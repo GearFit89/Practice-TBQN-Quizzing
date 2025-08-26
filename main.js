@@ -96,6 +96,7 @@ const quizApp = (function() {
     const versedict = {}; // place to store all the data
     let c = 0;// counter
     let selVerses =[];
+    let verse_dict;
     function processQuotes(quotesFTVs) {
     const data = quotesFTVs.trim().split("\n");
     for (let val of data) {
@@ -144,7 +145,7 @@ const quizApp = (function() {
 
     }
     async function initializeQuiz() {
-        const verse_dict = await loadQuotes(); // Wait for the data to load
+         verse_dict = await loadQuotes(); // Wait for the data to load
         if (!verse_dict) {
             console.error('Failed to load verse_dict. Exiting quiz initialization.');
             return;
