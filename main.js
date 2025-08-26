@@ -299,7 +299,7 @@ const quizApp = (function() {
         }
     }
 
-console.log(verse_dict[23].month)
+
 
 
 
