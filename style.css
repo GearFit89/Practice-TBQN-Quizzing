@@ -1,0 +1,323 @@
+/* General Body Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5; /* Fallback color */
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url("http://googleusercontent.com/image_generation_content/1"); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
+}
+/* Start Scene Styling */
+.start-scene-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.start-scene-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 20, 50, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+.start-scene-card:hover {
+    transform: translateY(-5px);
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 10px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+.option-section {
+    text-align: left;
+    margin-bottom: 25px;
+    border-top: 1px solid #ecf0f1;
+    padding-top: 25px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #34495e;
+    margin: 0 0 15px;
+}
+
+/* Custom Radio Button Styling */
+.radio-group {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #34495e;
+    user-select: none;
+}
+
+.radio-label input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    height: 20px;
+    width: 20px;
+    background-color: #ecf0f1;
+    border-radius: 50%;
+    margin-right: 10px;
+    display: inline-block;
+    position: relative;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.radio-label input[type="radio"]:checked + .radio-custom {
+    background-color: #3498db;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3);
+}
+
+.radio-custom::after {
+    content: '';
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
+
+.radio-label input[type="radio"]:checked + .radio-custom::after {
+    display: block;
+}
+
+/* Custom Checkbox (Toggle) Styling */
+.checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.toggle-label {
+    cursor: pointer;
+    font-size: 16px;
+    color: #34495e;
+    padding: 10px 20px;
+    background-color: #ecf0f1;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-label:has(input:checked) {
+    background-color: #3498db;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+}
+
+/* Main Start Button */
+#startQuizButton {
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* --- Revised Quiz Container Styles --- */
+
+.quiz-container {
+    width: 90%;
+    max-width: 700px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.quiz-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 20, 50, 0.15);
+    width: 100%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.quiz-header-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.timer-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: #34495e;
+    background-color: #f8f9fa;
+    border-radius: 50px;
+    padding: 8px 16px;
+    min-width: 100px;
+    text-align: center;
+    border: 2px solid #ddd;
+}
+
+.fallback-message {
+    font-size: 24px;
+    font-weight: 500;
+    color: #2c3e50;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+    line-height: 1.5;
+}
+
+.quiz-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+textarea {
+    width: 90%;
+    min-height: 120px;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(52, 152, 219, 0.2);
+}
+
+.button {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: #3498db; 
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.button:active {
+    background-color: #2471a3;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.answer-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    transition: background-color 0.3s;
+}
+
+.correct {
+    background-color: #28a745; 
+    display: none;
+}
+
+.incorrect {
+    background-color: #dc3545;
+    display: none;
+}
+.orange {
+    background-color: orange;
+    display: none;
+}
+/* Progress Bar Styling */
+.progress-container {
+    width: 90%;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-top: 15px;
+    height: 15px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #3498db; /* A vibrant blue */
+    border-radius: 15px;
+    transition: width 0.4s ease-in-out;
+}
+#restart{
+    
+    display: none;
+}
+a {
+    text-decoration: none;
+    color: white;
+  }

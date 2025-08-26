@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bible Quizzing Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a0dad; /* A deep purple */
+            --secondary-color: #f7d794; /* A light gold */
+            --text-color-dark: #2c3e50; /* Dark gray */
+            --text-color-light: #ecf0f1; /* Light gray */
+            --bg-color-light: #f4f4f9; /* Off-white */
+            --bg-color-dark: #4b4b6c; /* Dark slate */
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color-light);
+            color: var(--text-color-dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #a4508b 100%);
+            color: var(--text-color-light);
+            padding: 5rem 1rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 0.8rem 2.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Features Section */
+        .feature-card {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        }
+        
+        .feature-icon-wrapper {
+            background-color: var(--primary-color);
+            width: 4rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Footer */
+        .app-footer {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-light);
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">
+                The Bible Quizzing Companion
+            </div>
+            <a href="quiz.html" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out">
+                Play Now
+            </a>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Your Bible Study, On Your Terms.</h1>
+            <p class="hero-subtitle">Make memorizing scripture fun and easy with your friends. The Bible Quizzing Companion is a simple, customizable quiz tool built just for you and your group.</p>
+            <a href="quiz.html" class="cta-button">Let's Go!</a>
+        </div>
+    </section>
+
+    <section class="py-20">
+        <div class="container">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800">How It Works</h2>
+                <p class="text-lg text-gray-600 mt-2">Ready to play? It's as easy as 1-2-3.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                    </div>
+                    <h3 class="feature-title">1. Set Up Your Game</h3>
+                    <p class="text-gray-600">First, pick how you want to play. Choose your quiz mode, how many questions you want, and get things ready for a fun round.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                    </div>
+                    <h3 class="feature-title">2. Pick Your Verses</h3>
+                    <p class="text-gray-600">Select the specific months and "flights" you want to focus on. This lets you practice the exact verses that matter most to your group.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="feature-title">3. Time to Play!</h3>
+                    <p class="text-gray-600">Once everything's set, hit "Start." Verses will pop up based on your choices. Just type your answer and see how you do!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="feature-title">4. Check Your Score</h3>
+                    <p class="text-gray-600"> Answers all have to be word perfect but there is a built in spell checker for that. As soon as you type a wrong word in a verse you wil be prompted to "please correct"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="py-20 bg-white">
+        <div class="container">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800">Why You'll Love It</h2>
+                <p class="text-lg text-gray-600 mt-2">All the tools you need to crush your study goals.</p>
+            </div>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-indigo-500 text-white rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">Multiple Game Modes</h3>
+                        <p class="text-gray-600 mt-1">Play "Finish the Verse," "Quote," or mix them up to test your knowledge in different ways.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-indigo-500 text-white rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">Practice Your Way</h3>
+                        <p class="text-gray-600 mt-1">Challenge yourselves with random verses or stick to a specific order—whatever works best for your study group.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-indigo-500 text-white rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">Quick or Long Sessions</h3>
+                        <p class="text-gray-600 mt-1">Set the number of questions to match your schedule, whether it's a quick 5-minute review or a longer practice session.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-indigo-500 text-white rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">Smart Hints</h3>
+                        <p class="text-gray-600 mt-1">Stuck on a word? Just hit the spacebar to get a hint. It's like having a friend right there to help you out. By using a spell check method to check each word.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-gray-100">
+        <div class="container">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800">Your Progress is Safe with Us</h2>
+                <p class="text-lg text-gray-600 mt-2">We save your progress right on your device. Here's how it works.</p>
+            </div>
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Client-Side Storage</h3>
+                <p class="text-gray-600 mb-4">The Bible Quizzing Companion uses your browser's local storage to keep a record of how you're doing. This data is **private and only stored on your device**. You can track your progress without creating an account or sharing any personal info.</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li>When you answer, the app updates a simple counter for each verse.</li>
+                    <li>This lets the app show you which verses you're acing and which ones you need to work on.</li>
+                    <li>Since everything is saved locally, clearing your browser's cache or using a different device will reset your progress.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer class="app-footer">
+        <div class="container">
+            <p class="text-sm">&copy; 2024 The Bible Quizzing Companion. All rights reserved.(maybe some ai help too)</p>
+        </div>
+    </footer>
+
+</body>
+</html>
