@@ -143,17 +143,20 @@ const quizApp = (function() {
 
 
     }
-    const verse_dict = loadQuotes(); // Fetch and process the quotes
-    if (!verse_dict) {
-        console.error('Failed to load verse_dict. Exiting quiz initialization.');
-        return; // Exit if verse_dict is not loaded
-    }else{
-    console.log('Quiz initialized with verse_dict:', verse_dict);}
+    async function initializeQuiz() {
+        const verse_dict = await loadQuotes(); // Wait for the data to load
+        if (!verse_dict) {
+            console.error('Failed to load verse_dict. Exiting quiz initialization.');
+            return;
+        }
+        console.log('Quiz initialized with verse_dict:', verse_dict);
     
 
-        console.log(verse_dict[1].ref);
+        console.log(verse_dict[1]?.ref);
         console.log(verse_dict);
-        console.log(verse_dict[2].numVerses);
+        console.log(verse_dict[2]?.numVerses);
+    }
+    initializeQuiz();
         if (!clientanswers) {
             clientanswers = {};
             console.log("clientanswers initialized as an empty object.");
