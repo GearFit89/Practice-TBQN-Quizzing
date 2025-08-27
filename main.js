@@ -186,8 +186,7 @@ const quizApp = (function() {
             console.log(clientanswers); // Log the object to see the updated data.
             ver.ariaDisabled = 'true';
         }
-        p(verse_dict[100].month)
-        p(verse_dict[1].month)
+        
 
 
         
@@ -296,7 +295,7 @@ const quizApp = (function() {
         }
     }
 
-console.log(verse_dict[23].month)
+
 
 
 
