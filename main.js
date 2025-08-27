@@ -645,24 +645,31 @@ function handleSpaceEvent() {
                      }else{
                         quizSettings.numQuestions = clientAnswersLength;
                         selVerses = [];
-                        for(let i2 = 1; i2 <= clientAnswersLength; i2++){
-                        const typeref = clientanswers[i2].split('@');
-                        const type3 = typeref[0];
-                        const ref3 = typeref[1];
-                        const numv3 = typeref[2];
-                        const verse3 = Object.values(verse_dict).find(Verse => Verse.ref === ref3).verse;
-                        selVerses.push(i2 = {
-            
-                            verse: verse3,
-                            ref: ref3,
-                            verse: verse3,
-                            type: type3,
-                            numVerses: numv3,
-                        })
-                     }
-                    }
-                // Call new_quote to display the first question
+                        Object.keys(clientanswers).forEach(key => {
+    if (typeof key === 'string') {
+        const typeref = key.split('@');
+        if (typeref.length === 3) {
+            const type3 = typeref[0];
+            const ref3 = typeref[1];
+            const numv3 = typeref[2];
+            const verseObj = Object.values(verse_dict).find(Verse => Verse.ref === ref3);
+            const verse3 = verseObj ? verseObj.verse : '';
+            selVerses.push({
+                verse: verse3,
+                ref: ref3,
+                type: type3,
+                numVerses: numv3,
+            });
+        } else {
+            console.warn('Key split did not result in 3 parts:', key, typeref);
+        }
+    } else {
+        console.warn('Key is not a string:', key);
+    }
+});
 
+                    }
+    
           new_quote(
         quizSettings.quizMode,
         quizSettings.numQuestions,
