@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Practice Hard Verses</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body >
+    <div id="startScene" class="start-scene-container">
+        <div class="start-scene-card">
+            <h2 class="title">Quiz Setup</h2>
+            <p class="subtitle">Practice all the verse you got wrong.</p>
+
+
+        
+
+                
+
+                
+                    <div class="option-section">
+                        <h3 class="section-title">Length of timer (a length of zero will be no timer)</h3>
+                        <input type="number" id="secs" name="numQuestions" value="30" min="0" max="1000" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+
+                    <button type="button" class="button" id="resetclient" >Reset Local Storage</button>
+
+                <button type="submit" class="button" id="startQuizButton" >Start Quiz</button>
+            </form>
+        </div>
+    </div>
+
+    <main class="quiz-container" style="display: none;">
+        <div class="quiz-card">
+            <div class="quiz-header-area" id="clear">
+                <span id="timer" class="timer-display">Timer</span>
+                <div class="fallback-message" id="quizHeader"></div>
+                <main>
+            </div>
+            
+            <div class="progress-container" id="progressBar2">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="quiz-content">
+                <textarea spellcheck="false" placeholder="Enter Verse" id="verse"></textarea>
+                
+                <div class="button-group">
+                    <button type="reset" class="button" id="submit">Submit</button>
+                    <button id="correctbtn" class="answer-button correct">Correct!</button>
+                    <button id="incorrectbtn" class="answer-button incorrect">Incorrect!</button>
+                    <button id="pleasebtn" class="answer-button orange">Please Correct</button>
+                    <button id="next" class="button" type="reset" >Next</button>
+                </div>
+            </div>
+        </div>
+        </main>
+    </main>
+    <script src="main.js"></script>
+</body>
+</html>
