@@ -72,6 +72,47 @@ const quizApp = (function() {
         return true; // Return a success indicator for the 'set' operation
     };
     //g
+    function findUniqueTriggerWord(ARRAY, obj) {
+    if (!Array.isArray(ARRAY) || typeof obj !== 'object' || obj === null) {
+        console.error('Invalid input: ARRAY must be an array and obj must be an object.');
+        return [null, -1];
+    }
+
+    // Extract all verses from the object
+    const verses = Object.values(obj).map(item => item.verse.split(' '));
+
+    // Iterate through the ARRAY to find the first unique word
+    for (let i = 0; i < ARRAY.length; i++) {
+        const word = ARRAY[i];
+        let isUnique = true;
+
+        // Check if the word exists in the same position in all verses
+        for (const verseWords of verses) {
+            if (verseWords[i] === word) {
+                isUnique = false; // If the word exists in the same position in any verse, it's not unique
+                break;
+            }
+        }
+
+        // If the word is unique, return it along with its index
+        if (isUnique) {
+            return [word, i];
+        }
+    }
+
+    // If no unique word is found, return [null, -1]
+    return [null, -1];
+}
+
+let info = findUniqueTriggerWord(
+    ['For', 'God', 'so', 'loved', 'he'],
+    {
+        1: { verse: 'For God so loved he  world that he gave his one and only Son.' },
+        2: { verse: 'For God so loved he igave  another test here' }
+    }
+);
+
+console.log(info); // Output: ['one', 6]
     const questTypes = ['ftv', 'quote']
     const quizSettings = {};
     const quiMonths =  ['october', 'november', 'december', 'january', 'february', 'march'];
