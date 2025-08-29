@@ -8,13 +8,13 @@ const quizApp = (function() {
                     updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
                     alert('Client Data has been reset');
                 });
-            }
-    }
+            };
+    };
     const id = (word) => {
         let word1 = document.getElementById(word);
         return word1
 
-    }
+    };
     function Start() {
         let main = document.getElementsByTagName('main')[0];
         let startScene = document.getElementById('startScene');
