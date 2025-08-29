@@ -71,48 +71,72 @@ const quizApp = (function() {
         }
         return true; // Return a success indicator for the 'set' operation
     };
-    //g
-    function findUniqueTriggerWord(ARRAY, obj) {
-    if (!Array.isArray(ARRAY) || typeof obj !== 'object' || obj === null) {
-        console.error('Invalid input: ARRAY must be an array and obj must be an object.');
-        return [null, -1];
-    }
-
-    // Extract all verses from the object
-    const verses = Object.values(obj).map(item => item.verse.split(' '));
-
-    // Iterate through the ARRAY to find the first unique word
-    for (let i = 0; i < ARRAY.length; i++) {
-        const word = ARRAY[i];
-        let isUnique = true;
-
-        // Check if the word exists in the same position in all verses
-        for (const verseWords of verses) {
-            if (verseWords[i] === word) {
-                isUnique = false; // If the word exists in the same position in any verse, it's not unique
-                break;
+     const stripChar = (input) => {
+        // Define the set of characters to be stripped
+        const charToStrip = new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ']);
+    
+        // Helper function to process a single string
+        const processString = (str) => {
+            // Ensure the input is a string before proceeding
+            if (typeof str !== 'string') {
+                console.warn('stripChar received a non-string element in the array.');
+                return ''; // Return an empty string for invalid elements
+            }
+            // Convert to lowercase, trim whitespace, and filter out unwanted characters
+            return str.toLowerCase().trim().split('').filter(char => !charToStrip.has(char)).join('');
+        };
+    
+        // Check if the input is an array
+        if (Array.isArray(input)) {
+            // If it's an array, use .map() to process each string element
+            return input.map(str => processString(str));
+        } else if (typeof input === 'string') {
+            // If it's a single string, process it directly
+            return processString(input);
+        } else {
+            // Handle cases where the input is neither a string nor an array
+            console.warn('stripChar received an invalid input type. Expected a string or an array of strings.');
+            return input;
+        }
+    };
+    let notriggers =[];
+     function findUniqueTriggerWord(ARRAY, obj, currentVerseNumber, len = 5) {
+        if (!Array.isArray(ARRAY) || typeof obj !== 'object' || obj === null) {
+            console.error('Invalid input: ARRAY must be an array and obj must be an object.');
+            return [null, -1];
+        }
+    
+        // CORRECTED: Use Object.entries() to access the key (verse number)
+        const verses = Object.entries(obj)
+            // Filter out the current verse and verse 60
+            .filter(([key, value]) => key !== String(currentVerseNumber) && key !== '60')
+            .map(([key, item]) => item.verse.split(' '));
+    
+        // Iterate through the ARRAY to find the first unique word
+        for (let i = 0; i < len; i++) {
+            const word = ARRAY.slice(0, i + 1) // Get the word at the current index
+            let isUnique = true;
+    
+            // Check if the word exists in the same position in all verses
+            for (const verseWords of verses) {
+                if (stripChar(verseWords.slice(0, i+ 1)).join(' ') === stripChar(word).join(' ')) {
+                    isUnique = false;
+                   // If the word exists in the same position in any verse, it's not unique
+                    break;
+                }
+            }
+    
+            // If the word is unique, return it along with its index
+            if (isUnique) {
+                return [word[i], i];
             }
         }
+            
+          notriggers.push(ARRAY.join(' '));
 
-        // If the word is unique, return it along with its index
-        if (isUnique) {
-            return [word, i];
-        }
+        // If no unique word is found, return [null, -1]
+        return [null, ];
     }
-
-    // If no unique word is found, return [null, -1]
-    return [null, -1];
-}
-
-let info = findUniqueTriggerWord(
-    ['For', 'God', 'so', 'loved', 'he'],
-    {
-        1: { verse: 'For God so loved he  world that he gave his one and only Son.' },
-        2: { verse: 'For God so loved he igave  another test here' }
-    }
-);
-
-console.log(info); // Output: ['one', 6]
     const questTypes = ['ftv', 'quote']
     const quizSettings = {};
     const quiMonths =  ['october', 'november', 'december', 'january', 'february', 'march'];
