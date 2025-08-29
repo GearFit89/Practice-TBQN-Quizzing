@@ -1,13 +1,5 @@
 const quizApp = (function() {
-    function Start() {
-        let main = document.getElementsByTagName('main')[0];
-        let startScene = document.getElementById('startScene');
-
-        if (main && startScene) {
-            main.style.display = 'block';
-            startScene.style.display = 'none';
-        }
-                const resetclient = id('resetclient');
+     const resetclient = id('resetclient');
             if (resetclient) {
                  selverses = false;
                 resetclient.addEventListener('click', () => {
@@ -23,6 +15,15 @@ const quizApp = (function() {
         return word1
 
     }
+    function Start() {
+        let main = document.getElementsByTagName('main')[0];
+        let startScene = document.getElementById('startScene');
+
+        if (main && startScene) {
+            main.style.display = 'block';
+            startScene.style.display = 'none';
+        }
+               
     
     async function loadQuotes() {
         try {
