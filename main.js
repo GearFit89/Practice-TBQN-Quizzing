@@ -7,12 +7,23 @@ const quizApp = (function() {
             main.style.display = 'block';
             startScene.style.display = 'none';
         }
+                const resetclient = id('resetclient');
+            if (resetclient) {
+                 selverses = false;
+                resetclient.addEventListener('click', () => {
+                    localStorage.removeItem('objOFWrongAnswers/Right');
+                    clientanswers = {};
+                    updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
+                    alert('Client Data has been reset');
+                });
+            }
     }
     const id = (word) => {
         let word1 = document.getElementById(word);
         return word1
 
     }
+    
     async function loadQuotes() {
         try {
             // Fetch the quotes_ftvs.txt file
@@ -673,16 +684,7 @@ function handleSpaceEvent() {
                  if (title.value === 'Practice Hard Verses'){
                     //quizSettings.numQuestions = length(clientanswers);
                  }
-                 const resetclient = id('resetclient');
-            if (resetclient) {
-                 selverses = false;
-                resetclient.addEventListener('click', () => {
-                    localStorage.removeItem('objOFWrongAnswers/Right');
-                    clientanswers = {};
-                    updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
-                    alert('Client Data has been reset');
-                });
-            }
+         
             if (quizSettings.flights.length === 0){
                 quizSettings.flights = ['A','B','C','T']
              }
