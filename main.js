@@ -1,30 +1,41 @@
 const quizApp = (function() {
-     const resetclient = id('resetclient');
-            if (resetclient) {
-                 selverses = false;
-                resetclient.addEventListener('click', () => {
-                    localStorage.removeItem('objOFWrongAnswers/Right');
-                    clientanswers = {};
-                    updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
-                    alert('Client Data has been reset');
-                })
-            };
-    
-
-    const id = (word) => {
-        let word1 = document.getElementById(word);
-        return word1
-
-    };
+    let selverses = true; 
+    const resetclient = document.getElementById('resetclient');
+        if (resetclient) {
+             selverses = false;
+            resetclient.addEventListener('click', () => {
+                localStorage.removeItem('objOFWrongAnswers/Right');
+                clientanswers = {};
+                updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
+                alert('Client Data has been reset');
+            });
+        }
     function Start() {
+        const resetclient = id('resetclient');
+        if (resetclient) {
+             selverses = false;
+            resetclient.addEventListener('click', () => {
+                localStorage.removeItem('objOFWrongAnswers/Right');
+                clientanswers = {};
+                updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
+                alert('Client Data has been reset');
+            });
+        }
+
         let main = document.getElementsByTagName('main')[0];
         let startScene = document.getElementById('startScene');
-
+        
         if (main && startScene) {
             main.style.display = 'block';
             startScene.style.display = 'none';
         }
-               
+             
+    }
+    const id = (word) => {
+        let word1 = document.getElementById(word);
+        return word1
+
+    }
     
     async function loadQuotes() {
         try {
@@ -642,7 +653,7 @@ function handleSpaceEvent() {
                 answers = [];
                 correctCount = 0;
                 counterToMax = 0;
-                let selverses = true; //for now
+                //for now
                 // Add if statements to check if the elements exist before accessing their values
                 const verseSelectionElement = document.querySelector('input[name="verseSelection"]:checked');
                 if (verseSelectionElement) {
@@ -758,3 +769,4 @@ function handleSpaceEvent() {
 
 })();
 quizApp.start();
+
