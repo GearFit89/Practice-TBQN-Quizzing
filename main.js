@@ -7,9 +7,10 @@ const quizApp = (function() {
                     clientanswers = {};
                     updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
                     alert('Client Data has been reset');
-                });
+                })
             };
-    };
+    
+
     const id = (word) => {
         let word1 = document.getElementById(word);
         return word1
