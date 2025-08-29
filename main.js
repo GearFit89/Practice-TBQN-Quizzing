@@ -438,15 +438,7 @@ function measure(item1, item2, split = false, splitValue = '') {
     };
 
 
-    const stripChar = (verse = '') => {
-        if (typeof verse !== 'string') {
-            console.warn('stripChar received a non-string input:', verse);
-            return '';
-        }
-        verse = verse.toLowerCase().trim();
-        const charToStrip = new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ']);
-        return [...verse].filter(char => !charToStrip.has(char)).join('');
-    };
+   
 
 let running = true;
       function quiztimer(timeleft=30){
