@@ -330,10 +330,14 @@ const quizApp = (function() {
     // makes the document method easier
 
 
-    function write_text(par, elm, str, txtContent1, txtContent2 = null, txtContent3 = null, delay_in = 1000) {
+    function write_text(par, elm, str, txtContent1, txtContent2 = null, txtContent3 = null, delay_in = 1000, id1=true) {
         let text_data = ''
         const parent = id(par)
-        let text = document.createElement(elm);
+        let text;
+        if (typeof(id1) != 'string'){
+         text = document.createElement(elm);}else{
+        text = id('id') }
+        
         text.textContent = `${str} ${txtContent1}`
         parent.appendChild(text)
 
@@ -596,23 +600,30 @@ let running = true;
     };
     return {
         start: function() {
+            let checker = false;
             const submitButton = id('submit');
             submitButton.addEventListener("click", checkAns);
 
            ver.addEventListener('keydown', (event) => {
     // For desktop users, listen for the "Space" key
     if (event.code === 'Space') {
+        
+        checker = true;
         handleSpaceEvent();
     }
 });
 
-`ver.addEventListener('input', () => {
+ver.addEventListener('input', () => {
+setTimerOut(()=>{
+  if (!checker){
     // For mobile users, check if the last character entered is a space
     const lastChar = ver.value.slice(-1);
     if (lastChar === ' ') {
         handleSpaceEvent();
     }
-});`
+    }
+    }, 10);
+});
 
 function handleSpaceEvent() {
     let Answer2;
