@@ -346,7 +346,7 @@ const quizApp = (function() {
     }
 
 
-    function delay_text(txt, elm='p', par='quizHeader', delay = 0,COLOR=0) {
+    function delay_text(txt, elm='p', par='quizHeader', delay = 0,COLOR=0, id1=false) {
         const parent = id(par);
         const textElement = document.createElement(elm);
         textElement.textContent = '';
@@ -374,8 +374,17 @@ const quizApp = (function() {
         };
 
         window.addEventListener('keydown', stopAnimation);
-
-        for (let i = 0; i < txt.length; i++) {
+       const txt1 = txt.split(' ');
+        for (word9 in txt1){
+            if(typeof(id1) === 'number'){
+                if (word9 === id1{
+                   textElement.innerHTML += '<span>'
+                }
+                if(word9 === id1 + 1){
+                     textElement.innerHTML += '</span>'
+            }
+               
+        for (let i = 0; i < txt1[word9].length; i++) {
             const char = txt[i];
             const timeoutId = setTimeout(() => {
                 textElement.textContent += char;
@@ -387,7 +396,7 @@ const quizApp = (function() {
             timeouts.push(timeoutId);
         }
     }
-
+    }
 
 
 
@@ -614,7 +623,7 @@ let running = true;
 });
 
 ver.addEventListener('input', () => {
-setTimerOut(()=>{
+setTimeout(()=>{
   if (!checker){
     // For mobile users, check if the last character entered is a space
     const lastChar = ver.value.slice(-1);
