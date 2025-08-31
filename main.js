@@ -606,13 +606,13 @@ let running = true;
     }
 });
 
-ver.addEventListener('input', () => {
+`ver.addEventListener('input', () => {
     // For mobile users, check if the last character entered is a space
     const lastChar = ver.value.slice(-1);
     if (lastChar === ' ') {
         handleSpaceEvent();
     }
-});
+});`
 
 function handleSpaceEvent() {
     let Answer2;
