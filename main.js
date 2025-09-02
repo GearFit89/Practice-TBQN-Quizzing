@@ -618,7 +618,7 @@ let running = true;
 
             phars = first_5.join(' ')
             quest = words.slice(5).join(' ');
-            delay_text('Finish the Verse:error ','h4','quizHeader',0,'purple');
+            delay_text(' ','h4','quizHeader',0,'purple');
         } else if (ftv === 'quote') {
             globalquestype = 'quote';
             const verseData = selVerses[cnum];
