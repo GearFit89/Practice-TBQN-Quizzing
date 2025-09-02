@@ -161,6 +161,7 @@ const quizApp = (function() {
         // If no unique word is found, return [null, -1]
         return [null, ];
     }
+    let speed_tOf_text = 100;
     const questTypes = ['ftv', 'quote']
     const quizSettings = {};
     const quiMonths =  ['october', 'november', 'december', 'january', 'february', 'march'];
@@ -346,59 +347,78 @@ const quizApp = (function() {
     }
 
 
-    function delay_text(txt, elm='p', par='quizHeader', delay = 0,COLOR=0, id1=false) {
+    function delay_text(txt, elm = 'p', par = 'quizHeader', delay = 0, COLOR = 0, id1 = 'false') {
         const parent = id(par);
         const textElement = document.createElement(elm);
-        textElement.textContent = '';
-        if (typeof(COLOR) === 'string'){textElement.style.color = COLOR;}
+        textElement.innerHTML = '';
+        if (typeof(COLOR) === 'string') {
+            textElement.style.color = COLOR;
+        }
         parent.appendChild(textElement);
-
+    
         const timeouts = [];
         let isStopped = false;
-
+        let totalDelay = 0;
+    
+        const words = txt.split(' ');
+        let wordIndex = 0;
+        let charIndex = 0;
+        let currentHTML = '';
+        let isHighlighted = false;
+    
+        // Helper function to stop the animation
         const stopAnimation = (event) => {
             if (event.code === 'Space') {
                 event.preventDefault();
-                if (isStopped) { return;}
+                if (isStopped) {
+                    return;
+                }
                 isStopped = true;
-                const displayedText = textElement.textContent;
-                remainingText = txt.substring(displayedText.length);
-                console.log("Remaining Text:", remainingText);
-                quest = remainingText + quest; console.log(quest);
                 for (const timeoutId of timeouts) {
                     clearTimeout(timeoutId);
                 }
-
+                textElement.textContent = txt;
                 window.removeEventListener('keydown', stopAnimation);
             }
         };
-
         window.addEventListener('keydown', stopAnimation);
-       const txt1 = txt.split(' ');
-        for (word9 in txt1){
-            if(typeof(id1) === 'number'){
-                if (word9 === id1{
-                   textElement.innerHTML += '<span>'
-                }
-                if(word9 === id1 + 1){
-                     textElement.innerHTML += '</span>'
+    
+        // This is the core logic
+        function typeWriter() {
+            if (isStopped || wordIndex >= words.length) {
+                return;
             }
-               
-        for (let i = 0; i < txt1[word9].length; i++) {
-            const char = txt[i];
-            const timeoutId = setTimeout(() => {
-                textElement.textContent += char;
-
-                if (i === txt.length - 1) {
-                    window.removeEventListener('keydown', stopAnimation);
+    
+            const word = words[wordIndex] + (wordIndex === words.length - 1 ? '' : ' ');
+            const char = word[charIndex];
+    
+            // Check if the current word should be highlighted
+            if (wordIndex === id1) {
+                if (!isHighlighted) {
+                    currentHTML += '<span class="highlight-word">';
+                    isHighlighted = true;
                 }
-            }, (i + 1) * delay);
-            timeouts.push(timeoutId);
+            } else {
+                if (isHighlighted) {
+                    currentHTML += '</span>';
+                    isHighlighted = false;
+                }
+            }
+    
+            currentHTML += char;
+            textElement.innerHTML = currentHTML;
+    
+            charIndex++;
+            if (charIndex >= word.length) {
+                charIndex = 0;
+                wordIndex++;
+            }
+    
+            setTimeout(typeWriter, delay);
         }
+    
+        typeWriter();
     }
-    }
-
-
 
 
 function measure(item1, item2, split = false, splitValue = '') {
@@ -586,24 +606,29 @@ let running = true;
 
         clear('quizHeader');
         const qh = 'quizHeader';
-
+       let ftvTriggerI;
         if (ftv === 'ftv') {
             globalquestype = 'ftv';
             const verseText = selVerses[cnum].verse;
             const words = verseText.split(' ');
             const first_5 = words.slice(0, 5);
-            phars = first_5.join(' ');
+            ftvTriggerI = findUniqueTriggerWord(words, selVerses, cnum , 5)[1];
+
+
+
+            phars = first_5.join(' ')
             quest = words.slice(5).join(' ');
-            delay_text('Finish the Verse: ','h4','quizHeader',0,'purple');
+            delay_text('Finish the Verse:error ','h4','quizHeader',0,'purple');
         } else if (ftv === 'quote') {
             globalquestype = 'quote';
             const verseData = selVerses[cnum];
             phars = verseData.ref;
             quest = verseData.verse;
+            
             delay_text(`${selVerses[cnum].numVerses} Verse Quote: `,'h4','quizHeader',0,'purple');
         }
-
-        delay_text(`${phars}`, 'p', 'quizHeader', speed,);
+         
+        delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', ftvTriggerI);
         counterToMax += 1;
         updateProgressBar(); // Update the progress bar after a new question is loaded
     };
@@ -613,26 +638,13 @@ let running = true;
             const submitButton = id('submit');
             submitButton.addEventListener("click", checkAns);
 
-           ver.addEventListener('keydown', (event) => {
-    // For desktop users, listen for the "Space" key
-    if (event.code === 'Space') {
-        
-        checker = true;
-        handleSpaceEvent();
-    }
-});
-
-ver.addEventListener('input', () => {
-setTimeout(()=>{
-  if (!checker){
-    // For mobile users, check if the last character entered is a space
-    const lastChar = ver.value.slice(-1);
-    if (lastChar === ' ') {
-        handleSpaceEvent();
-    }
-    }
-    }, 10);
-});
+            ver.addEventListener('input', () => {
+                // Check if the input value ends with a space and is not empty.
+                if (ver.value.endsWith(' ') && ver.value.trim().length > 0) {
+                    // If it does, run the handleSpaceEvent logic.
+                    handleSpaceEvent();
+                }
+            });
 
 function handleSpaceEvent() {
     let Answer2;
@@ -762,10 +774,14 @@ function handleSpaceEvent() {
 
                     }
     
+    if (typeof(verse_dict) != 'object'){
+     
+        
+        alert('Content may be loading Please wait \n If you keep seeing this than there is connection error \n Please restart') }
           new_quote(
         quizSettings.quizMode,
         quizSettings.numQuestions,
-        quizSettings.verseSelection, 100)
+        quizSettings.verseSelection,speed_tOf_text)
         progressBar.style.width = '0%';
         if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'}else{
                 quiztimer(quizSettings.lenOfTimer)}
@@ -777,7 +793,7 @@ function handleSpaceEvent() {
             next.addEventListener("click", () => {
                 submitButton.style.display = 'block';
 
-                new_quote(quizSettings.quizMode, quizSettings.numQuestions , quizSettings.verseSelection, 100 );
+                new_quote(quizSettings.quizMode, quizSettings.numQuestions , quizSettings.verseSelection, speed_tOf_text); 
                 if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'}else{
                     quiztimer(quizSettings.lenOfTimer)}
             });
