@@ -323,4 +323,8 @@ a {
   }
 span { color: #3498db; /* A vibrant blue */
      }
+.black{ background-color: black;
+    display: none;
+}
+    
     
