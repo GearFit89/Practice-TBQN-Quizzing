@@ -1,4 +1,4 @@
-const quizApp = (function() {
+onst quizApp = (function() {
     let selverses = true; 
     const resetclient = document.getElementById('resetclient');
         if (resetclient) {
@@ -47,7 +47,7 @@ const quizApp = (function() {
     
             // Get the text content of the file
             const data = await response.text();
-            console.log('Fetched data:', data); // Debugging log
+           //console.log('Fetched data:', data); // Debugging log
     
             // Process the fetched data
            return processQuotes(data);
@@ -161,7 +161,8 @@ const quizApp = (function() {
         // If no unique word is found, return [null, -1]
         return [null, ];
     }
-    let speed_tOf_text = 100;
+    let startTimer = false;
+    let counterToMax = 0;
     const questTypes = ['ftv', 'quote']
     const quizSettings = {};
     const quiMonths =  ['october', 'november', 'december', 'january', 'february', 'march'];
@@ -348,7 +349,9 @@ const quizApp = (function() {
 
 
     function delay_text(txt, elm = 'p', par = 'quizHeader', delay = 0, COLOR = 0, id1 = 'false') {
+        return new Promise((resolve) => {
         const parent = id(par);
+
         const textElement = document.createElement(elm);
         textElement.innerHTML = '';
         if (typeof(COLOR) === 'string') {
@@ -371,13 +374,23 @@ const quizApp = (function() {
             if (event.code === 'Space') {
                 event.preventDefault();
                 if (isStopped) {
+                    resolve()
                     return;
                 }
                 isStopped = true;
                 for (const timeoutId of timeouts) {
                     clearTimeout(timeoutId);
                 }
-                textElement.textContent = txt;
+                const remainingWords = words.slice(wordIndex);
+
+                console.log('Remaining words:', remainingWords); // Debugging log
+                const remainingText = remainingWords.join(' ');
+                const tx = currentHTML + remainingText;
+                startTimer = true;
+                quest = remainingText + ' ' + quest;
+                
+                document.getElementById('pleasefinish').style.display = 'block'; 
+                
                 window.removeEventListener('keydown', stopAnimation);
             }
         };
@@ -386,7 +399,12 @@ const quizApp = (function() {
         // This is the core logic
         function typeWriter() {
             if (isStopped || wordIndex >= words.length) {
-                return;
+                window.removeEventListener('keydown', stopAnimation);
+                startTimer = true;
+                resolve()
+                return
+                
+
             }
     
             const word = words[wordIndex] + (wordIndex === words.length - 1 ? '' : ' ');
@@ -406,6 +424,7 @@ const quizApp = (function() {
             }
     
             currentHTML += char;
+            console.log('Current HTML:', currentHTML, 'char', char); // Debugging log
             textElement.innerHTML = currentHTML;
     
             charIndex++;
@@ -418,7 +437,8 @@ const quizApp = (function() {
         }
     
         typeWriter();
-    }
+    })
+};
 
 
 function measure(item1, item2, split = false, splitValue = '') {
@@ -448,6 +468,8 @@ function measure(item1, item2, split = false, splitValue = '') {
     // this function checks user input
 
     function clear(par3) {
+        id('pleasefinish').style.display = 'none';
+        id('pleasebtn').style.display = 'none';
         ver.value = '';
         id(par3).innerHTML = '';
         id('correctbtn').style.display = "none";
@@ -517,14 +539,14 @@ let running = true;
     
 
 
-    let counterToMax = 0;
+    
     let currentVerseIndex = 0;
     const progressBar = id('progressBar'); // Get a reference to the progress bar element
 
     const updateProgressBar = () => {
         const totalQuestions = quizSettings.numQuestions;
         // counterToMax is incremented before this function is called, so it represents the current question number.
-        const progressPercentage = (counterToMax / totalQuestions) * 100;
+        const progressPercentage = ((counterToMax  + 1 )/ totalQuestions) * 100;
         progressBar.style.width = `${progressPercentage}%`;
     };
 
@@ -574,7 +596,7 @@ let running = true;
     
     };
 
-    const new_quote = (_ftv ='quote', maxnum = 20, rand = 'random', speed= 0) => {
+     const new_quote = async (_ftv ='quote', maxnum = 20, rand = 'random', speed= 0) => {
         next.style.display = 'none';
     if (counterToMax === maxnum) {
             showQuizSummary();
@@ -606,6 +628,7 @@ let running = true;
 
         clear('quizHeader');
         const qh = 'quizHeader';
+        currerentVerse = selVerses[cnum];
        let ftvTriggerI;
         if (ftv === 'ftv') {
             globalquestype = 'ftv';
@@ -613,25 +636,41 @@ let running = true;
             const words = verseText.split(' ');
             const first_5 = words.slice(0, 5);
             ftvTriggerI = findUniqueTriggerWord(words, selVerses, cnum , 5)[1];
-
-
-
             phars = first_5.join(' ')
             quest = words.slice(5).join(' ');
-            delay_text(' ','h4','quizHeader',0,'purple');
+              
+            await delay_text(`Finish the Verse:`,'h4','quizHeader',0, 'purple', 5);
         } else if (ftv === 'quote') {
             globalquestype = 'quote';
             const verseData = selVerses[cnum];
             phars = verseData.ref;
             quest = verseData.verse;
             
-            delay_text(`${selVerses[cnum].numVerses} Verse Quote: `,'h4','quizHeader',0,'purple');
+            await delay_text(`${selVerses[cnum].numVerses} Verse Quote:`,'h4','quizHeader',0,'purple');
         }
-         
-        delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', ftvTriggerI);
-        counterToMax += 1;
-        updateProgressBar(); // Update the progress bar after a new question is loaded
+         startTimer = false;
+        await delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', ftvTriggerI);
+        
+        // Update the progress bar after a new question is loaded
+        return quest, phars;
     };
+    function dragElements(){
+        let blocks = currerentVerse.split(' ');
+        //add shuffle for blocks 
+        blocks.forEach(block => {
+            const span = document.createElement('button');
+            span.textContent = block + ' '; // Add a space after each word for separation
+            span.draggable = true; // Make the span draggable
+            span.classList.add('answer-button'); 
+            span.id = block // Optional: Add a class for styling
+            document.getElementById('draggableContainer').appendChild(span);
+    
+        })
+    
+        
+    
+    }
+    dragElements();
     return {
         start: function() {
             let checker = false;
@@ -649,19 +688,32 @@ let running = true;
 function handleSpaceEvent() {
     let Answer2;
     plsc.style.display = 'none';
+    id('pleasefinish').style.display = 'none';
     id('correctbtn').style.display = "none";
     id('incorrectbtn').style.display = "none";
+ id('puralbtn').style.display = 'none';
 
     let inpuT = ver.value;
     inpuT = inpuT.trim().split(' ');
     const user_word = inpuT[inpuT.length - 1];
     const Answer = quest.trim().split(' ');
     Answer2 = Answer[inpuT.length - 1];
+    //special comparsion to be added
+    if(Answer2[Answer2.length -1] === 's' && user_word[ user_word.length -1] != 's'){
+        //add dom for hint
+        id('puralbtn').style.display = 'block';
 
+    }else
+    if(Answer2[Answer2.length -1] != 's' && user_word[ user_word.length -1] === 's'){
+        //add dom for
+        id('puralbtn').style.display = 'block';
+    }
+    
+     //normal comparsion
     if (Answer2 && levenshtein(stripChar(user_word), stripChar(Answer2), 53)) {
         inpuT.pop();
         inpuT.push(Answer2);
-        ver.value = inpuT.join(' ');
+        ver.value = inpuT.join(' ') + ' ';
     } else {
         plsc.style.display = 'block';
     }
@@ -679,12 +731,12 @@ function handleSpaceEvent() {
 }
 
             const startButton = id('startQuizButton');
-            startButton.addEventListener('click', (event) => {
+            startButton.addEventListener('click',  (event) => {
                 event.preventDefault();
                 const clientAnswersLength = Object.keys(clientanswers).length;
                 answers = [];
                 correctCount = 0;
-                counterToMax = 0;
+                
                 //for now
                 // Add if statements to check if the elements exist before accessing their values
                 const verseSelectionElement = document.querySelector('input[name="verseSelection"]:checked');
@@ -714,6 +766,11 @@ function handleSpaceEvent() {
                 const lenOfTimerElement = document.getElementById('secs');
                 if (lenOfTimerElement) {
                     quizSettings.lenOfTimer = parseInt(lenOfTimerElement.value);
+                }
+                const speed_tOf_text = document.getElementById('speed');
+                if (speed_tOf_text) {
+                    if(typeof(parseFloat(speed_tOf_text.value)) != 'number')  { quizSettings.speed_tOf_text = 0}else{
+                    quizSettings.speed_tOf_text = parseFloat(speed_tOf_text.value) * 1000;}
                 }
                 
                 const selectedFlights = [];
@@ -772,29 +829,39 @@ function handleSpaceEvent() {
     }
 });
 
-                    }
+                    };
+        async function WaitForLoad(){
+
+        
     
     if (typeof(verse_dict) != 'object'){
      
         
         alert('Content may be loading Please wait \n If you keep seeing this than there is connection error \n Please restart') }
-          new_quote(
+         await new_quote(
         quizSettings.quizMode,
         quizSettings.numQuestions,
-        quizSettings.verseSelection,speed_tOf_text)
+        quizSettings.verseSelection, quizSettings.speed_tOf_text)
         progressBar.style.width = '0%';
-        if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'}else{
-                quiztimer(quizSettings.lenOfTimer)}
+        
+        if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
+                quiztimer(quizSettings.lenOfTimer)} 
+        }
+        
+                
              
                 Start();
+                WaitForLoad();
             });
 
             
-            next.addEventListener("click", () => {
+            next.addEventListener("click", async () => {
                 submitButton.style.display = 'block';
+                updateProgressBar();
+                counterToMax += 1;
 
-                new_quote(quizSettings.quizMode, quizSettings.numQuestions , quizSettings.verseSelection, speed_tOf_text); 
-                if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'}else{
+                await new_quote(quizSettings.quizMode, quizSettings.numQuestions , quizSettings.verseSelection, quizSettings.speed_tOf_text); 
+                if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'}else {
                     quiztimer(quizSettings.lenOfTimer)}
             });
 
@@ -804,5 +871,4 @@ function handleSpaceEvent() {
 
 
 })();
-quizApp.start();
-
+quizApp.start(); 
