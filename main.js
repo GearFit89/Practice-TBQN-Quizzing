@@ -161,6 +161,7 @@ const quizApp = (function() {
         // If no unique word is found, return [null, -1]
         return [null, ];
     }
+    let currerentVerse;
     let startTimer = false;
     let counterToMax = 0;
     const questTypes = ['ftv', 'quote']
