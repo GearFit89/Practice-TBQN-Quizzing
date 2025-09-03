@@ -844,7 +844,7 @@ function handleSpaceEvent() {
         quizSettings.numQuestions,
         quizSettings.verseSelection, quizSettings.speed_tOf_text)
         progressBar.style.width = '0%';
-            dragElements();
+            //dragElements();
         
         if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
                 quiztimer(quizSettings.lenOfTimer)} 
