@@ -700,13 +700,15 @@ function handleSpaceEvent() {
     const Answer = quest.trim().split(' ');
     Answer2 = Answer[inpuT.length - 1];
     //special comparsion to be added
-    if(Answer2[Answer2.length -1] === 's' && user_word[ user_word.length -1] != 's'){
+    if(stripChar(Answer2[Answer2.length -1]) === 's' && user_word[ user_word.length -1] != 's'){
         //add dom for hint
+        ver.placeholder = 's'
         id('puralbtn').style.display = 'block';
 
     }else
-    if(Answer2[Answer2.length -1] != 's' && user_word[ user_word.length -1] === 's'){
+    if(stripChar(Answer2[Answer2.length -1]) != 's' && user_word[ user_word.length -1] === 's'){
         //add dom for
+        ver.placeholder = ''
         id('puralbtn').style.display = 'block';
     }
     
