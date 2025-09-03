@@ -656,7 +656,7 @@ let running = true;
         return quest, phars;
     };
     function dragElements(){
-        let blocks = currerentVerse.split(' ');
+        let blocks = selVerses[cnum].verse.split(' ');
         //add shuffle for blocks 
         blocks.forEach(block => {
             const span = document.createElement('button');
