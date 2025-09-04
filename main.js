@@ -194,6 +194,8 @@ const quizApp = (function() {
     let remainingText = '';
     let numverses = 1;
     let verse_dict;
+    let isquote = false;
+    let isftv = false;
     const ver = id('verse');
     const timerbtn = id('timer');
      // spilts by new lines
@@ -665,13 +667,14 @@ let running = true;
         let ftv = _ftv;
          
          
+         
     if('ftv' in quizSettings.quizMode){
         ftv = 'ftv';
-        let isftv = true;
+         isftv = true;
     }
      if('quote' in quizSettings.quizMode){
         ftv = 'quote';
-        let isquote = true;
+         isquote = true;
     }
     if(isquote && isftv){
         ftv = 'both';
