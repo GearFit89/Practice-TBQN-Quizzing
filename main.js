@@ -1,4 +1,4 @@
-onst quizApp = (function() {
+const quizApp = (function() {
     let selverses = true; 
     const resetclient = document.getElementById('resetclient');
         if (resetclient) {
