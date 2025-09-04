@@ -211,9 +211,11 @@ const quizApp = (function() {
    const regex = /^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ:|According to) )?(.*)$/;
     
     for (let val of dataSplit){
-        const match = val.match(regex);
+        const match = val.match(/^(\w+ \d+:\d+[\w\d-]*) (\w) (?:(SQ:|According to) )?(.*)$/);
         c+= 1;
          // check if a match was found
+        if(match){console.log(match)
+        
             const monthIndex = Math.floor((c - 1) / 20);
             const monthName = quiMonths[monthIndex];
             const ref1 = match[1];
@@ -235,6 +237,8 @@ const quizApp = (function() {
                 month: monthName,
                 type: type1
             };
+                 }
+    }
         
     }
     console.log('processed quotes', questiondict);
