@@ -1,4 +1,4 @@
-const quizApp = (function() {
+onst quizApp = (function() {
     let selverses = true; 
     const resetclient = document.getElementById('resetclient');
         if (resetclient) {
@@ -11,17 +11,7 @@ const quizApp = (function() {
             });
         }
     function Start() {
-        const resetclient = id('resetclient');
-        if (resetclient) {
-             selverses = false;
-            resetclient.addEventListener('click', () => {
-                localStorage.removeItem('objOFWrongAnswers/Right');
-                clientanswers = {};
-                updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
-                alert('Client Data has been reset');
-            });
-        }
-
+        
         let main = document.getElementsByTagName('main')[0];
         let startScene = document.getElementById('startScene');
         
@@ -36,6 +26,29 @@ const quizApp = (function() {
         return word1
 
     }
+    async function loadQuestions(){
+        try{
+            const questResponse = await fetch('QuestioniTBQN.txt')
+            if(!questResponse.ok){
+                throw new Error(`Questions failed fetch ${questResponse.status}`)
+
+            }
+            const questionsText = await  questResponse.text()
+            console.log('data from questions has been loaded as text', questionsText)
+
+            return processQuestions(questionsText)
+
+
+        } catch (error) {
+            console.error('Failed loading Questions')
+
+        }
+    }
+
+
+
+
+
     
     async function loadQuotes() {
         try {
@@ -187,13 +200,61 @@ const quizApp = (function() {
      // place to store all the data
     let c = 0;// counter
     let selVerses =[];
+     
+
+     function processQuestions(data) {
+       const  dataSplit = data.trim().split('\n');
+       let questiondict = {};
+
+
+
+        const regex = /^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ|According to (?:\w+ \d+:\d+\w*\-?\d*))) (.*)$/;
+        
+        for (let val of dataSplit){
+            val.match(regex);
+            c+= 1;
+            if(val){
+
+            const monthIndex = Math.floor((c - 1) / 20);
+            const monthName = quiMonths[monthIndex];
+            const ref1 = val[1];
+            const flight1 = val[2];
+            
+            const typeQuestion = val[3];
+            if (typeof (typeQuestion) != 'string' ){
+                const type1 = 'question'
+            }else{
+                const type1 = typeQuestion
+            };
+            const questAns = val[4] // maybe use the regex to split between quest and ans
+
+            }
+            questiondict[c] = {
+                flight: flight1,
+                verse: questAns,
+                ref: ref1,
+                month: monthName,
+                type: type1
+                
+            };
+
+
+        };
+        console.log('processed quotes', questiondict)
+        return questiondict
+
+     }
     function processQuotes(quotesFTVs) {
-    const data = quotesFTVs.trim().split("\n");
-    let versedict = {};
-    for (let val of data) {
+        c = 0
+        const data = quotesFTVs.trim().split("\n");
+        let versedict = {};
+        for (let val of data) {
    
         // simple macth method word, digit:digit , word, Quote/FTV word
-        val = val.match(/^(\w+ \d+:\d+\w*\-?\d*) (\w) Quote\/FTV (.*)$/);
+            val = val.match(/^(\w+ \d+:\d+\w*\-?\d*) (\w) Quote\/FTV (.*)$/);
+        //example regex for questions
+        // val.match(/^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ|According to (?:\w+ \d+:\d+\w*\-?\d*))) (.*)$/)
+        
 
         c += 1;
         if (val) {
@@ -655,22 +716,65 @@ let running = true;
         // Update the progress bar after a new question is loaded
         return quest, phars;
     };
-    function dragElements(){
-        let blocks = selVerses[cnum].verse.split(' ');
-        //add shuffle for blocks 
-        blocks.forEach(block => {
-            const span = document.createElement('button');
-            span.textContent = block + ' '; // Add a space after each word for separation
-            span.draggable = true; // Make the span draggable
-            span.classList.add('answer-button'); 
-            span.id = block // Optional: Add a class for styling
-            document.getElementById('draggableContainer').appendChild(span);
-    
-        })
-    
+
+
+    function setupDropZone(containerId) {
+        const container = document.getElementById(containerId);
+
+        container.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        container.addEventListener('dragenter', (e) => {
+            container.classList.add('drop-valid');
+        });
+
+        container.addEventListener('dragleave', (e) => {
+            container.classList.remove('drop-valid');
+        });
         
-    
+        container.addEventListener('drop', (eB) => {
+            eB.preventDefault();
+            container.classList.remove('drop-valid');
+            
+            const dataVBlock= eB.dataTransfer.getData('text/plain');
+            const draggedElementVBlock = document.getElementById(dataVBlock);
+            if (draggedElementVBlock) {
+                container.appendChild(draggedElementVBlock);
+            }
+        });
     }
+
+    // The corrected function with all fixes applied.
+    function dragElements(){
+        const draggableContainer = document.getElementById('draggableContainer');
+
+        let blocks = selVerses[cnum].verse.split(' ');
+        let idIndex = 0;
+        blocks.forEach(block => {
+            const button = document.createElement('button');
+            button.textContent = block + ' '; // Add a space after each word for separation
+            button.draggable = true; // Make the span draggable
+            
+            //button.className = 'bg-blue-500 text-white rounded-md px-4 py-2 m-2 cursor-grab transition-colors duration-200 hover:bg-blue-600';
+            
+            button.id = `${idIndex}-${block}`;
+            idIndex++;
+            draggableContainer.appendChild(button);
+            
+            button.addEventListener('dragstart', (eventdragB) => {
+                eventdragB.dataTransfer.setData('text/plain', eventdragB.target.id);
+            });
+        });
+        
+        // Set up both containers as drop zones
+        setupDropZone('draggableContainer');
+        setupDropZone('dropVerse');
+
+        // Add listener to the new button to log IDs
+        //document.getElementById('getIDsButton').addEventListener('click', getDraggedElementIds);
+    }
+
     
     return {
         start: function() {
@@ -700,15 +804,13 @@ function handleSpaceEvent() {
     const Answer = quest.trim().split(' ');
     Answer2 = Answer[inpuT.length - 1];
     //special comparsion to be added
-    if(stripChar(Answer2[Answer2.length -1]) === 's' && user_word[ user_word.length -1] != 's'){
+    if(Answer2[Answer2.length -1] === 's' && user_word[ user_word.length -1] != 's'){
         //add dom for hint
-        
         id('puralbtn').style.display = 'block';
 
     }else
-    if(stripChar(Answer2[Answer2.length -1]) != 's' && user_word[ user_word.length -1] === 's'){
+    if(Answer2[Answer2.length -1] != 's' && user_word[ user_word.length -1] === 's'){
         //add dom for
-        
         id('puralbtn').style.display = 'block';
     }
     
@@ -846,7 +948,7 @@ function handleSpaceEvent() {
         quizSettings.numQuestions,
         quizSettings.verseSelection, quizSettings.speed_tOf_text)
         progressBar.style.width = '0%';
-            //dragElements();
+            dragElements();
         
         if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
                 quiztimer(quizSettings.lenOfTimer)} 
