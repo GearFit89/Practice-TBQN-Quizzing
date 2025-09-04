@@ -211,7 +211,7 @@ const quizApp = (function() {
         const regex = /^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ|According to (?:\w+ \d+:\d+\w*\-?\d*))) (.*)$/;
         
         for (let val of dataSplit){
-            val.match(regex);
+            val = val.match(regex);
             c+= 1;
             if(val){
 
