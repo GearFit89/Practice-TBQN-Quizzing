@@ -40,7 +40,7 @@ const quizApp = (function() {
 
 
         } catch (error) {
-            console.error('Failed loading Questions')
+            console.error('Failed loading Questions', error)
 
         }
     }
