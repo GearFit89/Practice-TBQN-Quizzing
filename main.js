@@ -448,6 +448,7 @@ const quizApp = (function() {
                 quest = remainingText + ' ' + quest;
                 
                 document.getElementById('pleasefinish').style.display = 'block'; 
+                ver.placeholder = "Don't forget to enter the last word on the screen";
                 
                 window.removeEventListener('keydown', stopAnimation);
             }
@@ -526,6 +527,7 @@ function measure(item1, item2, split = false, splitValue = '') {
     // this function checks user input
 
     function clear(par3) {
+        ver.placeholder = 'Eneter Answer'
         id('pleasefinish').style.display = 'none';
         id('pleasebtn').style.display = 'none';
         ver.value = '';
