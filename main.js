@@ -240,7 +240,7 @@ const quizApp = (function() {
                  }
     }
         
-    }
+    
     console.log('processed quotes', questiondict);
     return questiondict;
  }
