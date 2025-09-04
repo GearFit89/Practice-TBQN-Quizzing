@@ -213,7 +213,7 @@ const quizApp = (function() {
     for (let val of dataSplit){
         const match = val.match(regex);
         c+= 1;
-        if(match){ // check if a match was found
+         // check if a match was found
             const monthIndex = Math.floor((c - 1) / 20);
             const monthName = quiMonths[monthIndex];
             const ref1 = match[1];
@@ -235,7 +235,7 @@ const quizApp = (function() {
                 month: monthName,
                 type: type1
             };
-        }
+        
     }
     console.log('processed quotes', questiondict);
     return questiondict;
@@ -706,7 +706,8 @@ let running = true;
         const qh = 'quizHeader';
         currerentVerse = selVerses[cnum];
        let ftvTriggerI;
-         if(selVerses[cnum].type === 'quote/ftv'){
+         //if(selVerses[cnum].type === 'quote/ftv'){
+         if (true){
         if (ftv === 'ftv') {
             globalquestype = 'ftv';
             const verseText = selVerses[cnum].verse;
