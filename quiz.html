@@ -31,10 +31,84 @@
                         </label>
                     </div>
                 </div>
+                <div class="option-section">
+                    <h3 class="section-title">Question Type</h3>
+                    <div class="checkbox-container">
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="quote" checked>Qutoes</label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="ftv" checked title="Finish the Verse"> FTV</label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="sq" checked> SQ</label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="at" checked>According to </label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="q"  checked title="Regluar questions">Questions</label>
+                    </div>
+                </div>
+
+                
+                <div class="option-section">
+                    <h3 class="section-title">Number of Questions</h3>
+                    <input type="number" id="numQuestions" name="numQuestions" value="20" min="1" max="100" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                </div>
+                    <div class="option-section">
+                        <h3 class="section-title">Length of Timer (Length of zero will be no timer)</h3>
+                        <input type="number" id="secs" name="numQuestions" value="30" min="0" max="1000" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+                    <div class="option-section">
+                        <h3 class="section-title">Delay in Text (In seconds)</h3>
+                        <input type="number" id="speed" name="numQuestions" value="0" min="0" max="1000" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
 
                 <div class="option-section">
-                    <h3 class="section-title">Quiz Mode</h3>
-                    <div class="radio-group">
+                    <h3 class="section-title">Flight</h3>
+                    <div class="checkbox-container">
+                        <label class="toggle-label"><input type="checkbox" name="flight" value="A"> A</label>
+                        <label class="toggle-label"><input type="checkbox" name="flight" value="B"> B</label>
+                        <label class="toggle-label"><input type="checkbox" name="flight" value="C"> C</label>
+                        <label class="toggle-label"><input type="checkbox" name="flight" value="T"> T</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="button" id="startQuizButton" >Start Quiz</button>
+            </form>
+        </div>
+    </div>
+
+    <main class="quiz-container" style="display: none;">
+        <div class="quiz-card">
+            <div class="quiz-header-area" id="clear">
+                <span id="timer" class="timer-display">Timer</span>
+                <div class="fallback-message" id="quizHeader"></div>
+                <main>
+            </div>
+            
+            <div class="progress-container" id="progressBar2">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="quiz-content">
+                <div id="versedrop">
+                <textarea spellcheck="false" placeholder="Enter Verse" id="verse"></textarea>
+                </div>
+                <div id="draggableContainer" class="draggable-container"></div>
+                <div class="button-group">
+                    <button type="reset" class="button" id="submit">Submit</button>
+                    <button id="correctbtn" class="answer-button correct">Correct!</button>
+                    <button id="incorrectbtn" class="answer-button incorrect">Incorrect!</button>
+                    <button id="pleasebtn" class="answer-button orange">Please Correct</button>
+                    <button id="next" class="button" type="reset" >Next</button>
+                    <button id="pleasefinish" class="answer-button black">Finish the Question 
+                        (Be sure to include the last word!)
+                    </button>
+                    
+                    <button id="puralbtn" class="answer-button orange">Incorrect Form</button>
+                    
+                    <a href="index.html"><button id="restart" class="button" type="reset" >Home</button></a>
+                </div>
+            </div>
+        </div>
+        </main>
+    </main>
+    <script src="main.js"></script>
+</body>
+</html>                    <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="quizMode" value="ftv" checked>
                             <span class="radio-custom"></span>
