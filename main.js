@@ -702,13 +702,13 @@ function handleSpaceEvent() {
     //special comparsion to be added
     if(stripChar(Answer2[Answer2.length -1]) === 's' && user_word[ user_word.length -1] != 's'){
         //add dom for hint
-        ver.placeholder = 's'
+        
         id('puralbtn').style.display = 'block';
 
     }else
     if(stripChar(Answer2[Answer2.length -1]) != 's' && user_word[ user_word.length -1] === 's'){
         //add dom for
-        ver.placeholder = ''
+        
         id('puralbtn').style.display = 'block';
     }
     
