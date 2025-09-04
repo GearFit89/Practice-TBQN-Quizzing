@@ -925,7 +925,7 @@ function handleSpaceEvent() {
                 quizSettings.months = quiMonths;
              }
              if(quizSettings.quizMode === 'ftv' || quizSettings.quizMode === 'quote'){
-                quizSettings.quizMode.push('ftv/quote')
+                quizSettings.quizMode = selquizMode.push('ftv/quote')
              }
                 console.log('Quiz Settings Saved:', quizSettings);
                 next.style.display = 'none';
