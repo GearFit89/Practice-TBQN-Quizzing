@@ -669,7 +669,19 @@ let running = true;
         let ftv = _ftv;
          
          
-    
+    if('ftv' in quizSettings.quizMode){
+        ftv = 'ftv';
+        let isftv = true;
+    }
+     if('quote' in quizSettings.quizMode){
+        ftv = 'quote';
+        let isquote = true;
+    }
+    if(isquote && isftv){
+        ftv = 'both';
+    }
+
+        
          //not needed
         if (ftv === 'both') {
             const randtype = Math.floor(Math.random() * questTypes.length);
