@@ -998,7 +998,7 @@ function handleSpaceEvent() {
                 updateProgressBar();
                 counterToMax += 1;
 
-                await new_quote('ftv', quizSettings.numQuestions , quizSettings.verseSelection, quizSettings.speed_tOf_text); 
+                 await new_quote('ftv', quizSettings.numQuestions , quizSettings.verseSelection, quizSettings.speed_tOf_text); 
                 if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'}else {
                     quiztimer(quizSettings.lenOfTimer)}
             });
@@ -1009,4 +1009,9 @@ function handleSpaceEvent() {
 
 
 })();
+quizApp.start(); 
+
+
+
+
 quizApp.start(); 
