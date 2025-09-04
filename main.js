@@ -202,42 +202,49 @@ const quizApp = (function() {
     let selVerses =[];
      
 
-    function processQuestions(data) {
-    const dataSplit = data.trim().split('\n');
-    let questiondict = {};
+     function processQuestions(data) {
+       const  dataSplit = data.trim().split('\n');
+       let questiondict = {};
 
-    const regex = /^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ|According to (?:\w+ \d+:\d+\w*\-?\d*))) (.*)$/;
-    
-    for (let val of dataSplit){
-        const match = val.match(regex);
-        c+= 1;
-        if(match){ // check if a match was found
+
+
+        const regex = /^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ:|According to (?:\w+ \d+:\d+\w*\-?\d*))) (.*)$/;
+        
+        for (let val of dataSplit){
+            match = val.match(regex);
+            c+= 1;
+            if(val){
+
             const monthIndex = Math.floor((c - 1) / 20);
             const monthName = quiMonths[monthIndex];
             const ref1 = match[1];
             const flight1 = match[2];
             
-            const typeQuestion = match[3];
-            let type1; // declare type1 with a broader scope
+            let typeQuestion = match[3];
             if (typeof (typeQuestion) != 'string' ){
-                type1 = 'question';
+                const type1 = 'question'
             }else{
-                type1 = typeQuestion;
+                const type1 = typeQuestion
             };
-            const questAns = match[4];
+            const questAns = match[4] // maybe use the regex to split between quest and ans
 
+            
             questiondict[c] = {
                 flight: flight1,
                 verse: questAns,
                 ref: ref1,
                 month: monthName,
                 type: type1
+                
             };
         }
-    }
-    console.log('processed quotes', questiondict);
-    return questiondict;
- }
+
+
+        };
+        console.log('processed quotes', questiondict)
+        return questiondict
+
+     }
     function processQuotes(quotesFTVs) {
         c = 0
         const data = quotesFTVs.trim().split("\n");
@@ -448,7 +455,6 @@ const quizApp = (function() {
                 quest = remainingText + ' ' + quest;
                 
                 document.getElementById('pleasefinish').style.display = 'block'; 
-                ver.placeholder = "Don't forget to enter the last word on the screen";
                 
                 window.removeEventListener('keydown', stopAnimation);
             }
@@ -527,7 +533,6 @@ function measure(item1, item2, split = false, splitValue = '') {
     // this function checks user input
 
     function clear(par3) {
-        ver.placeholder = 'Eneter Answer'
         id('pleasefinish').style.display = 'none';
         id('pleasebtn').style.display = 'none';
         ver.value = '';
@@ -665,19 +670,7 @@ let running = true;
         let ftv = _ftv;
          
          
-    if('ftv' in quizSettings.quizMode){
-        ftv = 'ftv';
-        let isftv = true;
-    }
-     if('quote' in quizSettings.quizMode){
-        ftv = 'quote';
-        let isquote = true;
-    }
-    if(isquote && isftv){
-        ftv = 'both';
-    }
-
-        
+    
          //not needed
         if (ftv === 'both') {
             const randtype = Math.floor(Math.random() * questTypes.length);
@@ -860,10 +853,14 @@ function handleSpaceEvent() {
                     quizSettings.verseSelection = verseSelectionElement.value;
                 }
                 // type of verses to use
+                const selquizMode = [];
                 const quizModeElement = document.querySelectorAll('input[name="quizMode"]:checked');
                 if (quizModeElement) {
-                    quizSettings.quizMode = quizModeElement.value;
+                    quizModeElement.forEach((checkboxqm) => {
+                        selquizMode.push(checkboxqm.value);
+                    });
                 }
+               quizSettings.quizMode = selquizMode;
 
                 const selectedMonths = [];
                 const monthCheckboxes = document.querySelectorAll('input[name="month"]:checked');
@@ -983,7 +980,7 @@ function handleSpaceEvent() {
                 updateProgressBar();
                 counterToMax += 1;
 
-                await new_quote('ftv', quizSettings.numQuestions , quizSettings.verseSelection, quizSettings.speed_tOf_text); 
+                await new_quote(quizSettings.quizMode, quizSettings.numQuestions , quizSettings.verseSelection, quizSettings.speed_tOf_text); 
                 if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'}else {
                     quiztimer(quizSettings.lenOfTimer)}
             });
