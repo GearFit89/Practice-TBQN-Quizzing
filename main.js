@@ -706,6 +706,7 @@ let running = true;
         const qh = 'quizHeader';
         currerentVerse = selVerses[cnum];
        let ftvTriggerI;
+         if(selVerses[cnum].type === 'quote/ftv'){
         if (ftv === 'ftv') {
             globalquestype = 'ftv';
             const verseText = selVerses[cnum].verse;
@@ -724,6 +725,9 @@ let running = true;
             
             await delay_text(`${selVerses[cnum].numVerses} Verse Quote:`,'h4','quizHeader',0,'purple');
         }
+         }else {
+             phars = selVerses[cnum].verse
+         }
          startTimer = false;
         await delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', ftvTriggerI);
         
