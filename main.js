@@ -208,7 +208,7 @@ const quizApp = (function() {
     const dataSplit = data.trim().split('\n');
     let questiondict = {};
 
-    const regex = /^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ|According to (?:\w+ \d+:\d+\w*\-?\d*))) (.*)$/;
+   const regex = /^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ:|According to) )?(.*)$/;
     
     for (let val of dataSplit){
         const match = val.match(regex);
