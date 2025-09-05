@@ -222,28 +222,32 @@ const quizApp = (function() {
         const match = val.match(/^(\w+ \d+:\d+[\w\d-]*) (\w) (?:(SQ:|According to) )?(.*)$/);
         c+= 1;
          // check if a match was found
-        if(match){console.log(match)
+        if(match){
         
-            const monthIndex = Math.floor((c - 1) / 20);
+            //const monthIndex = Math.floor((c - 1) / 20);
             let monthName;
             const ref1 = match[1];
             let splitref = ref1.split(' ');
             let book = splitref[0];
             let chapter = splitref[1].split(':');
             chapter = chapter[0];
-            quizMonths.forEach(month=>{
-                if(book === 'Matthew'){
-                    if(month.includes(chapter)){
-                         monthName = month
-
-                    }
-
-                }else {
-                monthName = 'march'
+            if (book === 'Matthew') {
+                // Find the month array that contains the chapter number
+                const foundMonthArray = quizMonths.find(month => {
+                    // This is the corrected check: access the nested array (at index 1)
+                    // and convert the chapter string to a number
+                    return month[1].includes(Number(chapter));
+                });
+                // If a month was found, assign its name (at index 0)
+                if (foundMonthArray) {
+                    monthName = foundMonthArray[0];
                 }
+            } else {
+                monthName = 'march';
+            }
 
 
-            })
+            
             const flight1 = match[2];
             
             const typeQuestion = match[3];
@@ -329,7 +333,7 @@ const quizApp = (function() {
             return;
         }
         console.log('Quiz initialized with verse_dict');
-        console.log("Questins are good")
+        console.log("Questions are good")
         // Call dependent functions here
     }
     initializeQuiz();
@@ -514,7 +518,7 @@ const quizApp = (function() {
             }
     
             currentHTML += char;
-            console.log('Current HTML:', currentHTML, 'char', char); // Debugging log
+            //console.log('Current HTML:', currentHTML, 'char', char); // Debugging log
             textElement.innerHTML = currentHTML;
     
             charIndex++;
@@ -574,7 +578,7 @@ function measure(item1, item2, split = false, splitValue = '') {
           let subm = id("submit");
           clearInterval(timerid)
          subm.style.display = 'none';
-        console.log('quest b=v=valur at checkans', quest)
+        console.log('quest valur at checkans:', quest)
         let inVerse = ver.value
         id('correctbtn').style.display = "none";
         id('incorrectbtn').style.display = "none";
@@ -673,7 +677,7 @@ let running = true;
     
         delay_text(`Quiz Complete!`, 'h2', 'quizHeader', 0, 'green');
         delay_text(`Your score: ${correctAnswers} out of ${totalQuestions}`, 'p', 'quizHeader', 0);
-         console.log(answers)
+         //console.log(answers)
         if (answers.some(a => !a.correct)) {
             delay_text(`You missed the following verses:`, 'h3', 'quizHeader', 0);
             answers.forEach(answer => {
@@ -971,6 +975,7 @@ function handleSpaceEvent() {
              if (quizSettings.months.length === 0){
                 quizSettings.months = quiMonths;
              }
+             quizSettings.quizMode = selquizMode;
              if (quizSettings.quizMode.includes('ftv') || quizSettings.quizMode.includes('quote')) {
                 // If the array includes either 'ftv' or 'quote', push the combined mode.
                 selquizMode.push('ftv/quote');
@@ -1059,4 +1064,6 @@ function handleSpaceEvent() {
 
 })();
 quizApp.start(); 
+
+
 
