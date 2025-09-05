@@ -180,6 +180,14 @@ const quizApp = (function() {
     const questTypes = ['ftv', 'quote']
     const quizSettings = {};
     const quiMonths =  ['october', 'november', 'december', 'january', 'february', 'march'];
+    const quizMonths = [
+        ['october', [1, 2, 3, 4, 5]],
+        ['november', [6, 7, 8, 9]],
+        ['december', [10, 12]],
+        ['january', [13, 14]],
+        ['february', [15, 16]],
+        ['march', ['jonah']]
+    ];
     let cnum = 0;
     let timerid;
     let globalquestype;
@@ -217,8 +225,25 @@ const quizApp = (function() {
         if(match){console.log(match)
         
             const monthIndex = Math.floor((c - 1) / 20);
-            const monthName = quiMonths[monthIndex];
+            let monthName;
             const ref1 = match[1];
+            let splitref = ref1.split(' ');
+            let book = splitref[0];
+            let chapter = splitref[1].split(':');
+            chapter = chapter[0];
+            quizMonths.forEach(month=>{
+                if(book === 'Matthew'){
+                    if(month.includes(chapter)){
+                         monthName = month
+
+                    }
+
+                }else {
+                monthName = 'march'
+                }
+
+
+            })
             const flight1 = match[2];
             
             const typeQuestion = match[3];
@@ -671,19 +696,30 @@ let running = true;
         let ftv = _ftv;
          
          
-         
-    if('ftv' in quizSettings.quizMode){
-        ftv = 'ftv';
-         isftv = true;
-    }
-     if('quote' in quizSettings.quizMode){
-        ftv = 'quote';
-         isquote = true;
-    }
-    if(isquote && isftv){
-        ftv = 'both';
-    }
+        if (quizSettings.quizMode.includes('ftv')) {
+            ftv = 'ftv';
+            isftv = true;
+        }
+        
+        if (quizSettings.quizMode.includes('quote')) {
+            ftv = 'quote';
+            isquote = true;
+        }
+        
+        if (isquote && isftv) {
+            ftv = 'both';
+        }
+           /*if(quizSettings.quizMode.length > 1){
+           if(quizSettings.quizMode.includes('quote/ftv')){
+           quizSetting.quizMode.pop()
+           }
+            questTypes = quizSettings.quizMode;
+            ftv = 'both'
 
+
+           }else {
+            ftv = quizSettings.quizMode[0];
+           } */
         
          //not needed
         if (ftv === 'both') {
@@ -729,9 +765,20 @@ let running = true;
             quest = verseData.verse;
             
             await delay_text(`${selVerses[cnum].numVerses} Verse Quote:`,'h4','quizHeader',0,'purple');
+        } `
+        else if(ftv ==='sq'){
+
         }
-         }else {
-             phars = selVerses[cnum].verse
+        else if(ftv === 'at'){
+
+        }
+        else if(ftv === 'q'){
+
+        }
+        else {
+
+        }`
+
          }
          startTimer = false;
         await delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', ftvTriggerI);
@@ -878,7 +925,7 @@ function handleSpaceEvent() {
                         selquizMode.push(checkboxqm.value);
                     });
                 }
-               quizSettings.quizMode = selquizMode;
+              
 
                 const selectedMonths = [];
                 const monthCheckboxes = document.querySelectorAll('input[name="month"]:checked');
@@ -924,9 +971,11 @@ function handleSpaceEvent() {
              if (quizSettings.months.length === 0){
                 quizSettings.months = quiMonths;
              }
-             if(quizSettings.quizMode === 'ftv' || quizSettings.quizMode === 'quote'){
-                quizSettings.quizMode = selquizMode.push('ftv/quote')
-             }
+             if (quizSettings.quizMode.includes('ftv') || quizSettings.quizMode.includes('quote')) {
+                // If the array includes either 'ftv' or 'quote', push the combined mode.
+                selquizMode.push('ftv/quote');
+            }
+            quizSettings.quizMode = selquizMode;
                 console.log('Quiz Settings Saved:', quizSettings);
                 next.style.display = 'none';
 
@@ -1011,7 +1060,3 @@ function handleSpaceEvent() {
 })();
 quizApp.start(); 
 
-
-
-
-quizApp.start(); 
