@@ -713,17 +713,18 @@ let running = true;
         if (isquote && isftv) {
             ftv = 'both';
         }
-           /*if(quizSettings.quizMode.length > 1){
+           if(quizSettings.quizMode.length > 1){
            if(quizSettings.quizMode.includes('quote/ftv')){
            quizSetting.quizMode.pop()
            }
+           
             questTypes = quizSettings.quizMode;
             ftv = 'both'
 
 
            }else {
             ftv = quizSettings.quizMode[0];
-           } */
+           } 
         
          //not needed
         if (ftv === 'both') {
@@ -771,12 +772,14 @@ let running = true;
             await delay_text(`${selVerses[cnum].numVerses} Verse Quote:`,'h4','quizHeader',0,'purple');
         } `
         else if(ftv ==='sq'){
+        
 
         }
         else if(ftv === 'at'){
 
         }
         else if(ftv === 'q'){
+        phars = 
 
         }
         else {
@@ -865,6 +868,7 @@ let running = true;
             });
 
 function handleSpaceEvent() {
+    if(selVerses[cnum].type === 'quote/ftv'{
     let Answer2;
     plsc.style.display = 'none';
     id('pleasefinish').style.display = 'none';
@@ -907,6 +911,7 @@ function handleSpaceEvent() {
         correct('right');
         clearInterval(timerid);
     }
+};
 }
 
             const startButton = id('startQuizButton');
