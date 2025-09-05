@@ -1,325 +1,357 @@
 /* General Body Styles */
 body {
-    margin: 0; /* Ensures no default margin around the body */
-    padding: 0; /* Ensures no default padding */
-    background-color: #f0f2f5; /* A light, soft gray background */
-    font-family: 'Inter', sans-serif; /* Uses a clean, modern font */
-    display: flex; /* Centers the content using flexbox */
-    justify-content: center; /* Horizontally centers the content */
-    align-items: center; /* Vertically centers the content */
-    min-height: 100vh; /* Ensures the body takes up at least the full viewport height */
-    background-image: url("http://googleusercontent.com/image_generation_content/1"); /* Example background image */
-    background-size: cover; /* Ensures the background image covers the entire body */
-    background-position: center; /* Centers the background image */
-    background-repeat: no-repeat; /* Prevents the background image from repeating */
-    color: #333; /* Sets a dark gray text color for readability */
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5; /* Fallback color */
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url("http://googleusercontent.com/image_generation_content/1"); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
 }
-
-/* ------------------------------------- */
-/* --- Start Scene Styling --- */
-/* ------------------------------------- */
+/* Start Scene Styling */
 .start-scene-container {
-    display: flex; /* Uses flexbox to center content */
-    justify-content: center; /* Horizontally centers content */
-    align-items: center; /* Vertically centers content */
-    width: 100%; /* Takes up the full width */
-    padding: 20px; /* Adds internal spacing */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
 }
 
 .start-scene-card {
-    background-color: #ffffff; /* Sets a white background */
-    padding: 40px; /* Adds internal spacing */
-    border-radius: 16px; /* Rounds the corners */
-    box-shadow: 0 8px 30px rgba(0, 20, 50, 0.1); /* Adds a subtle shadow for depth */
-    width: 100%; /* Takes up the full width */
-    max-width: 500px; /* Limits the maximum width */
-    text-align: center; /* Centers the text within the card */
-    transition: transform 0.3s ease-in-out; /* Adds a smooth transition for the transform property */
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 20, 50, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
 }
 .start-scene-card:hover {
-    transform: translateY(-5px); /* Moves the card up slightly on hover */
+    transform: translateY(-5px);
 }
 
 .title {
-    font-size: 28px; /* Sets the font size */
-    font-weight: 700; /* Makes the font bold */
-    color: #2c3e50; /* Sets a dark blue-gray color */
-    margin: 0 0 10px; /* Sets margins */
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 10px;
 }
 
 .subtitle {
-    font-size: 16px; /* Sets the font size */
-    color: #7f8c8d; /* Sets a gray color */
-    margin: 0 0 25px; /* Sets margins */
+    font-size: 16px;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+.option-section {
+    text-align: left;
+    margin-bottom: 25px;
+    border-top: 1px solid #ecf0f1;
+    padding-top: 25px;
 }
 
 .section-title {
-    font-size: 18px; /* Sets the font size */
-    font-weight: 600; /* Sets the font weight */
-    color: #34495e; /* Sets a dark blue-gray color */
-    border-bottom: 2px solid #ecf0f1; /* Adds a light bottom border */
-    padding-bottom: 5px; /* Adds padding below the border */
-    margin-bottom: 20px; /* Sets the bottom margin */
+    font-size: 18px;
+    font-weight: 500;
+    color: #34495e;
+    margin: 0 0 15px;
 }
 
+/* Custom Radio Button Styling */
 .radio-group {
-    display: flex; /* Uses flexbox to arrange radio buttons */
-    justify-content: center; /* Horizontally centers the radio buttons */
-    gap: 20px; /* Adds space between the radio buttons */
-    margin-bottom: 20px; /* Sets the bottom margin */
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
 }
 
 .radio-label {
-    display: flex; /* Uses flexbox to align the input and text */
-    align-items: center; /* Vertically aligns items */
-    cursor: pointer; /* Changes cursor to a pointer on hover */
-    font-size: 16px; /* Sets the font size */
-    color: #34495e; /* Sets a dark blue-gray color */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #34495e;
+    user-select: none;
+}
+
+.radio-label input[type="radio"] {
+    display: none;
 }
 
 .radio-custom {
-    width: 20px; /* Sets the width */
-    height: 20px; /* Sets the height */
-    border-radius: 50%; /* Makes the element a circle */
-    border: 2px solid #bdc3c7; /* Sets a gray border */
-    margin-right: 10px; /* Adds space to the right */
-    transition: all 0.2s ease-in-out; /* Adds a smooth transition */
+    height: 20px;
+    width: 20px;
+    background-color: #ecf0f1;
+    border-radius: 50%;
+    margin-right: 10px;
+    display: inline-block;
+    position: relative;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-input[type="radio"]:checked + .radio-custom {
-    background-color: #3498db; /* Changes background color when checked */
-    border-color: #3498db; /* Changes border color when checked */
-    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3); /* Adds a shadow when checked */
+.radio-label input[type="radio"]:checked + .radio-custom {
+    background-color: #3498db;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3);
 }
 
-.start-button {
-    background-color: #3498db; /* Sets a vibrant blue background */
-    color: #ffffff; /* Sets white text color */
-    border: none; /* Removes the border */
-    padding: 15px 30px; /* Adds internal spacing */
-    font-size: 18px; /* Sets the font size */
-    font-weight: 600; /* Sets the font weight */
-    border-radius: 50px; /* Makes the button fully rounded */
-    cursor: pointer; /* Changes cursor to a pointer */
-    transition: background-color 0.3s, transform 0.2s; /* Adds smooth transitions */
-}
-.start-button:hover {
-    background-color: #2980b9; /* Darkens the background on hover */
-    transform: translateY(-2px); /* Lifts the button slightly on hover */
-}
-.verse-info {
-    font-size: 14px; /* Sets the font size */
-    color: #7f8c8d; /* Sets a gray color */
-    margin-top: 20px; /* Sets the top margin */
-    max-height: 150px; /* Limits the maximum height */
-    overflow-y: auto; /* Adds a scrollbar if content overflows */
-    border: 1px solid #ecf0f1; /* Adds a light border */
-    padding: 10px; /* Adds internal spacing */
-    border-radius: 8px; /* Rounds the corners */
-    text-align: left; /* Aligns text to the left */
-    white-space: pre-wrap; /* Preserves whitespace and wraps text */
-    word-wrap: break-word; /* Prevents long words from overflowing */
-}
-.verse-info span {
-    color: #3498db; /* Sets a vibrant blue color for spans */
-}
-.reset-button {
-    background: none; /* Removes the background */
-    border: none; /* Removes the border */
-    color: #e74c3c; /* Sets a red color */
-    font-size: 14px; /* Sets the font size */
-    cursor: pointer; /* Changes cursor to a pointer */
-    margin-top: 10px; /* Sets the top margin */
-    transition: color 0.3s; /* Adds a smooth transition for color */
-}
-.reset-button:hover {
-    color: #c0392b; /* Darkens the color on hover */
-}
-.input-container {
-    position: relative; /* Sets positioning for child elements */
-    margin-bottom: 20px; /* Sets the bottom margin */
-    display: flex; /* Uses flexbox for layout */
-    flex-direction: column; /* Stacks children vertically */
-    align-items: center; /* Horizontally centers children */
-}
-.input-field {
-    width: 100%; /* Takes up the full width */
-    padding: 10px; /* Adds internal spacing */
-    border: 1px solid #ccc; /* Sets a light gray border */
-    border-radius: 5px; /* Rounds the corners */
-    font-size: 16px; /* Sets the font size */
-    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+.radio-custom::after {
+    content: '';
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
 }
 
-.suggestion-box {
-    position: absolute; /* Positions the element relative to its parent */
-    top: 100%; /* Positions the top edge at the bottom of the parent */
-    left: 0; /* Aligns the left edge with the parent's left edge */
-    width: 100%; /* Takes up the full width */
-    background-color: white; /* Sets a white background */
-    border: 1px solid #ccc; /* Sets a light gray border */
-    border-top: none; /* Removes the top border */
-    max-height: 150px; /* Limits the maximum height */
-    overflow-y: auto; /* Adds a vertical scrollbar if content overflows */
-    z-index: 1000; /* Ensures the element is on top of others */
-    text-align: left; /* Aligns text to the left */
-}
-.suggestion-item {
-    padding: 10px; /* Adds internal spacing */
-    cursor: pointer; /* Changes cursor to a pointer */
-}
-.suggestion-item:hover {
-    background-color: #f0f0f0; /* Changes background on hover */
-}
-.hint-text {
-    font-size: 12px; /* Sets the font size */
-    color: #999; /* Sets a gray color */
-    margin-top: 5px; /* Sets the top margin */
-    text-align: center; /* Centers the text */
+.radio-label input[type="radio"]:checked + .radio-custom::after {
+    display: block;
 }
 
-/* ------------------------------------- */
-/* --- Quiz Scene Styling --- */
-/* ------------------------------------- */
-main {
-    display: none; /* Hides the main content initially */
+/* Custom Checkbox (Toggle) Styling */
+.checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.toggle-label {
+    cursor: pointer;
+    font-size: 16px;
+    color: #34495e;
+    padding: 10px 20px;
+    background-color: #ecf0f1;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-label:has(input:checked) {
+    background-color: #3498db;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+}
+
+/* Main Start Button */
+#startQuizButton {
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* --- Revised Quiz Container Styles --- */
+
+.quiz-container {
+    width: 90%;
+    max-width: 700px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .quiz-card {
-    background-color: #ffffff; /* Sets a white background */
-    padding: 30px; /* Adds internal spacing */
-    border-radius: 16px; /* Rounds the corners */
-    box-shadow: 0 8px 30px rgba(0, 20, 50, 0.1); /* Adds a subtle shadow */
-    width: 100%; /* Takes up the full width */
-    max-width: 700px; /* Limits the maximum width */
-    transition: transform 0.3s ease-in-out; /* Adds a smooth transition */
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 20, 50, 0.15);
+    width: 100%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
 }
 
 .quiz-header-area {
-    display: flex; /* Uses flexbox for layout */
-    justify-content: space-between; /* Spaces items evenly */
-    align-items: center; /* Vertically aligns items */
-    margin-bottom: 20px; /* Sets the bottom margin */
-    padding-bottom: 10px; /* Adds padding below the border */
-    border-bottom: 2px solid #ecf0f1; /* Adds a light bottom border */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
 .timer-display {
-    font-size: 20px; /* Sets the font size */
-    font-weight: 700; /* Makes the font bold */
-    color: #e74c3c; /* Sets a red color */
-    text-align: right; /* Aligns text to the right */
+    font-size: 24px;
+    font-weight: bold;
+    color: #34495e;
+    background-color: #f8f9fa;
+    border-radius: 50px;
+    padding: 8px 16px;
+    min-width: 100px;
+    text-align: center;
+    border: 2px solid #ddd;
 }
 
-.question-text {
-    font-size: 24px; /* Sets the font size */
-    font-weight: 500; /* Sets the font weight */
-    color: #34495e; /* Sets a dark blue-gray color */
-    margin-bottom: 20px; /* Sets the bottom margin */
-    line-height: 1.6; /* Sets the line height */
-}
-.answer-grid {
-    display: grid; /* Uses CSS grid for layout */
-    grid-template-columns: 1fr 1fr; /* Creates two equal columns */
-    gap: 15px; /* Adds spacing between grid items */
-    margin-top: 20px; /* Sets the top margin */
-}
-.answer-button {
-    background-color: #f8f9fa; /* Sets a light gray background */
-    color: #2c3e50; /* Sets a dark blue-gray text color */
-    border: 2px solid #ecf0f1; /* Adds a light border */
-    padding: 15px 20px; /* Adds internal spacing */
-    font-size: 16px; /* Sets the font size */
-    font-weight: 500; /* Sets the font weight */
-    border-radius: 12px; /* Rounds the corners */
-    cursor: pointer; /* Changes cursor to a pointer */
-    transition: background-color 0.3s, border-color 0.3s, transform 0.2s; /* Adds smooth transitions */
-    text-align: left; /* Aligns text to the left */
-}
-.answer-button:hover {
-    background-color: #e9ecef; /* Changes background on hover */
-    border-color: #bdc3c7; /* Changes border color on hover */
-    transform: translateY(-2px); /* Lifts the button slightly on hover */
+.fallback-message {
+    font-size: 24px;
+    font-weight: 500;
+    color: #2c3e50;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+    line-height: 1.5;
 }
 
-.button-group {
-    display: flex; /* Uses flexbox for layout */
-    flex-wrap: wrap; /* Allows buttons to wrap to a new line */
-    justify-content: center; /* Horizontally centers the buttons */
-    gap: 15px; /* Adds space between buttons */
-    margin-top: 20px; /* Sets the top margin */
+.quiz-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+textarea {
+    width: 90%;
+    min-height: 120px;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(52, 152, 219, 0.2);
 }
 
 .button {
-    background-color: #3498db; /* Sets a vibrant blue background */
-    color: #ffffff; /* Sets white text color */
-    border: none; /* Removes the border */
-    padding: 15px 30px; /* Adds internal spacing */
-    font-size: 18px; /* Sets the font size */
-    font-weight: 600; /* Sets the font weight */
-    border-radius: 50px; /* Makes the button fully rounded */
-    cursor: pointer; /* Changes cursor to a pointer */
-    transition: background-color 0.3s, transform 0.2s; /* Adds smooth transitions */
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: #3498db; 
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
 }
+
 .button:hover {
-    background-color: #2980b9; /* Darkens the background on hover */
-    transform: translateY(-2px); /* Lifts the button slightly on hover */
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.button:active {
+    background-color: #2471a3;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.answer-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    transition: background-color 0.3s;
 }
 
 .correct {
-    background-color: #28a745; /* Green for correct */
-    color: white; /* White text for contrast */
-    display: none; /* Hides the element initially */
+    background-color: #28a745; 
+    display: none;
 }
 
 .incorrect {
-    background-color: #dc3545; /* Red for incorrect */
-    color: white; /* White text for contrast */
-    display: none; /* Hides the element initially */
+    background-color: #dc3545;
+    display: none;
 }
 .orange {
-    background-color: orange; /* Sets an orange background */
-    color: white; /* White text for contrast */
-    display: none; /* Hides the element initially */
+    background-color: orange;
+    display: none;
 }
 /* Progress Bar Styling */
 .progress-container {
-    width: 90%; /* Sets the width */
-    background-color: #e0e0e0; /* Sets a light gray background */
-    border-radius: 15px; /* Rounds the corners */
-    overflow: hidden; /* Hides content that overflows */
-    margin-top: 15px; /* Sets the top margin */
-    height: 15px; /* Sets the height */
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Adds an inner shadow */
+    width: 90%;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-top: 15px;
+    height: 15px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .progress-bar {
-    height: 100%; /* Takes up the full height of its container */
-    width: 0%; /* Starts with a width of 0 */
+    height: 100%;
+    width: 0%;
     background-color: #3498db; /* A vibrant blue */
-    border-radius: 15px; /* Rounds the corners */
-    transition: width 0.4s ease-in-out; /* Adds a smooth transition for the width */
+    border-radius: 15px;
+    transition: width 0.4s ease-in-out;
 }
-#restart {
-    display: none; /* Hides the element initially */
+#restart{
+    
+    display: none;
 }
 a {
-    text-decoration: none; /* Removes the underline from links */
-    color: white; /* Sets white text color for links */
+    text-decoration: none;
+    color: white;
   }
 span {
-    color: #3498db; /* Sets a vibrant blue color for spans */
+    color: #3498db;   
   }
-  .black {
-    background-color: black; /* Sets a black background */
-    display: none; /* Hides the element initially */
+  .black{
+    background-color: black;
+    display: none;
   }
   #versedrop {
-    display: flex; /* Uses flexbox for layout */
+    display: flex;
     flex-direction: column; /* Stacks the children vertically */
     align-items: center; /* Centers the items horizontally */
-    gap: 15px; /* Adds space between items */
-    margin-bottom: 20px; /* Sets the bottom margin */
+    gap: 15px; /* Adds space between the textarea and the blocks container */
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#verse {
+    width: 100%;
+    height: 100px; /* Set a fixed height to prevent it from shrinking */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical; /* Allows the user to resize it vertically */
+}
+
+.draggable-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap; /* Allows the blocks to wrap to the next line */
+    justify-content: center;
+    gap: 10px;
 }
 
 /* ------------------------------------- */
