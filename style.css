@@ -2,7 +2,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #f0f2f5; /* Fallback color */
+    background-color: #f0f2f5; /* A light, soft gray background */
     font-family: 'Inter', sans-serif;
     display: flex;
     justify-content: center;
@@ -13,8 +13,12 @@ body {
     background-position: center; 
     background-repeat: no-repeat;
 }
-/* Start Scene Styling */
+
+/* ------------------------------------- */
+/* --- Start Scene Styling --- */
+/* ------------------------------------- */
 .start-scene-container {
+    /* Uses flexbox to center content */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,17 +27,18 @@ body {
 }
 
 .start-scene-card {
+    /* A card for the initial quiz setup */
     background-color: #ffffff;
     padding: 40px;
     border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0, 20, 50, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 20, 50, 0.1); /* Adds a subtle, modern shadow */
     width: 100%;
     max-width: 500px;
     text-align: center;
     transition: transform 0.3s ease-in-out;
 }
 .start-scene-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px); /* A simple hover effect to add interactivity */
 }
 
 .title {
@@ -46,253 +51,243 @@ body {
 .subtitle {
     font-size: 16px;
     color: #7f8c8d;
-    margin-bottom: 30px;
-}
-
-.option-section {
-    text-align: left;
-    margin-bottom: 25px;
-    border-top: 1px solid #ecf0f1;
-    padding-top: 25px;
+    margin: 0 0 25px;
 }
 
 .section-title {
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 600;
     color: #34495e;
-    margin: 0 0 15px;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
 }
 
-/* Custom Radio Button Styling */
 .radio-group {
+    /* Arranges radio buttons in a row using flexbox */
     display: flex;
+    justify-content: center;
     gap: 20px;
-    justify-content: flex-start;
+    margin-bottom: 20px;
 }
 
 .radio-label {
+    /* A visually appealing container for the radio input */
     display: flex;
     align-items: center;
     cursor: pointer;
     font-size: 16px;
     color: #34495e;
-    user-select: none;
-}
-
-.radio-label input[type="radio"] {
-    display: none;
 }
 
 .radio-custom {
-    height: 20px;
+    /* Custom radio button styling */
     width: 20px;
-    background-color: #ecf0f1;
+    height: 20px;
     border-radius: 50%;
+    border: 2px solid #bdc3c7;
     margin-right: 10px;
-    display: inline-block;
-    position: relative;
-    transition: background-color 0.3s, box-shadow 0.3s;
+    transition: all 0.2s ease-in-out;
 }
 
-.radio-label input[type="radio"]:checked + .radio-custom {
+input[type="radio"]:checked + .radio-custom {
     background-color: #3498db;
+    border-color: #3498db;
     box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3);
 }
 
-.radio-custom::after {
-    content: '';
-    position: absolute;
-    display: none;
-    left: 6px;
-    top: 6px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: white;
-}
-
-.radio-label input[type="radio"]:checked + .radio-custom::after {
-    display: block;
-}
-
-/* Custom Checkbox (Toggle) Styling */
-.checkbox-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.toggle-label {
-    cursor: pointer;
-    font-size: 16px;
-    color: #34495e;
-    padding: 10px 20px;
-    background-color: #ecf0f1;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    user-select: none;
-}
-
-.toggle-label input[type="checkbox"] {
-    display: none;
-}
-
-.toggle-label:has(input:checked) {
+.start-button {
     background-color: #3498db;
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
-
-/* Main Start Button */
-#startQuizButton {
-    width: 100%;
+.start-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+.verse-info {
+    font-size: 14px;
+    color: #7f8c8d;
     margin-top: 20px;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ecf0f1;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
-
-/* --- Revised Quiz Container Styles --- */
-
-.quiz-container {
-    width: 90%;
-    max-width: 700px;
-    min-height: 500px;
+.verse-info span {
+    color: #3498db;
+}
+.reset-button {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: color 0.3s;
+}
+.reset-button:hover {
+    color: #c0392b;
+}
+.input-container {
+    position: relative;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 20px;
+}
+.input-field {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
     box-sizing: border-box;
+}
+
+.suggestion-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1000;
+    text-align: left;
+}
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+}
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+.hint-text {
+    font-size: 12px;
+    color: #999;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* ------------------------------------- */
+/* --- Quiz Scene Styling --- */
+/* ------------------------------------- */
+main {
+    display: none; /* Initially hides the main quiz content */
 }
 
 .quiz-card {
     background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 20, 50, 0.15);
-    width: 100%;
     padding: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 20, 50, 0.1);
+    width: 100%;
+    max-width: 700px;
+    transition: transform 0.3s ease-in-out;
 }
 
 .quiz-header-area {
-    width: 100%;
+    /* Uses flexbox to lay out header elements in a row */
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ecf0f1;
 }
 
 .timer-display {
-    font-size: 24px;
-    font-weight: bold;
-    color: #34495e;
-    background-color: #f8f9fa;
-    border-radius: 50px;
-    padding: 8px 16px;
-    min-width: 100px;
-    text-align: center;
-    border: 2px solid #ddd;
+    font-size: 20px;
+    font-weight: 700;
+    color: #e74c3c;
+    text-align: right;
 }
 
-.fallback-message {
+.question-text {
     font-size: 24px;
     font-weight: 500;
-    color: #2c3e50;
-    text-align: center;
-    padding: 20px 0;
+    color: #34495e;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+.answer-grid {
+    /* Uses CSS Grid for a clean, two-column layout of buttons */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
     margin-top: 20px;
-    line-height: 1.5;
 }
-
-.quiz-content {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-textarea {
-    width: 90%;
-    min-height: 120px;
-    padding: 15px;
-    margin-bottom: 25px;
+.answer-button {
+    /* Styles for the answer buttons */
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    border: 2px solid #ecf0f1;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: 500;
     border-radius: 12px;
-    border: 1px solid #ccc;
-    resize: vertical;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-textarea:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(52, 152, 219, 0.2);
-}
-
-.button {
-    padding: 15px 30px;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background-color: #3498db; 
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
+    text-align: left;
 }
-
-.button:hover {
-    background-color: #2980b9;
+.answer-button:hover {
+    background-color: #e9ecef;
+    border-color: #bdc3c7;
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.button:active {
-    background-color: #2471a3;
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .button-group {
+    /* Arranges the control buttons in a flexible row that wraps */
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    flex-wrap: wrap; /* Allows buttons to move to a new line */
     justify-content: center;
-    gap: 15px;
-    width: 100%;
+    gap: 15px; /* Spacing between buttons */
+    margin-top: 20px;
 }
 
-.answer-button {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.button {
+    background-color: #3498db;
     color: #ffffff;
     border: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: default;
-    transition: background-color 0.3s;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
 }
 
 .correct {
     background-color: #28a745; 
+    color: white;
     display: none;
 }
 
 .incorrect {
     background-color: #dc3545;
+    color: white;
     display: none;
 }
 .orange {
     background-color: orange;
+    color: white;
     display: none;
 }
 /* Progress Bar Styling */
@@ -309,45 +304,28 @@ textarea:focus {
 .progress-bar {
     height: 100%;
     width: 0%;
-    background-color: #3498db; /* A vibrant blue */
+    background-color: #3498db; 
     border-radius: 15px;
     transition: width 0.4s ease-in-out;
 }
-#restart{
-    
+#restart {
     display: none;
 }
 a {
     text-decoration: none;
     color: white;
   }
-span { color: #3498db; /* A vibrant blue */
-     }
-.black{ background-color: black;
+span {
+    color: #3498db;   
+  }
+  .black {
+    background-color: black;
     display: none;
-}
-#versedrop {
+  }
+  #versedrop {
     display: flex;
-    flex-direction: column; /* Stacks the children vertically */
-    align-items: center; /* Centers the items horizontally */
-    gap: 15px; /* Adds space between the textarea and the blocks container */
-    width: 100%;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 15px; 
     margin-bottom: 20px;
-}
-
-#verse {
-    width: 100%;
-    height: 100px; /* Set a fixed height to prevent it from shrinking */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    resize: vertical; /* Allows the user to resize it vertically */
-}
-
-.draggable-container {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap; /* Allows the blocks to wrap to the next line */
-    justify-content: center;
-    gap: 10px;
 }
