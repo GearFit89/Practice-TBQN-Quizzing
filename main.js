@@ -770,7 +770,7 @@ let running = true;
             quest = verseData.verse;
             
             await delay_text(`${selVerses[cnum].numVerses} Verse Quote:`,'h4','quizHeader',0,'purple');
-        } `
+        } 
         else if(ftv ==='sq'){
         
 
@@ -779,12 +779,17 @@ let running = true;
 
         }
         else if(ftv === 'q'){
-        phars = 
+        const getaq = selVerses[cnum].verse.split('?');
+        let QUEST = getaq[0];
+        let ANS = getaq[1];
+        phars = `${QUEST}?`;
+        selVerses[cnum].verse = ANS;
+        await delay_text(`Question`,'h4','quizHeader',0,'purple');
 
         }
         else {
 
-        }`
+        }
 
          }
          startTimer = false;
@@ -868,7 +873,7 @@ let running = true;
             });
 
 function handleSpaceEvent() {
-    if(selVerses[cnum].type === 'quote/ftv'{
+    if(selVerses[cnum].type === 'quote/ftv'){
     let Answer2;
     plsc.style.display = 'none';
     id('pleasefinish').style.display = 'none';
@@ -1069,6 +1074,3 @@ function handleSpaceEvent() {
 
 })();
 quizApp.start(); 
-
-
-
