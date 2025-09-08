@@ -8,7 +8,7 @@ const quizApp = (function() {
                 clientanswers = {};
                 updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true);
                 alert('Client Data has been reset');
-            });
+            });                
         }
     function Start() {
         
@@ -177,7 +177,7 @@ const quizApp = (function() {
     let currerentVerse;
     let startTimer = false;
     let counterToMax = 0;
-    const questTypes = ['ftv', 'quote']
+    let questTypes = ['ftv', 'quote']
     const quizSettings = {};
     const quiMonths =  ['october', 'november', 'december', 'january', 'february', 'march'];
     const quizMonths = [
@@ -574,17 +574,20 @@ function measure(item1, item2, split = false, splitValue = '') {
 
     
     const checkAns = () => {
+
         next.style.display = 'block';
           let subm = id("submit");
           clearInterval(timerid)
          subm.style.display = 'none';
+
         console.log('quest valur at checkans:', quest)
         let inVerse = ver.value
         id('correctbtn').style.display = "none";
         id('incorrectbtn').style.display = "none";
 
         plsc.style.display = 'none';
-        console.log(quest);
+        if(selVerses[cnum].type === 'quote/ftv'){                                                     
+        //console.log(quest);
         if (stripChar(inVerse) === stripChar(quest)) {
             id('correctbtn').style.display = "block";
             // Correctly add a record to the answers array
@@ -609,7 +612,38 @@ function measure(item1, item2, split = false, splitValue = '') {
             correct('wrong')
             return false;
         }
-    };
+    }else{
+        if (stripChar(inVerse) === stripChar(quest)) {
+            id('correctbtn').style.display = "block";
+            // Correctly add a record to the answers array
+            answers.push({
+                verse: selVerses[cnum],
+                correct: true,
+                
+            });
+            correctCount ++;
+           correct('right')
+            //return true;
+        } else {
+            id('incorrectbtn').style.display = "block";
+            ver.value =`${ver.value} \n \nCorrect Answer: ${selVerses[cnum].ref}\n${selVerses[cnum].verse} `;
+            // Correctly add a record to the answers array
+            answers.push({
+                verse: selVerses[cnum],
+                correct: false
+            });
+            
+
+            correct('wrong')
+            //return false;
+        }
+
+
+    }
+
+    }
+
+
 
 
    
@@ -690,6 +724,18 @@ let running = true;
     id('restart').style.display = 'block'
     
     };
+    function shuffleArray(array, itemOfArray=false) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        if(itemOfArray){
+            const r = Math.floor(Math.random()* array.length)
+            const rand_itemOfarray = array[r]
+            return [rand_itemOfarray, array]
+        }
+        return array;
+    }
 
      const new_quote = async (_ftv ='quote', maxnum = 20, rand = 'random', speed= 0) => {
         next.style.display = 'none';
@@ -713,10 +759,11 @@ let running = true;
         if (isquote && isftv) {
             ftv = 'both';
         }
+        if(quizSettings.quizMode.includes('quote/ftv')){
+            quizSetting.quizMode.pop()
+            }
            if(quizSettings.quizMode.length > 1){
-           if(quizSettings.quizMode.includes('quote/ftv')){
-           quizSetting.quizMode.pop()
-           }
+           
            
             questTypes = quizSettings.quizMode;
             ftv = 'both'
@@ -771,24 +818,46 @@ let running = true;
             
             await delay_text(`${selVerses[cnum].numVerses} Verse Quote:`,'h4','quizHeader',0,'purple');
         } 
-        else if(ftv ==='sq'){
-        
+        else if(ftv ==='SQ:'){
+            globalquestype = ftv;
+            const getaq = selVerses[cnum].verse.split('?');
+            let QUEST = getaq[0];
+            let ANS = getaq[1];
+            phars = `${QUEST}?`;
+            selVerses[cnum].verse = ANS;
+            QUEST = QUEST.split(' ')
+            ftvTriggerI = findUniqueTriggerWord(QUEST, selVerses, cnum , QUEST.length)[1];
+            await delay_text(`SQ `,'h4','quizHeader',0,'purple');
+    
 
         }
-        else if(ftv === 'at'){
+        else if(ftv === 'According to'){
+            globalquestype = ftv;
+            const getaq = selVerses[cnum].verse.split('?');
+        let QUEST = getaq[0];
+        let ANS = getaq[1];
+        phars = `According To:${QUEST}`;
+        selVerses[cnum].verse = ANS;
+        QUEST = QUEST.split(' ')
+        //ftvTriggerI = findUniqueTriggerWord(QUEST, selVerses, cnum , QUEST.length)[1];
+        await delay_text(`According To`,'h4','quizHeader',0,'purple');
+
 
         }
-        else if(ftv === 'q'){
+        else if(ftv === 'question'){
+        globalquestype = 'q';
         const getaq = selVerses[cnum].verse.split('?');
         let QUEST = getaq[0];
         let ANS = getaq[1];
         phars = `${QUEST}?`;
         selVerses[cnum].verse = ANS;
+        QUEST = QUEST.split(' ')
+        ftvTriggerI = findUniqueTriggerWord(QUEST, selVerses, cnum , QUEST.length)[1];
         await delay_text(`Question`,'h4','quizHeader',0,'purple');
 
         }
         else {
-
+console.log('failed at new', ftv)
         }
 
          }
@@ -999,8 +1068,9 @@ function handleSpaceEvent() {
                 { quizSettings.numQuestions = 20}
                 if(typeof(quizSettings.numQuestions) != 'number')  { quizSettings.numQuestions = 100}
                 if(typeof(quizSettings.lenOfTimer) != 'number')  { quizSettings.lenOfTimer = 0}
-                
+                async function Selectdata(){
                 if (selverses){
+                    verse_dict = {...verse_dict, ...question_dict}
                     selVerses = Object.values(verse_dict).filter(Verse =>
                         
                         quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type))
@@ -1029,14 +1099,16 @@ function handleSpaceEvent() {
         console.warn('Key is not a string:', key);
     }
 });
+}
 
                     };
         async function WaitForLoad(){
 
-        
+        await Selectdata();
     
     if (typeof(verse_dict) != 'object'){
      
+        
         
         alert('Content may be loading Please wait \n If you keep seeing this than there is connection error \n Please restart') }
          await new_quote(
@@ -1044,7 +1116,7 @@ function handleSpaceEvent() {
         quizSettings.numQuestions,
         quizSettings.verseSelection, quizSettings.speed_tOf_text)
         progressBar.style.width = '0%';
-            dragElements();
+            //dragElements();
         
         if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
                 quiztimer(quizSettings.lenOfTimer)} 
@@ -1074,3 +1146,11 @@ function handleSpaceEvent() {
 
 })();
 quizApp.start(); 
+
+
+
+
+
+
+
+//------------hi there
