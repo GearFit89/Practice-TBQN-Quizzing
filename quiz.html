@@ -34,11 +34,11 @@
                 <div class="option-section">
                     <h3 class="section-title">Question Type</h3>
                     <div class="checkbox-container">
-                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="quote" checked>Quotes</label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="quote" checked>Qutoes</label>
                         <label class="toggle-label"><input type="checkbox" name="quizMode" value="ftv" checked title="Finish the Verse"> FTV</label>
-                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="sq" checked> SQ</label>
-                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="at" checked>According to </label>
-                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="q"  checked title="Regluar questions">Questions</label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="SQ:" checked> SQ</label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="According to" checked>According to </label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="question"  checked title="Regluar questions">Questions</label>
                     </div>
                 </div>
 
@@ -54,6 +54,18 @@
                     <div class="option-section">
                         <h3 class="section-title">Delay in Text (In seconds)</h3>
                         <input type="number" id="speed" name="numQuestions" value="0" min="0" max="1000" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+
+                    <div class="option-section">
+                        <h3 class="section-title">Select Months</h3>
+                        <div class="checkbox-container">
+                            <label class="toggle-label"><input type="checkbox" name="month" value="october"> October</label>
+                            <label class="toggle-label"><input type="checkbox" name="month" value="november"> November</label>
+                            <label class="toggle-label"><input type="checkbox" name="month" value="december"> December</label>
+                            <label class="toggle-label"><input type="checkbox" name="month" value="january"> January</label>
+                            <label class="toggle-label"><input type="checkbox" name="month" value="february"> February</label>
+                            <label class="toggle-label"><input type="checkbox" name="month" value="march"> March</label>
+                        </div>
                     </div>
 
                 <div class="option-section">
@@ -83,12 +95,12 @@
                 <div class="progress-bar" id="progressBar"></div>
             </div>
 
-            <div class="quiz-content">
-               <div id="versedrop" class="verse-drop-zone-container"></div>
-                    <textarea spellcheck="false" placeholder="Enter Verse" id="verse"></textarea>
-                    <div id="draggableContainer" class="draggable-container"></div>
-                
-               
+           <div class="quiz-content">
+                <textarea spellcheck="false" placeholder="Enter Verse" id="verse"></textarea>
+                <!--<div class="quiz-footer">
+                    <div class="score-display" id="score">Score: 0</div>
+                    <div class="question-count" id="questionCount">Question: 0/0</div>
+                </div>-->
                 <div class="button-group">
                     <button type="reset" class="button" id="submit">Submit</button>
                     <button id="correctbtn" class="answer-button correct">Correct!</button>
@@ -109,4 +121,4 @@
     </main>
     <script src="main.js"></script>
 </body>
-</html>               
+</html>
