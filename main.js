@@ -743,44 +743,6 @@ let running = true;
             showQuizSummary();
             return;} // Stop the function here
         let phars = '';
-        let ftv = _ftv;
-         
-         
-        if (quizSettings.quizMode.includes('ftv')) {
-            ftv = 'ftv';
-            isftv = true;
-        }
-        
-        if (quizSettings.quizMode.includes('quote')) {
-            ftv = 'quote';
-            isquote = true;
-        }
-        
-        if (isquote && isftv) {
-            ftv = 'both';
-        }
-        if(quizSettings.quizMode.includes('quote/ftv')){
-            quizSetting.quizMode.pop()
-            }
-           if(quizSettings.quizMode.length > 1){
-           
-           
-            questTypes = quizSettings.quizMode;
-            ftv = 'both'
-
-
-           }else {
-            ftv = quizSettings.quizMode[0];
-           } 
-        
-         //not needed
-        if (ftv === 'both') {
-            const randtype = Math.floor(Math.random() * questTypes.length);
-            ftv = questTypes[randtype];
-            globalquestype = questTypes[randtype];
-        }
-        /* still used  */
-
         if (rand === "random") {
             const randomIndex = Math.floor(Math.random() * selVerses.length);
             cnum = randomIndex;
@@ -791,9 +753,36 @@ let running = true;
             cnum = currentVerseIndex;
             currentVerseIndex++;
         }
+        let ftv = selVerses[cnum].type;
+         
+         
+        if (quizSettings.quizMode.includes('ftv')) {
+            //ftv = 'ftv';
+            isftv = true;
+        }
+        
+        if (quizSettings.quizMode.includes('quote')) {
+            //ftv = 'quote';
+            isquote = true;
+        }
+        
+        if (isquote && isftv && ftv === 'quote/ftv') {
+            ftv = 'both';
+        }
         
         
+         //not needed
+        if (ftv === 'both') {
+            const randtype = Math.floor(Math.random() * questTypes.length);
+            ftv = questTypes[randtype];
+            globalquestype = questTypes[randtype];
+        }
+        /* still used  */
 
+       
+        
+        
+       //let question_dict2 = question_dict;
         clear('quizHeader');
         const qh = 'quizHeader';
         currerentVerse = selVerses[cnum];
@@ -826,8 +815,8 @@ let running = true;
             phars = `${QUEST}?`;
             selVerses[cnum].verse = ANS;
             QUEST = QUEST.split(' ')
-            ftvTriggerI = findUniqueTriggerWord(QUEST, selVerses, cnum , QUEST.length)[1];
-            await delay_text(`SQ `,'h4','quizHeader',0,'purple');
+            //ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
+            await delay_text(`SQ`,'h4','quizHeader',0,'purple');
     
 
         }
@@ -836,7 +825,7 @@ let running = true;
             const getaq = selVerses[cnum].verse.split('?');
         let QUEST = getaq[0];
         let ANS = getaq[1];
-        phars = `According To:${QUEST}`;
+        phars = `According To: ${QUEST}`;
         selVerses[cnum].verse = ANS;
         QUEST = QUEST.split(' ')
         //ftvTriggerI = findUniqueTriggerWord(QUEST, selVerses, cnum , QUEST.length)[1];
@@ -852,7 +841,7 @@ let running = true;
         phars = `${QUEST}?`;
         selVerses[cnum].verse = ANS;
         QUEST = QUEST.split(' ')
-        ftvTriggerI = findUniqueTriggerWord(QUEST, selVerses, cnum , QUEST.length)[1];
+        //ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
         await delay_text(`Question`,'h4','quizHeader',0,'purple');
 
         }
@@ -1147,10 +1136,4 @@ function handleSpaceEvent() {
 })();
 quizApp.start(); 
 
-
-
-
-
-
-
-//------------hi there
+//-- why are LOOKING at my code you are not allowed to read this message so u must tun an d i will kill u inn ur sllp imenat sllep no sllepp no sleep 
