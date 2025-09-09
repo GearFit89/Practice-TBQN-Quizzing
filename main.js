@@ -775,10 +775,10 @@ let running = true;
             ftv = 'both';
         }
          const verse_dict2 = selVerses.filter(itemsel2=>{
-            itemsel2.type === 'quote/ftv'
+           return itemsel2.type === 'quote/ftv'
         })
         const question_dict2 = selVerses.filter(itemsel=>{
-            itemsel.type != 'quote/ftv'
+            return itemsel.type != 'quote/ftv'
         })
         delog(question_dict2, verse_dict2);
          
