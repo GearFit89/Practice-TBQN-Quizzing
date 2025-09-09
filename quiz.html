@@ -10,6 +10,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body >
+    <dialouge class="modal" id="settings"> 
+        <div class="modal-content" id="modaldiv">
+            <h3 id="modalh3"></h3>
+            
+            <p id="modalMessage"></p>
+            <button id="closeModalBtn" class="button">OK</button>
+            </div>
+        
+    </dialouge>
     <div id="startScene" class="start-scene-container">
         <div class="start-scene-card">
             <h2 class="title">Quiz Setup</h2>
@@ -97,6 +106,8 @@
 
            <div class="quiz-content">
                 <textarea spellcheck="false" placeholder="Enter Verse" id="verse"></textarea>
+               <div id="versedrop class="drop-zone"> </div>
+               <div id="verse-con" class="draggable-container"> </div>
                 <!--<div class="quiz-footer">
                     <div class="score-display" id="score">Score: 0</div>
                     <div class="question-count" id="questionCount">Question: 0/0</div>
