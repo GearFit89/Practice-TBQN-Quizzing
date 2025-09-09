@@ -1007,7 +1007,7 @@ console.log('failed at new', ftv)
         });
         
         // Set up both containers as drop zones
-        setupDropZone('draggableContainer');
+        setupDropZone('verse-con');
         setupDropZone('versedrop');
 
         // Add listener to the new button to log IDs
@@ -1204,7 +1204,7 @@ function handleSpaceEvent() {
         quizSettings.numQuestions,
         quizSettings.verseSelection, quizSettings.speed_tOf_text)
         progressBar.style.width = '0%';
-            //dragElements();
+            dragElements();
         
         if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
                 quiztimer(quizSettings.lenOfTimer)} 
