@@ -1146,7 +1146,10 @@ function handleSpaceEvent() {
                 WaitForLoad();
             });
 
-            
+            btnTOModal.addEventListener('click, () =>{
+                    manageModal('Set quiz settings here');
+            }
+                                        
             next.addEventListener("click", async () => {
                 submitButton.style.display = 'block';
                 updateProgressBar();
