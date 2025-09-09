@@ -360,7 +360,8 @@ const delog = (ll='', lj='',pp='', plp='') =>{
             
                 closeBtn.addEventListener('click', () =>{
                 closeBtn.style.display = 'none'
-                modal.close()}
+                modal.close();
+                }
             }
         
 
@@ -637,6 +638,75 @@ function measure(item1, item2, split = false, splitValue = '') {
             return false;
         }
     }else{
+            /*const prompt = `
+                Evaluate the user's answer for a Bible quiz question.
+                
+                Question: "${currentQuestion.question}"
+                Correct Answer: "${currentQuestion.correct_answer}"
+                User's Answer: "${userResponse}"
+
+                Based on the context of the Bible, is the user's answer correct, incorrect, or does it need more information?
+                - If the user's answer is a direct match, a close paraphrase, or semantically equivalent, return 'Correct'.
+                - If the user's answer is partially correct but not a full answer, or a good starting point for a conversation, return 'Needs more information'.
+                - If the user's answer is completely wrong or unrelated, return 'Incorrect'.
+                
+                Respond with a single JSON object. Do not include any other text.
+                Example correct response: \`{"evaluation": "Correct"}\`
+                Example needs more info response: \`{"evaluation": "Needs more information"}\`
+                Example incorrect response: \`{"evaluation": "Incorrect"}\`
+            `;
+
+            try {
+               // This is the corrected generationConfig.
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    // We are now telling the API to expect a single JSON object.
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        "type": "OBJECT",
+                        "properties": {
+                            "evaluation": { "type": "STRING" }
+                        }
+                    }
+                },
+            };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const evaluation = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (evaluation) {
+                    const parsedEvaluation = JSON.parse(evaluation);
+                    const outcome = parsedEvaluation.evaluation;
+
+                    if (outcome === 'Correct') {
+                        resultArea.innerHTML = `<p class="text-green-600 font-bold text-lg">Correct!</p>`;
+                    } else if (outcome === 'Incorrect') {
+                        resultArea.innerHTML = `<p class="text-red-600 font-bold text-lg">Incorrect. The correct answer is "${currentQuestion.correct_answer}".</p>`;
+                    } else if (outcome === 'Needs more information') {
+                        resultArea.innerHTML = `<p class="text-yellow-600 font-bold text-lg">Your answer is close, but needs more information. Try to be more specific!</p>`;
+                    } else {
+                        resultArea.innerHTML = `<p class="text-red-500 font-bold text-lg">Evaluation Error: Unexpected response from model.</p>`;
+                    }
+                    submitBtn.classList.add('hidden');
+                    nextBtn.classList.remove('hidden');
+                } else {
+                    resultArea.innerHTML = `<p class="text-red-500 font-bold text-lg">Evaluation failed. Please try again.</p>`;
+                    submitBtn.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                resultArea.innerHTML = `<p class="text-red-500 font-bold text-lg">Something went wrong. Please check your network and try again.</p>`;
+            } finally {
+                loadingIndicator.classList.add('hidden');
+                submitBtn.disabled = false;
+            } */
         if (stripChar(inVerse) === stripChar(quest)) {
             id('correctbtn').style.display = "block";
             // Correctly add a record to the answers array
