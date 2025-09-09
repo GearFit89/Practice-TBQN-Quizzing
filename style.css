@@ -431,3 +431,31 @@ span {
     /* Changes the border color to blue. */
     border-color: #3498db;
 }
+/* Styling for the modal backdrop and the modal itself. */
+dialog.modal {
+    /* Using the 'dialog' tag's built-in show/hide functionality. */
+    border: none;
+    /* Removes the default border. */
+    border-radius: 16px;
+    /* Rounds the corners of the pop-up. */
+    padding: 40px;
+    /* Adds internal space around the content. */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    /* Adds a soft shadow for a floating effect. */
+    max-width: 500px;
+    /* Sets the maximum width of the pop-up. */
+    margin: auto;
+    /* Centers the pop-up horizontally and vertically. */
+}
+
+/* This pseudo-element styles the semi-transparent overlay behind the pop-up. */
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Creates a dark, transparent background. */
+}
+
+/* You can also style the content inside the modal. */
+.modal-content {
+    text-align: center;
+    /* Centers the text and button. */
+}
