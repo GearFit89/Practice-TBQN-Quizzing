@@ -188,6 +188,7 @@ const quizApp = (function() {
         ['february', [15, 16]],
         ['march', ['jonah']]
     ];
+    let deblog = true;
     let cnum = 0;
     let timerid;
     let globalquestype;
@@ -211,7 +212,11 @@ const quizApp = (function() {
     let c = 0;// counter
     let selVerses =[];
      
-
+const delog = (1='',2='',3='',4='') =>{
+    if (deblog) {
+    console.log(1, 2, 3, 4)
+}
+}    
     function processQuestions(data) {
     const dataSplit = data.trim().split('\n');
     let questiondict = {};
@@ -274,7 +279,7 @@ const quizApp = (function() {
     return questiondict;
  }
     function processQuotes(quotesFTVs) {
-        c = 0
+        
         const data = quotesFTVs.trim().split("\n");
         let versedict = {};
         for (let val of data) {
@@ -769,9 +774,14 @@ let running = true;
         if (isquote && isftv && ftv === 'quote/ftv') {
             ftv = 'both';
         }
-        
-        
-         //not needed
+         const verse_dict2 = selVerses.filter(itemsel2=>{
+            itemsel2.type === 'quote/ftv'
+        })
+        const question_dict2 = selVerses.filter(itemsel=>{
+            itemsel.type != 'quote/ftv'
+        })
+        delog(question_dict2, verse_dict2);
+         
         if (ftv === 'both') {
             const randtype = Math.floor(Math.random() * questTypes.length);
             ftv = questTypes[randtype];
@@ -794,7 +804,7 @@ let running = true;
             const verseText = selVerses[cnum].verse;
             const words = verseText.split(' ');
             const first_5 = words.slice(0, 5);
-            ftvTriggerI = findUniqueTriggerWord(words, selVerses, cnum , 5)[1];
+            ftvTriggerI = findUniqueTriggerWord(words, verse_dict2, cnum , 5)[1];
             phars = first_5.join(' ')
             quest = words.slice(5).join(' ');
               
@@ -815,8 +825,8 @@ let running = true;
             phars = `${QUEST}?`;
             selVerses[cnum].verse = ANS;
             QUEST = QUEST.split(' ')
-            //ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
-            await delay_text(`SQ`,'h4','quizHeader',0,'purple');
+            ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
+            await delay_text(`Question`,'h4','quizHeader',0,'purple');
     
 
         }
@@ -829,7 +839,7 @@ let running = true;
         selVerses[cnum].verse = ANS;
         QUEST = QUEST.split(' ')
         //ftvTriggerI = findUniqueTriggerWord(QUEST, selVerses, cnum , QUEST.length)[1];
-        await delay_text(`According To`,'h4','quizHeader',0,'purple');
+        await delay_text(`Question`,'h4','quizHeader',0,'purple');
 
 
         }
@@ -841,7 +851,7 @@ let running = true;
         phars = `${QUEST}?`;
         selVerses[cnum].verse = ANS;
         QUEST = QUEST.split(' ')
-        //ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
+        ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
         await delay_text(`Question`,'h4','quizHeader',0,'purple');
 
         }
