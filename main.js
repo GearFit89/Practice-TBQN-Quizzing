@@ -361,7 +361,7 @@ const delog = (ll='', lj='',pp='', plp='') =>{
                 closeBtn.addEventListener('click', () =>{
                 closeBtn.style.display = 'none'
                 modal.close();
-                }
+                })
             }
         
 
