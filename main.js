@@ -1216,7 +1216,7 @@ function handleSpaceEvent() {
                 WaitForLoad();
             });
 
-            btnTOModal.addEventListener('click, () =>{
+            btnTOModal.addEventListener('click', () =>{
                     manageModal('Set quiz settings here');
             })
                                         
