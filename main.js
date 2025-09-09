@@ -194,6 +194,7 @@ const quizApp = (function() {
     let globalquestype;
     let quest;
     const next = id('next');
+    const btnTOModal = id(BTN)
     //let clientanswers = {}
     let clientanswers =  updateClientInfo(null, 'objOFWrongAnswers/Right', false) || {};
     console.log(clientanswers)
@@ -346,6 +347,24 @@ const delog = (ll='', lj='',pp='', plp='') =>{
             clientanswers = {};
             console.log("clientanswers initialized as an empty object.");
         }
+        fucnction manageModal(mtxt="hi",modalid='settings', mcon="modaldiv", closebtn='closeModalBtn'){
+            const modal = id(modalid);
+            const modalContent = id(mcon)
+            const closeBtn = id(closebtn);
+            modalContent.textContent = mtxt;
+            closeBtn.style.display = 'none'
+            
+            closeBtn.style.display = 'block'
+            
+            modal.showModal();
+            
+                closeBtn.addEventListener('click', () =>{
+                closeBtn.style.display = 'none'
+                modal.close()}
+            }
+        
+
+    
         function p(parhams,j,k,l,o,p,t) {
             console.log(parhams,j,k,l,o,p,t)
 
