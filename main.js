@@ -212,9 +212,9 @@ const quizApp = (function() {
     let c = 0;// counter
     let selVerses =[];
      
-const delog = (1='',2='',3='',4='') =>{
+const delog = (ll='', lj='',pp='', plp='') =>{
     if (deblog) {
-    console.log(1, 2, 3, 4)
+    console.log(ll, lj, pp, plp)
 }
 }    
     function processQuestions(data) {
