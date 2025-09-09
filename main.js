@@ -347,7 +347,7 @@ const delog = (ll='', lj='',pp='', plp='') =>{
             clientanswers = {};
             console.log("clientanswers initialized as an empty object.");
         }
-        fucnction manageModal(mtxt="hi",modalid='settings', mcon="modaldiv", closebtn='closeModalBtn'){
+        function manageModal(mtxt="hi",modalid='settings', mcon="modaldiv", closebtn='closeModalBtn'){
             const modal = id(modalid);
             const modalContent = id(mcon)
             const closeBtn = id(closebtn);
