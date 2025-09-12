@@ -1,4 +1,3 @@
-/* General Body Styles */
 body {
     margin: 0;
     padding: 0;
@@ -12,6 +11,16 @@ body {
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat;
+}
+.correct1 {
+    background-color: #28a745; 
+    display: none;
+
+}
+
+.incorrect1 {
+    background-color: #dc3547;
+    display: none;
 }
 /* Start Scene Styling */
 .start-scene-container {
@@ -280,17 +289,12 @@ textarea:focus {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     cursor: default;
     transition: background-color 0.3s;
-}
-
-.correct {
-    background-color: #28a745; 
     display: none;
 }
-
-.incorrect {
-    background-color: #dc3545;
-    display: none;
+.blueborder{
+    border: 2px solid #0c91c5;
 }
+
 .orange {
     background-color: orange;
     display: none;
@@ -321,37 +325,25 @@ a {
     text-decoration: none;
     color: white;
   }
-span {
-    color: #3498db;   
+  .highlight-word {
+    color: #3498db;
+
+  }
+  .highlight-char{
+    color: orange;
   }
   .black{
     background-color: black;
     display: none;
   }
-  #versedrop {
-    display: flex;
-    flex-direction: column; /* Stacks the children vertically */
-    align-items: center; /* Centers the items horizontally */
-    gap: 15px; /* Adds space between the textarea and the blocks container */
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-#verse-con {
-    width: 100%;
-    height: 100px; /* Set a fixed height to prevent it from shrinking */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    resize: vertical; /* Allows the user to resize it vertically */
-}
+  
 
 .draggable-container {
     width: 100%;
     display: flex;
     flex-wrap: wrap; /* Allows the blocks to wrap to the next line */
     justify-content: center;
-    gap: 10px;
+    gap: 1px;
 }
 /* New CSS for drag zones */
 .drag-zone {
@@ -372,7 +364,7 @@ span {
     /* Allows the items to wrap to the next line. */
     flex-wrap: wrap;
     /* Adds space between draggable items. */
-    gap: 10px;
+    gap: 1px;
     /* Centers the items horizontally. */
     justify-content: center;
     /* Centers the items vertically. */
@@ -383,31 +375,72 @@ span {
     transition: background-color 0.3s ease-in-out;
 }
 
-/* New CSS for draggable blocks */
+/* Styling for the draggable word buttons. */
 .draggable-block {
-    /* Sets a blue background for the blocks. */
     background-color: #3498db;
-    /* Sets the text color to white. */
+    /* A friendly blue color. */
     color: white;
-    /* Adds padding inside the blocks. */
-    padding: 10px 15px;
-    /* Adds rounded corners. */
-    border-radius: 5px;
-    /* Changes the cursor to a grabbing hand. */
-    cursor: grab;
-    /* Sets the font weight. */
+    /* White text for contrast. */
+    padding: 12px 20px;
+    /* Ample padding for a good button size. */
+    margin: 8px;
+    /* Space between each button. */
+    border-radius: 25px;
+    /* Fully rounded corners for a modern "pill" shape. */
+    border: none;
+    /* Remove the default button border. */
+    font-size: 18px;
+    /* A comfortable font size for readability. */
     font-weight: 500;
-    /* Prevents the text from being selected. */
+    /* Medium font weight. */
+    cursor: grab;
+    /* Changes cursor to indicate it's draggable. */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Smooth transitions for hover effects. */
     user-select: none;
-    /* Adds smooth transitions. */
-    transition: transform 0.2s, box-shadow 0.2s;
+    /* Prevents text selection on the button. */
 }
 
+/* Hover effect for the draggable words. */
 .draggable-block:hover {
-    /* Lifts the block on hover. */
-    transform: translateY(-2px);
-    /* Adds a subtle shadow. */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Slightly lifts the button on hover. */
+    transform: translateY(-3px);
+    /* Adds a soft shadow for depth. */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Style for the container where the words are initially placed. */
+#verse-con {
+    min-height: 100px;
+    /* Ensures the container has a visible height. */
+    border: 2px dashed #bdc3c7;
+    /* A dashed line to suggest this is a starting area. */
+    background-color: #ecf0f1;
+    /* A light gray background. */
+    border-radius: 12px;
+    /* Slightly rounded corners. */
+    margin-bottom: 20px;
+    /* Spacing below the container. */
+    padding: 15px;
+    /* Padding inside the container. */
+}
+
+/* Styling for the drop zone where the user will build the sentence. */
+#versedrop {
+    min-height: 100px;
+    
+    /* Ensures a visible height. */
+   
+    /* A solid green border to make it stand out. */
+    background-color: #e8f8f5;
+    /* A light green background. */
+    border-radius: 12px;
+    /* Rounded corners. */
+    padding: 15px;
+    /* Inner padding. */
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+    /* A subtle green glow to indicate it is the target. */
+    margin-bottom: 20px;
 }
 
 /* Style for when a block is being dragged */
@@ -458,4 +491,167 @@ dialog::backdrop {
 .modal-content {
     text-align: center;
     /* Centers the text and button. */
+}
+input[type='number'] {
+    width: 100%;
+    padding: 10px 12px;
+    /* Adds internal spacing. */
+    border-radius: 8px;
+    /* Rounds the corners. */
+    border: 1px solid #ccc;
+    /* Sets a light gray border. */
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    /* Sets the font size. */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    /* Adds smooth transitions. */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Adds a subtle inner shadow. */
+  }
+  
+  input[type='number']:focus {
+    outline: none;
+    /* Removes the default focus outline. */
+    border-color: #3498db;
+    /* Changes the border color on focus. */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 0 8px rgba(52, 152, 219, 0.2);
+    /* Adds a blue glow on focus. */
+  }
+  /* Style the range input (for a sleek, modern look) */
+/* Style the range input for a sleek, modern look */
+input[type='range'] {
+    /* Set basic dimensions and appearance. */
+    -webkit-appearance: none; /* For Chrome, Safari, etc. */
+    appearance: none; /* The standard property for all other browsers. */
+    width: 100%;
+    height: 8px;
+    background: #dfe6e9; /* A soft, light-gray track. */
+    border-radius: 4px;
+    outline: none; /* Remove the outline on focus. */
+    transition: background 0.2s ease-in-out;
+  }
+  /* Style the track (the bar the thumb slides on). */
+  /* Chrome, Safari, and Edge. */
+  input[type='range']::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    background: #dfe6e9;
+    border-radius: 4px;
+  }
+  
+  /* Firefox */
+  input[type='range']::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    background: #dfe6e9;
+    border-radius: 4px;
+  }
+  
+  /* Style the thumb (the draggable circle or square). */
+  /* Chrome, Safari, and Edge. */
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    /* Removes the default thumb style. */
+    height: 20px;
+    /* Set the height of the thumb. */
+    width: 20px;
+    /* Set the width of the thumb. */
+    border-radius: 50%;
+    /* Makes the thumb a circle. */
+    background: #3498db;
+    /* A nice blue color for the thumb. */
+    cursor: pointer;
+    /* Changes the cursor to a pointer when hovering over it. */
+    margin-top: -6px;
+    /* Adjusts the vertical position to center it on the track. */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow. */
+  }
+  
+  /* Firefox */
+  input[type='range']::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  input[type='number'] {
+    width: 100%;
+    padding: 10px 12px;
+    /* Adds internal spacing. */
+    border-radius: 8px;
+    /* Rounds the corners. */
+    border: 1px solid #ccc;
+    /* Sets a light gray border. */
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    /* Sets the font size. */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    /* Adds smooth transitions. */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Adds a subtle inner shadow. */
+  }
+  
+  input[type='number']:focus {
+    outline: none;
+    /* Removes the default focus outline. */
+    border-color: #3498db;
+    /* Changes the border color on focus. */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 0 8px rgba(52, 152, 219, 0.2);
+    /* Adds a blue glow on focus. */
+  }
+  /* Container for the range input and its value display. */
+.range-display-container {
+    /* Use Flexbox to align the range input and the value. */
+    display: flex;
+    align-items: center; /* Vertically centers the items. */
+    gap: 15px; /* Adds space between the range and the number. */
+    width: 100%; /* Ensures the container takes up the full width. */
+}
+
+/* Style for the span that displays the value. */
+#speedValue {
+    /* Sets the font size. */
+    font-size: 1.2rem;
+    /* Makes the text bold. */
+    font-weight: 500;
+    /* Sets the color. */
+    color: #34495e;
+    /* Ensures the text doesn't shrink. */
+    flex-shrink: 0;
+    /* Adds some space to the right. */
+    min-width: 30px;
+    text-align: right;
+}
+#versedrop.correct {
+    border: 2px solid #27ae60;
+    
+    border-radius: 12px;
+}
+
+#versedrop.incorrect {
+    border: 2px solid #e74c3c;
+    
+    border-radius: 12px;
+}
+#verse-con.correct {
+    border: 2px solid #27ae60;
+    
+    border-radius: 12px;
+}
+
+#verse-con.incorrect {
+    border: 2px solid #e74c3c;
+    
+    border-radius: 12px;
+}
+#verse.correct {
+    border: 2px solid #27ae60;
+    
+    border-radius: 12px;
+}
+
+#verse.incorrect {
+    border: 2px solid #e74c3c;
+    
+    border-radius: 12px;
 }
