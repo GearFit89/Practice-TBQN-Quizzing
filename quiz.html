@@ -10,7 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body >
-    <dialouge class="modal" id="settings"> 
+    
+    <dialog class="modal" id="settings"> 
         <div class="modal-content" id="modaldiv">
             <h3 id="modalh3">Settings</h3>
            <!-- <div class="option-section">
@@ -23,10 +24,14 @@
                     </div>-->
             
             <p id="modalMessage"></p>
-            <button id="closeModalBtn" class="button">OK</button>
+            
             </div>
+            <br>
+            
+            
+            <button id='closeModalBtn' class="button">OK</button>
         
-    </dialouge>
+    </dialog>
     <div id="startScene" class="start-scene-container">
         <div class="start-scene-card">
             <h2 class="title">Quiz Setup</h2>
@@ -51,7 +56,7 @@
                 <div class="option-section">
                     <h3 class="section-title">Question Type</h3>
                     <div class="checkbox-container">
-                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="quote" checked>Qutoes</label>
+                        <label class="toggle-label"><input type="checkbox" name="quizMode" value="quote" checked>Quotes</label>
                         <label class="toggle-label"><input type="checkbox" name="quizMode" value="ftv" checked title="Finish the Verse"> FTV</label>
                         <label class="toggle-label"><input type="checkbox" name="quizMode" value="SQ:" checked> SQ</label>
                         <label class="toggle-label"><input type="checkbox" name="quizMode" value="According to" checked>According to </label>
@@ -70,7 +75,12 @@
                     </div>
                     <div class="option-section">
                         <h3 class="section-title">Speed of Text (In seconds)</h3>
-                        <input type="range" id="speed" name="numQuestions" value="0" min="0" max="1000" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <div class="range-display-container">
+                            <!-- This is your existing range input. -->
+                            <input type="range" id="speed" name="numQuestions" value="0" min="0" max="4000">
+                            <!-- Add a new span element to display the current value. -->
+                            <span id="speedValue">0</span>
+                        </div>
                     </div>
 
                     <div class="option-section">
@@ -113,23 +123,24 @@
             </div>
 
            <div class="quiz-content">
-                <textarea spellcheck="false" placeholder="Enter Verse" id="verse"></textarea>
-               <div id="versedrop" class="drag-zone draggable-container"> </div>
-               <div id="verse-con" class="draggable-container drag-zone"> </div>
+                <textarea spellcheck="false" placeholder="Enter Verse" id="verse" class="blueborder"></textarea>
+               <div id="versedrop" class="drag-zone draggable-container blueborder"> </div>
+               <div id="verse-con" class="draggable-container drag-zone blueborder"> </div>
                 <!--<div class="quiz-footer">
                     <div class="score-display" id="score">Score: 0</div>
                     <div class="question-count" id="questionCount">Question: 0/0</div>
                 </div>-->
                 <div class="button-group">
                     <button type="reset" class="button" id="submit">Submit</button>
-                    <button id="correctbtn" class="answer-button correct">Correct!</button>
-                    <button id="incorrectbtn" class="answer-button incorrect">Incorrect!</button>
+                    <button id="correctbtn" class="answer-button correct1">Correct!</button>
+                    <button id="incorrectbtn" class="answer-button incorrect1">Incorrect!</button>
                     <button id="pleasebtn" class="answer-button orange">Please Correct</button>
                     <button id="next" class="button" type="reset" >Next</button>
                     <button id="pleasefinish" class="answer-button black">Finish the Question 
                         
                     </button>
-                    <button id="BTN" class="button"> </button>
+                    <button id="More" class="answer-button orange">More information</button>
+                    <button id="BTN" class="button"> Quiz Settings</button>
                     
                     <button id="puralbtn" class="answer-button orange">Incorrect Form</button>
                     
