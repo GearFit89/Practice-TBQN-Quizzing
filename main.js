@@ -159,7 +159,7 @@ const quizApp = (function() {
         if(CHAR){
              verses = Object.entries(obj)
             // Filter out the current verse and verse 60
-            .filter(([key, value]) => key !== String(currentVerseNumber) && key !== '60')
+            .filter(([key, value]) => key !== String(currentVerseNumber))
             .map(([key, item]) => item.verse.split(''));
 
         }else{
@@ -506,18 +506,22 @@ const delog = (ll='', lj='',pp='', plp='') =>{
         
 
 
-        function findTrigChar(list, _verse, vType, lEn=200){
+        function findTrigChar(list, _verse, vn, lEn=200){
             let unique = true;
             let og_v = _verse.split('')
             let k = 1
             let l = 1
             let _q;
+            let f = true
             _q = stripChar(_verse)
             _q= _q.split('')
             for(let i = 0; i < lEn; i++){
             //list.forEach(v =>{
+                f = true;
                 for(v of list){
-                    if(stripChar(v.verse) === stripChar(_verse) ){
+                    if(v ==  vn ){
+                        unique = false
+                        f = false
                         break;
                     }
                 
@@ -539,8 +543,10 @@ const delog = (ll='', lj='',pp='', plp='') =>{
             }
             //})
             if(!unique){
+                
                 unique = true;
-                k++
+                if(f){
+                k++};
             }else{
                 let m = 0;
                 let n = 0;
@@ -551,7 +557,7 @@ const delog = (ll='', lj='',pp='', plp='') =>{
                     }
                     n++;
                     if(m === k){
-                        delog(n)
+                        delog(n,'n')
                         return [n, og_v[n]]
                     }
                 }
@@ -665,7 +671,7 @@ isrendered = false;
                     clearTimeout(timeoutId);
                 }
                 const remainingWords = words.slice(wordIndex);
-
+                if(selVerses[cnum].type != 'SQ:')
                 console.log('Remaining words:', remainingWords); // Debugging log
                 const remainingText = remainingWords.join(' ');
                 const tx = currentHTML + remainingText;
@@ -1150,7 +1156,7 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
         QUEST = QUEST.split(' ')
         ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
         QUEST = QUEST.join(' ');
-        if(ANS.includes('(')){
+        `if(ANS.includes('(')){
           const sA =  ANS.split('(');
           ANS2 = sA[1];
           ANS = sA[0];
@@ -1158,7 +1164,7 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
         if(ANS.includes('[')){
             ANS =  ANS.split('[')[0]
             
-          }
+          }`
         //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
         await delay_text(`Situation Question:`,'h4','quizHeader',0,'purple');
         
@@ -1185,7 +1191,7 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
             ANS =  ANS.split('[')[0]
             
           }
-        //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
+        trigChar = findUniqueTriggerWord(QUEST.split(''), question_dict2, cnum , QUEST.length)[1];
         await delay_text(`Question`,'h4','quizHeader',0,'purple');
         
         }
@@ -1221,7 +1227,7 @@ console.log('failed at new', ftv)
 
          }
          startTimer = false;
-         delog(trigChar);
+         delog(tChar);
         await delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', ftvTriggerI, tChar);
         
         // Update the progress bar after a new question is loaded
@@ -1266,6 +1272,43 @@ container.style.display = 'none';
 
 //delog('random words', randwords);
     // This function initializes the draggable word blocks for the quiz.
+    function setupDropZone(containerId) {
+        
+        const container = document.getElementById(containerId);
+        //clear all child blocks
+        if(dragEnabled === false){
+            
+container.style.display = 'none';
+            return}
+
+        // Re-adding the drag-and-drop event listeners for the container.
+        container.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        container.addEventListener('dragenter', (e) => {
+            container.classList.add('drop-valid');
+        });
+
+        container.addEventListener('dragleave', (e) => {
+            container.classList.remove('drop-valid');
+        });
+        
+        container.addEventListener('drop', (eB) => {
+            eB.preventDefault();
+            container.classList.remove('drop-valid');
+            
+            const dataVBlock= eB.dataTransfer.getData('text/plain');
+            const draggedElementVBlock = document.getElementById(dataVBlock);
+            if (draggedElementVBlock) {
+                container.appendChild(draggedElementVBlock);
+            }
+        });
+        return container;
+    }
+    
+
+// This function initializes the clickable and draggable word blocks for the quiz.
 function dragElements(){
     if(dragEnabled === false){setupDropZone('verse-con');
         setupDropZone('versedrop');
@@ -1274,11 +1317,13 @@ function dragElements(){
 
     // Get the container for the draggable words.
     const draggableContainer = document.getElementById('verse-con');
+    const dropContainer = document.getElementById('versedrop');
     
     // Split the verse into individual words to create separate buttons.
     const rnum = Math.floor(Math.random() * 3 + 1);
-    let blocks = selVerses[cnum].verse.split(' ');
+    let blocks;
     if(selVerses[cnum].type != 'ftv/quote'){
+        blocks = ANS.split(' ');
     selVerses.forEach(itemSelected => {
         const randWord = shuffleArray(itemSelected.verse.split(' '), true)[0];
         randwords.push(randWord);
@@ -1291,6 +1336,8 @@ for(let i =0; i < rnum; i++){
     delog('random word added', randWORD)
 
 };
+    }else{
+        blocks = quest.split(' ')
     }
 
     blocks = shuffleArray(blocks);
@@ -1303,7 +1350,7 @@ for(let i =0; i < rnum; i++){
         // Set the text content of the button, adding a space for separation.
         if(block != ''){
         button.textContent = block + ' '; 
-        // Enable the draggable attribute for the button.
+        // Re-enable the draggable attribute for the button.
         button.draggable = true; 
         
         // Add the base class for all draggable elements.
@@ -1332,6 +1379,20 @@ for(let i =0; i < rnum; i++){
         button.addEventListener('dragend', (event) => {
           // Remove the dragging class to reset the element's appearance.
           event.target.classList.remove('is-dragging');
+        });
+
+        // Add a 'click' event listener to handle click-based movement.
+        button.addEventListener('click', (event) => {
+            // Check the current parent of the clicked button.
+            const parentContainer = event.target.parentNode;
+            // If the button is in the source container, move it to the drop container.
+            if (parentContainer.id === 'verse-con') {
+                dropContainer.appendChild(event.target);
+            } 
+            // Otherwise, if it's in the drop container, move it back to the source.
+            else if (parentContainer.id === 'versedrop') {
+                draggableContainer.appendChild(event.target);
+            }
         });
     });
     
@@ -1653,4 +1714,9 @@ delog(selVerses, 'selverses')
 quizApp.start(); 
 
 //-- why are LOOKING at my code you are not allowed to read this message so u must tun an d i will kill u inn ur sllp imenat sllep no sllepp no sleep 
+
+
+//----------------------------quizApp.start(); 
+
+
 
