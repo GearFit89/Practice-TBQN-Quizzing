@@ -1,4 +1,20 @@
 const quizApp = (function() {
+    const id = (word) => {
+        let word1 = document.getElementById(word);
+        return word1
+
+    }
+    let running = true;
+    
+    const speedInput = id('speed'); // Gets the range input element.
+            const speedValueSpan = id('speedValue'); // Gets the span element to display the value.
+            
+            // Listen for the 'input' event, which fires continuously as the slider is moved.
+            speedInput.addEventListener('input', (event) => {
+                // Update the text content of the span with the current value of the input.
+                speedValueSpan.textContent = event.target.value;
+            });
+            
     let selverses = true; 
     const resetclient = document.getElementById('resetclient');
         if (resetclient) {
@@ -21,11 +37,7 @@ const quizApp = (function() {
         }
              
     }
-    const id = (word) => {
-        let word1 = document.getElementById(word);
-        return word1
-
-    }
+    
     async function loadQuestions(){
         try{
             const questResponse = await fetch('QuestioniTBQN.txt')
@@ -137,17 +149,25 @@ const quizApp = (function() {
         }
     };
     let notriggers =[];
-     function findUniqueTriggerWord(ARRAY, obj, currentVerseNumber, len = 5) {
+     function findUniqueTriggerWord(ARRAY, obj, currentVerseNumber, len = 5, CHAR = false) {
         if (!Array.isArray(ARRAY) || typeof obj !== 'object' || obj === null) {
             console.error('Invalid input: ARRAY must be an array and obj must be an object.');
             return [null, -1];
         }
-    
+    let verses = [];
         // CORRECTED: Use Object.entries() to access the key (verse number)
-        const verses = Object.entries(obj)
+        if(CHAR){
+             verses = Object.entries(obj)
+            // Filter out the current verse and verse 60
+            .filter(([key, value]) => key !== String(currentVerseNumber) && key !== '60')
+            .map(([key, item]) => item.verse.split(''));
+
+        }else{
+         verses = Object.entries(obj)
             // Filter out the current verse and verse 60
             .filter(([key, value]) => key !== String(currentVerseNumber) && key !== '60')
             .map(([key, item]) => item.verse.split(' '));
+        }
     
         // Iterate through the ARRAY to find the first unique word
         for (let i = 0; i < len; i++) {
@@ -174,6 +194,12 @@ const quizApp = (function() {
         // If no unique word is found, return [null, -1]
         return [null, ];
     }
+    let Time;
+    let speeddetext;
+    let ftvTriggerI;
+    let trigChar;
+    let QUEST;
+    let randwords = [];
     let currerentVerse;
     let startTimer = false;
     let counterToMax = 0;
@@ -182,19 +208,25 @@ const quizApp = (function() {
     const quiMonths =  ['october', 'november', 'december', 'january', 'february', 'march'];
     const quizMonths = [
         ['october', [1, 2, 3, 4, 5]],
-        ['november', [6, 7, 8, 9]],
-        ['december', [10, 12]],
+        ['november', [6, 7, 8, 9]], 
+        ['december', [10, 11, 12]],
         ['january', [13, 14]],
         ['february', [15, 16]],
         ['march', ['jonah']]
     ];
+   let isrendered = false;
+    let TimeLeft = 30;
+    let dragEnabled = true;
     let deblog = true;
     let cnum = 0;
     let timerid;
     let globalquestype;
     let quest;
+    const morebtn = id("More")
     const next = id('next');
-    const btnTOModal = id(BTN)
+    const btnTOModal = id('BTN')
+    const vD = id('versedrop')
+    const vC = id('verse-con');
     //let clientanswers = {}
     let clientanswers =  updateClientInfo(null, 'objOFWrongAnswers/Right', false) || {};
     console.log(clientanswers)
@@ -204,6 +236,8 @@ const quizApp = (function() {
     let remainingText = '';
     let numverses = 1;
     let verse_dict;
+    let ANS;
+    let ANS2;
     let isquote = false;
     let isftv = false;
     const ver = id('verse');
@@ -283,6 +317,7 @@ const delog = (ll='', lj='',pp='', plp='') =>{
         
         const data = quotesFTVs.trim().split("\n");
         let versedict = {};
+        let c2 = 0;
         for (let val of data) {
    
         // simple macth method word, digit:digit , word, Quote/FTV word
@@ -290,12 +325,12 @@ const delog = (ll='', lj='',pp='', plp='') =>{
         //example regex for questions
         // val.match(/^(\w+ \d+:\d+\w*\-?\d*) (\w) (?:(SQ|According to (?:\w+ \d+:\d+\w*\-?\d*))) (.*)$/)
         
-
+        c2 ++;
         c += 1;
         if (val) {
 
          // Now, we correctly assign the month based on the verse number
-            const monthIndex = Math.floor((c - 1) / 20);
+            const monthIndex = Math.floor((c2 - 1) / 20);
             const monthName = quiMonths[monthIndex];
             const ref1 = val[1];
             const flight1 = val[2];
@@ -312,7 +347,7 @@ const delog = (ll='', lj='',pp='', plp='') =>{
             } else {
                 numverses = 1;
             }
-
+            
             versedict[c] = {
                 flight: flight1,
                 verse: verse1,
@@ -342,25 +377,80 @@ const delog = (ll='', lj='',pp='', plp='') =>{
         console.log("Questions are good")
         // Call dependent functions here
     }
-    initializeQuiz();
+   
         if (!clientanswers) {
             clientanswers = {};
             console.log("clientanswers initialized as an empty object.");
         }
-        function manageModal(mtxt="hi",modalid='settings', mcon="modaldiv", closebtn='closeModalBtn'){
+        initializeQuiz();
+
+
+        function manageModal(mtxt="hi", set=false, modalid='settings', mcon="modaldiv", closebtn='closeModalBtn'){
             const modal = id(modalid);
             const modalContent = id(mcon)
             const closeBtn = id(closebtn);
-            modalContent.textContent = mtxt;
+            modalContent.innerHTML = mtxt;
             closeBtn.style.display = 'none'
             
             closeBtn.style.display = 'block'
+            running = false
+            clearInterval(timerid);
+            const secsInput2= document.getElementById('secs1');
+            const speedInput2 = document.getElementById('speed1');
+            const sv = id('speedValue1');
             
+            if (secsInput2 && Time) {
+                secsInput2.value = Time;
+            }
+            if (speedInput2 && speeddetext && sv) {
+                speedInput2.value = speeddetext;
+                sv.textContent = speeddetext;
+
+            }
             modal.showModal();
             
                 closeBtn.addEventListener('click', () =>{
                 closeBtn.style.display = 'none'
                 modal.close();
+                if(set){
+                    const lenOfTimerElement1 = document.getElementById('secs1');
+                    if (lenOfTimerElement1) {
+                        Time = parseInt(lenOfTimerElement1.value);
+                    }
+                    const speed_tOf_text1 = document.getElementById('speed1');
+                    if (speed_tOf_text1) {
+                        if(typeof(parseFloat(speed_tOf_text1.value)) != 'number')  { quizSettings.speed_tOf_text = 0}else{
+                        speeddetext = parseFloat(speed_tOf_text1.value);}
+                    }
+                    let textType;
+                    const MODE = document.querySelector('input[name="type"]:checked');
+                if (MODE) {
+                    textType = MODE.value;
+                }
+           
+           
+            running = true;
+            if(isrendered){quiztimer(TimeLeft);}
+                if (textType === 't'){
+                    vD.style.display ='none';
+                    vC.style.display = 'none';
+                    ver.style.display = 'block';
+                   
+                    dragEnabled = false
+                }else{
+                    vD.innerHTML = '';
+                    vC.innerHTML = '';
+                    ver.value = '';
+                    vD.style.display ='block';
+                    vC.style.display = 'block';
+                    ver.style.display = 'none';
+                    
+                    if(isrendered){dragElements();};
+                    dragEnabled = true
+
+                }
+
+                }
                 })
             }
         
@@ -388,8 +478,26 @@ const delog = (ll='', lj='',pp='', plp='') =>{
             // Increment the appropriate counter based on the result.
             if (result === 'right') {
                 clientanswers[versetype].correct += 1;
+                vD.classList.add('correct')
+                vD.classList.remove('incorrect')
+                vD.classList.remove('blueborder')
+                vC.classList.add('correct')
+                vC.classList.remove('incorrect')
+                vC.classList.remove('blueborder')
+                ver.classList.add('correct')
+                ver.classList.remove('incorrect')
+                ver.classList.remove('blueborder')
             } else if (result === 'wrong') {
                 clientanswers[versetype].wrong += 1;
+                vD.classList.add('incorrect')
+                vD.classList.remove('correct')
+                vD.classList.remove('blueborder')
+                vC.classList.add('incorrect')
+                vC.classList.remove('correct')
+                vC.classList.remove('blueborder')
+                ver.classList.add('incorrect')
+                ver.classList.remove('correct')
+                ver.classList.remove('blueborder')
             }
         
             console.log(clientanswers); // Log the object to see the updated data.
@@ -398,7 +506,61 @@ const delog = (ll='', lj='',pp='', plp='') =>{
         
 
 
+        function findTrigChar(list, _verse, vType, lEn=200){
+            let unique = true;
+            let og_v = _verse.split('')
+            let k = 1
+            let l = 1
+            let _q;
+            _q = stripChar(_verse)
+            _q= _q.split('')
+            for(let i = 0; i < lEn; i++){
+            //list.forEach(v =>{
+                for(v of list){
+                    if(stripChar(v.verse) === stripChar(_verse) ){
+                        break;
+                    }
+                
+                    
+                    let Q = stripChar(v.verse)
+                    Q = Q.split('')
+                    
+                   
+                    //const charToStrip = new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ']);
         
+                        
+                 if(_q.slice(0, k).join('') === Q.slice(0, k).join('')){
+                            unique = false
+                            break;
+                            
+                   }
+                        
+                
+            }
+            //})
+            if(!unique){
+                unique = true;
+                k++
+            }else{
+                let m = 0;
+                let n = 0;
+                for(let o of og_v){
+                    if(o === _q[m]){
+                        m++;
+
+                    }
+                    n++;
+                    if(m === k){
+                        delog(n)
+                        return [n, og_v[n]]
+                    }
+                }
+                //return k
+            }
+        }
+        return 'no';
+
+        };
     function levenshtein(a, b, Percent=75) {
         const matrix = [];
 
@@ -466,10 +628,10 @@ const delog = (ll='', lj='',pp='', plp='') =>{
     }
 
 
-    function delay_text(txt, elm = 'p', par = 'quizHeader', delay = 0, COLOR = 0, id1 = 'false') {
+    function delay_text(txt, elm = 'p', par = 'quizHeader', delay = 0, COLOR = 0, id1 = 'false', id2= 'f') {
         return new Promise((resolve) => {
         const parent = id(par);
-
+isrendered = false;
         const textElement = document.createElement(elm);
         textElement.innerHTML = '';
         if (typeof(COLOR) === 'string') {
@@ -480,18 +642,21 @@ const delog = (ll='', lj='',pp='', plp='') =>{
         const timeouts = [];
         let isStopped = false;
         let totalDelay = 0;
-    
+        let ANS2 = false;
         const words = txt.split(' ');
         let wordIndex = 0;
         let charIndex = 0;
         let currentHTML = '';
         let isHighlighted = false;
-    
+       let isHighlighted2 = false;
+       let CHArNUm = 0;
         // Helper function to stop the animation
         const stopAnimation = (event) => {
             if (event.code === 'Space') {
                 event.preventDefault();
                 if (isStopped) {
+                    isrendered = true
+                    ver.disabled = false
                     resolve()
                     return;
                 }
@@ -506,7 +671,7 @@ const delog = (ll='', lj='',pp='', plp='') =>{
                 const tx = currentHTML + remainingText;
                 startTimer = true;
                 quest = remainingText + ' ' + quest;
-                
+                ANS = remainingText + ' ' + ANS;
                 document.getElementById('pleasefinish').style.display = 'block'; 
                 ver.placeholder = "Don't forget to enter the last word on the screen";
                 
@@ -519,6 +684,8 @@ const delog = (ll='', lj='',pp='', plp='') =>{
         function typeWriter() {
             if (isStopped || wordIndex >= words.length) {
                 window.removeEventListener('keydown', stopAnimation);
+                isrendered = true
+                ver.disabled = false;
                 startTimer = true;
                 resolve()
                 return
@@ -541,11 +708,22 @@ const delog = (ll='', lj='',pp='', plp='') =>{
                     isHighlighted = false;
                 }
             }
+            if (CHArNUm === id2) {
+                if (!isHighlighted2) {
+                    currentHTML += '<span class="highlight-char">';
+                    isHighlighted2 = true;
+                }
+            } else {
+                if (isHighlighted2) {
+                    currentHTML += '</span>';
+                    isHighlighted2 = false;
+                }
+            }
     
             currentHTML += char;
             //console.log('Current HTML:', currentHTML, 'char', char); // Debugging log
             textElement.innerHTML = currentHTML;
-    
+            CHArNUm++
             charIndex++;
             if (charIndex >= word.length) {
                 charIndex = 0;
@@ -587,7 +765,16 @@ function measure(item1, item2, split = false, splitValue = '') {
     // this function checks user input
 
     function clear(par3) {
-        ver.placeholder = 'Eneter Answer'
+        morebtn.style.display = 'none';
+        vD.classList.remove('correct', 'incorrect');
+        vD.classList.add('blueborder')
+        vC.classList.remove('correct', 'incorrect');
+        vC.classList.add('blueborder')
+        ver.classList.remove('correct', 'incorrect');
+        ver.classList.add('blueborder')
+        vC.innerHTML = '';
+        vD.innerHTML = '';
+        ver.placeholder = 'Enter Answer'
         id('pleasefinish').style.display = 'none';
         id('pleasebtn').style.display = 'none';
         ver.value = '';
@@ -611,7 +798,7 @@ function measure(item1, item2, split = false, splitValue = '') {
         id('incorrectbtn').style.display = "none";
 
         plsc.style.display = 'none';
-        if(selVerses[cnum].type === 'quote/ftv'){                                                     
+        if(selVerses[cnum].type === 'ftv/quote'){                                                     
         //console.log(quest);
         if (stripChar(inVerse) === stripChar(quest)) {
             id('correctbtn').style.display = "block";
@@ -627,7 +814,8 @@ function measure(item1, item2, split = false, splitValue = '') {
         } else {
             id('incorrectbtn').style.display = "block";
             ver.value =`${ver.value} \n \nCorrect Answer: ${selVerses[cnum].ref}\n${selVerses[cnum].verse} `;
-            // Correctly add a record to the answers array
+           
+            //vC.innerHTML =`${ver.value} \n \nCorrect Answer: ${QUEST}?\n${ANS}`;// Correctly add a record to the answers array
             answers.push({
                 verse: selVerses[cnum],
                 correct: false
@@ -637,77 +825,56 @@ function measure(item1, item2, split = false, splitValue = '') {
             correct('wrong')
             return false;
         }
-    }else{
-            /*const prompt = `
-                Evaluate the user's answer for a Bible quiz question.
-                
-                Question: "${currentQuestion.question}"
-                Correct Answer: "${currentQuestion.correct_answer}"
-                User's Answer: "${userResponse}"
-
-                Based on the context of the Bible, is the user's answer correct, incorrect, or does it need more information?
-                - If the user's answer is a direct match, a close paraphrase, or semantically equivalent, return 'Correct'.
-                - If the user's answer is partially correct but not a full answer, or a good starting point for a conversation, return 'Needs more information'.
-                - If the user's answer is completely wrong or unrelated, return 'Incorrect'.
-                
-                Respond with a single JSON object. Do not include any other text.
-                Example correct response: \`{"evaluation": "Correct"}\`
-                Example needs more info response: \`{"evaluation": "Needs more information"}\`
-                Example incorrect response: \`{"evaluation": "Incorrect"}\`
-            `;
-
-            try {
-               // This is the corrected generationConfig.
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    // We are now telling the API to expect a single JSON object.
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        "type": "OBJECT",
-                        "properties": {
-                            "evaluation": { "type": "STRING" }
-                        }
-                    }
-                },
-            };
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-                const evaluation = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                
-                if (evaluation) {
-                    const parsedEvaluation = JSON.parse(evaluation);
-                    const outcome = parsedEvaluation.evaluation;
-
-                    if (outcome === 'Correct') {
-                        resultArea.innerHTML = `<p class="text-green-600 font-bold text-lg">Correct!</p>`;
-                    } else if (outcome === 'Incorrect') {
-                        resultArea.innerHTML = `<p class="text-red-600 font-bold text-lg">Incorrect. The correct answer is "${currentQuestion.correct_answer}".</p>`;
-                    } else if (outcome === 'Needs more information') {
-                        resultArea.innerHTML = `<p class="text-yellow-600 font-bold text-lg">Your answer is close, but needs more information. Try to be more specific!</p>`;
-                    } else {
-                        resultArea.innerHTML = `<p class="text-red-500 font-bold text-lg">Evaluation Error: Unexpected response from model.</p>`;
-                    }
-                    submitBtn.classList.add('hidden');
-                    nextBtn.classList.remove('hidden');
-                } else {
-                    resultArea.innerHTML = `<p class="text-red-500 font-bold text-lg">Evaluation failed. Please try again.</p>`;
-                    submitBtn.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('API Error:', error);
-                resultArea.innerHTML = `<p class="text-red-500 font-bold text-lg">Something went wrong. Please check your network and try again.</p>`;
-            } finally {
-                loadingIndicator.classList.add('hidden');
-                submitBtn.disabled = false;
-            } */
-        if (stripChar(inVerse) === stripChar(quest)) {
+    }else if(!dragEnabled){
+        
+       // This function compares a user's answer to the correct answer.
+// It returns 'Correct', 'Incorrect', or 'Needs More Info'.
+const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
+    // Step 1: Normalize both answers.
+    // This removes leading/trailing whitespace, makes them lowercase, and removes common punctuation.
+    const normalize = (str) => {
+      // Check if the input is a string before trying to normalize it.
+      if (typeof str !== 'string') {
+        return '';
+      }
+      // Convert to lowercase to ignore case differences.
+      // Remove leading/trailing spaces with trim().
+      // Use a regular expression to remove common punctuation and symbols.
+      // Replace multiple spaces with a single space.
+      return str.toLowerCase().trim().replace(/[.,/#!$%^&*;:{}=?\-_`~()'"]/g, '').replace(/\s{2,}/g, ' ');
+    };
+  
+    const normalizedUser = normalize(userAnswer); // Normalize the user's answer.
+    const normalizedCorrect = normalize(correctAnswer); // Normalize the correct answer.
+  
+    // Step 2: Check for an exact match.
+    // This is the most straightforward check for correctness.
+    if (normalizedUser === normalizedCorrect) {
+      // If the normalized answers are identical, the user is correct.
+      return 'Correct';
+    }
+  
+    // Step 3: Check for a partial match.
+    // This is where we determine if the user is close but needs more information.
+    // We check if the user's answer contains a significant part of the correct answer.
+    if (normalizedCorrect.includes(normalizedUser) && normalizedUser.length > 2) {
+      // The includes() method checks if a string contains another string.
+      // We also check that the user's answer is not just a single letter or number,
+      // to avoid false positives (e.g., 'a' is in 'apple').
+      return 'More';
+    }
+    
+    // Step 4: If no match is found, the answer is incorrect.
+    // This is the final and default case if the answer is neither correct nor close.
+    return 'Incorrect';
+  };
+  
+   
+        console.log('quest valur at checkans after AI:', ANS)
+        
+       const result = checkAdvancedAnswer(inVerse, ANS);
+         delog('Result of advanced check:', result); // Log the result for debugging.
+         if (result === 'Correct') {
             id('correctbtn').style.display = "block";
             // Correctly add a record to the answers array
             answers.push({
@@ -717,10 +884,11 @@ function measure(item1, item2, split = false, splitValue = '') {
             });
             correctCount ++;
            correct('right')
-            //return true;
-        } else {
+            return true;
+        } else if(result === 'Incorrect'){
             id('incorrectbtn').style.display = "block";
-            ver.value =`${ver.value} \n \nCorrect Answer: ${selVerses[cnum].ref}\n${selVerses[cnum].verse} `;
+            ver.value =`${ver.value} \n \nCorrect Answer: ${QUEST}?\n${ANS}`;
+             //vC.innerHTML =`${ver.value} \n \nCorrect Answer:${QUEST}?\n${ANS}`;
             // Correctly add a record to the answers array
             answers.push({
                 verse: selVerses[cnum],
@@ -729,9 +897,47 @@ function measure(item1, item2, split = false, splitValue = '') {
             
 
             correct('wrong')
-            //return false;
+            return false;
+        }else{
+           morebtn.style.display = 'block';
+
+
         }
 
+
+    }else{
+        // drag and drop elements
+        const Blocks = Array.from(vD.children);
+        entered_words = Blocks.map(Block => { 
+            return Block.textContent.trim();
+        })
+        if (stripChar(entered_words.join(' ')) === stripChar(ANS)) {
+            id('correctbtn').style.display = "block";
+            // Correctly add a record to the answers array
+            answers.push({
+                verse: selVerses[cnum],
+                correct: true,
+                
+            });
+            correctCount ++;
+           correct('right')
+            return true;
+        } else {
+            id('incorrectbtn').style.display = "block";
+            ver.value =`${ver.value} \n \nCorrect Answer: ${QUEST}?\n${ANS}`;
+            vC.innerHTML =`Correct Answer: ${QUEST}?\n${ANS}`;
+            // Correctly add a record to the answers array
+            answers.push({
+                verse: selVerses[cnum],
+                correct: false,
+                //type: selVerses[cnum].type
+            });
+            
+
+            correct('wrong')
+            return false;
+        }
+        
 
     }
 
@@ -742,14 +948,17 @@ function measure(item1, item2, split = false, splitValue = '') {
 
    
 
-let running = true;
+
       function quiztimer(timeleft=30){
-        if (!running){return}
+        if (!running){
+            clearInterval(timerid);
+            TimeLeft = timeleft;
+    return}
           if(timerid){clearInterval(timerid);}
           timerid = setInterval(()=>{
           timerbtn.textContent = timeleft;
               timeleft --;
-              
+              TimeLeft = timeleft;
 
               if (timeleft <= 0){
                   clearInterval(timerid);
@@ -775,9 +984,11 @@ let running = true;
 
     const showQuizSummary = () => {
         // Stop the timer
-
+        vC.style.display = 'none'
+        vD.style.display = 'none';
+        
         clearInterval(timerid);
-    
+    clear('quizHeader');
         // Hide quiz scene and show start scene
         document.getElementsByTagName('main')[1].style.display = 'none';
     
@@ -785,17 +996,23 @@ let running = true;
         // Clear the quiz header content
         const quizHeader = id('quizHeader');
         quizHeader.innerText= ''
-        console.log(clientanswers)
+        delog(clientanswers)
         // Clear the verse input text area
         ver.value = '';
         progressBar.style.display ='none'
         id('progressBar2').style.display ='none'
         ver.style.display = 'none'
         // Hide the buttons and 'please wait' message
-        id('next').style.display = 'none'
+        id('next').style.display ='none';
+        id('pleasefinish').style.display = 'none';
+        id('pleasebtn').style.display = 'none';
+        id('More').style.display = 'none';
+        ver.value = '';
+        //id(par3).innerHTML = '';
         id('submit').style.display = 'none';
-        id('correctbtn').style.display = 'none';
-        id('incorrectbtn').style.display = 'none';
+        id('BTN').style.display = 'none';
+        id('correctbtn').style.display = "none";
+        id('incorrectbtn').style.display = "none";
         plsc.style.display = 'none';
         running = false
         updateClientInfo(clientanswers, 'objOFWrongAnswers/Right', true)
@@ -811,7 +1028,13 @@ let running = true;
             answers.forEach(answer => {
                 if (!answer.correct) {
                 delay_text(`${answer.verse.ref}`, 'h6','quizHeader',0,'purple');
+                if(answer.verse.type === 'ftv/quote'){
                 delay_text(`${answer.verse.verse}`, 'h6', 'quizHeader', 0); 
+                }else{
+                const aAQ = answer.verse.aq.split('?')
+                delay_text(`${aAQ[0]}?`, 'h6', 'quizHeader', 0); 
+                delay_text(`${aAQ[1]}`, 'h6', 'quizHeader', 0); 
+                }
                 }
             });
         }
@@ -849,28 +1072,34 @@ let running = true;
         }
         let ftv = selVerses[cnum].type;
          
-         
+         let vtype;
         if (quizSettings.quizMode.includes('ftv')) {
-            //ftv = 'ftv';
+            vtype = 'ftv';
             isftv = true;
         }
         
         if (quizSettings.quizMode.includes('quote')) {
-            //ftv = 'quote';
+            vtype = 'quote';
             isquote = true;
         }
         
-        if (isquote && isftv && ftv === 'quote/ftv') {
-            ftv = 'both';
+        if (isquote && isftv && ftv === 'ftv/quote') {
+            vtype = 'both';
         }
          const verse_dict2 = selVerses.filter(itemsel2=>{
-           return itemsel2.type === 'quote/ftv'
+           return itemsel2.type === 'ftv/quote'
         })
+        delog('question_dict','2')
         const question_dict2 = selVerses.filter(itemsel=>{
-            return itemsel.type != 'quote/ftv'
+            return itemsel.type !== 'ftv/quote'
         })
         delog(question_dict2, verse_dict2);
-         
+
+         if(ftv === 'ftv/quote'){
+            ftv = vtype
+
+         }
+
         if (ftv === 'both') {
             const randtype = Math.floor(Math.random() * questTypes.length);
             ftv = questTypes[randtype];
@@ -885,8 +1114,9 @@ let running = true;
         clear('quizHeader');
         const qh = 'quizHeader';
         currerentVerse = selVerses[cnum];
-       let ftvTriggerI;
-         //if(selVerses[cnum].type === 'quote/ftv'){
+        ftvTriggerI;
+        let tChar ='no';
+         //if(selVerses[cnum].type === 'ftv/quote'){
          if (true){
         if (ftv === 'ftv') {
             globalquestype = 'ftv';
@@ -896,6 +1126,7 @@ let running = true;
             ftvTriggerI = findUniqueTriggerWord(words, verse_dict2, cnum , 5)[1];
             phars = first_5.join(' ')
             quest = words.slice(5).join(' ');
+            //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
               
             await delay_text(`Finish the Verse:`,'h4','quizHeader',0, 'purple', 5);
         } else if (ftv === 'quote') {
@@ -903,46 +1134,86 @@ let running = true;
             const verseData = selVerses[cnum];
             phars = verseData.ref;
             quest = verseData.verse;
+            //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
             
             await delay_text(`${selVerses[cnum].numVerses} Verse Quote:`,'h4','quizHeader',0,'purple');
         } 
         else if(ftv ==='SQ:'){
-            globalquestype = ftv;
-            const getaq = selVerses[cnum].verse.split('?');
-            let QUEST = getaq[0];
-            let ANS = getaq[1];
-            phars = `${QUEST}?`;
-            selVerses[cnum].verse = ANS;
-            QUEST = QUEST.split(' ')
-            ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
-            await delay_text(`Question`,'h4','quizHeader',0,'purple');
-    
-
-        }
-        else if(ftv === 'According to'){
-            globalquestype = ftv;
-            const getaq = selVerses[cnum].verse.split('?');
-        let QUEST = getaq[0];
-        let ANS = getaq[1];
-        phars = `According To: ${QUEST}`;
-        selVerses[cnum].verse = ANS;
-        QUEST = QUEST.split(' ')
-        //ftvTriggerI = findUniqueTriggerWord(QUEST, selVerses, cnum , QUEST.length)[1];
-        await delay_text(`Question`,'h4','quizHeader',0,'purple');
-
-
-        }
-        else if(ftv === 'question'){
-        globalquestype = 'q';
+             const aq = selVerses[cnum].verse
+        selVerses[cnum].aq = aq
+        globalquestype = 'sq';
         const getaq = selVerses[cnum].verse.split('?');
-        let QUEST = getaq[0];
-        let ANS = getaq[1];
+        QUEST = getaq[0];
+        ANS = getaq[1];
         phars = `${QUEST}?`;
         selVerses[cnum].verse = ANS;
         QUEST = QUEST.split(' ')
         ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
-        await delay_text(`Question`,'h4','quizHeader',0,'purple');
+        QUEST = QUEST.join(' ');
+        if(ANS.includes('(')){
+          const sA =  ANS.split('(');
+          ANS2 = sA[1];
+          ANS = sA[0];
+        }
+        if(ANS.includes('[')){
+            ANS =  ANS.split('[')[0]
+            
+          }
+        //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
+        await delay_text(`Situation Question:`,'h4','quizHeader',0,'purple');
+        
 
+        }
+        else if(ftv === 'According to'){
+             const aq = selVerses[cnum].verse
+        selVerses[cnum].aq = aq
+        globalquestype = 'at';
+        const getaq = selVerses[cnum].verse.split('?');
+        QUEST = getaq[0];
+        ANS = getaq[1];
+        phars = `According To: ${QUEST}?`;
+        selVerses[cnum].verse = ANS;
+        QUEST = QUEST.split(' ')
+        //ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
+        QUEST = QUEST.join(' ');
+        if(ANS.includes('(')){
+          const sA =  ANS.split('(');
+          ANS2 = sA[1];
+          ANS = sA[0];
+        }
+        if(ANS.includes('[')){
+            ANS =  ANS.split('[')[0]
+            
+          }
+        //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
+        await delay_text(`Question`,'h4','quizHeader',0,'purple');
+        
+        }
+        else if(ftv === 'question'){
+        const aq = selVerses[cnum].verse
+        selVerses[cnum].aq = aq
+        globalquestype = 'q';
+        const getaq = selVerses[cnum].verse.split('?');
+        QUEST = getaq[0];
+        ANS = getaq[1];
+        phars = `${QUEST}?`;
+        selVerses[cnum].verse = ANS;
+        QUEST = QUEST.split(' ')
+        tChar = findTrigChar(question_dict2, QUEST.join(' '), 0, 100)[0]
+        ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
+        QUEST = QUEST.join(' ');
+        if(ANS.includes('(')){
+          const sA =  ANS.split('(');
+          ANS2 = sA[1];
+          ANS = sA[0];
+        }
+        if(ANS.includes('[')){
+            ANS =  ANS.split('[')[0]
+            
+          }
+        //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
+        await delay_text(`Question`,'h4','quizHeader',0,'purple');
+        
         }
         else {
 console.log('failed at new', ftv)
@@ -950,7 +1221,8 @@ console.log('failed at new', ftv)
 
          }
          startTimer = false;
-        await delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', ftvTriggerI);
+         delog(trigChar);
+        await delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', ftvTriggerI, tChar);
         
         // Update the progress bar after a new question is loaded
         return quest, phars;
@@ -958,7 +1230,13 @@ console.log('failed at new', ftv)
 
 
     function setupDropZone(containerId) {
+        
         const container = document.getElementById(containerId);
+        //clear all child blocks
+        if(dragEnabled === false){
+            
+container.style.display = 'none';
+            return}
 
         container.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -982,37 +1260,88 @@ console.log('failed at new', ftv)
                 container.appendChild(draggedElementVBlock);
             }
         });
+        return container;
     }
+    
 
-    // The corrected function with all fixes applied.
-    function dragElements(){
-        const draggableContainer = document.getElementById('draggableContainer');
-
-        let blocks = selVerses[cnum].verse.split(' ');
-        let idIndex = 0;
-        blocks.forEach(block => {
-            const button = document.createElement('button');
-            button.textContent = block + ' '; // Add a space after each word for separation
-            button.draggable = true; // Make the span draggable
-            
-            //button.className = 'bg-blue-500 text-white rounded-md px-4 py-2 m-2 cursor-grab transition-colors duration-200 hover:bg-blue-600';
-            
-            button.id = `${idIndex}-${block}`;
-            idIndex++;
-            draggableContainer.appendChild(button);
-            
-            button.addEventListener('dragstart', (eventdragB) => {
-                eventdragB.dataTransfer.setData('text/plain', eventdragB.target.id);
-            });
-        });
-        
-        // Set up both containers as drop zones
-        setupDropZone('verse-con');
+//delog('random words', randwords);
+    // This function initializes the draggable word blocks for the quiz.
+function dragElements(){
+    if(dragEnabled === false){setupDropZone('verse-con');
         setupDropZone('versedrop');
+    return
+ };
 
-        // Add listener to the new button to log IDs
-        //document.getElementById('getIDsButton').addEventListener('click', getDraggedElementIds);
+    // Get the container for the draggable words.
+    const draggableContainer = document.getElementById('verse-con');
+    
+    // Split the verse into individual words to create separate buttons.
+    const rnum = Math.floor(Math.random() * 3 + 1);
+    let blocks = selVerses[cnum].verse.split(' ');
+    if(selVerses[cnum].type != 'ftv/quote'){
+    selVerses.forEach(itemSelected => {
+        const randWord = shuffleArray(itemSelected.verse.split(' '), true)[0];
+        randwords.push(randWord);
+    });
+    delog('random words', randwords);
+for(let i =0; i < rnum; i++){
+    
+    let randWORD = shuffleArray(randwords, true)[0];
+    blocks.push(randWORD);
+    delog('random word added', randWORD)
+
+};
     }
+
+    blocks = shuffleArray(blocks);
+    let idIndex = 0;
+    delog('block' , blocks)
+    // Iterate over each word block to create a new button element.
+    blocks.forEach(block => {
+        // Create a new button for each word.
+        const button = document.createElement('button');
+        // Set the text content of the button, adding a space for separation.
+        if(block != ''){
+        button.textContent = block + ' '; 
+        // Enable the draggable attribute for the button.
+        button.draggable = true; 
+        
+        // Add the base class for all draggable elements.
+        button.className = 'draggable-block';
+        
+        // Assign a unique ID to each button to identify it later.
+        button.id = `${idIndex}-${block}`;
+        // Increment the ID index for the next button.
+        idIndex++;
+        // Append the newly created button to the draggable container in the HTML.
+        if(block.textContent != '  '){
+        draggableContainer.appendChild(button);
+        }
+    }
+    
+
+        // Add a 'dragstart' event listener to handle the beginning of a drag operation.
+        button.addEventListener('dragstart', (eventdragB) => {
+            // Set the data to be transferred during the drag, using the button's ID.
+            eventdragB.dataTransfer.setData('text/plain', eventdragB.target.id);
+            // Add a class to the button to visually indicate that it is being dragged.
+            eventdragB.target.classList.add('is-dragging');
+        });
+
+        // Add a 'dragend' event listener to handle the end of a drag operation.
+        button.addEventListener('dragend', (event) => {
+          // Remove the dragging class to reset the element's appearance.
+          event.target.classList.remove('is-dragging');
+        });
+    });
+    
+    // Set up both the source and the drop zone containers as valid drop targets.
+    setupDropZone('verse-con');
+    setupDropZone('versedrop');
+
+    // Add a listener to the new button to log IDs.
+    //document.getElementById('getIDsButton').addEventListener('click', getDraggedElementIds);
+}
 
     
     return {
@@ -1030,7 +1359,7 @@ console.log('failed at new', ftv)
             });
 
 function handleSpaceEvent() {
-    if(selVerses[cnum].type === 'quote/ftv'){
+    if(selVerses[cnum].type === 'ftv/quote'){
     let Answer2;
     plsc.style.display = 'none';
     id('pleasefinish').style.display = 'none';
@@ -1077,11 +1406,16 @@ function handleSpaceEvent() {
 }
 
             const startButton = id('startQuizButton');
-            startButton.addEventListener('click',  (event) => {
+            startButton.addEventListener('click', async (event) => {
                 event.preventDefault();
                 const clientAnswersLength = Object.keys(clientanswers).length;
                 answers = [];
                 correctCount = 0;
+                if(!verse_dict || !question_dict){
+                    manageModal('Content is still loading please wait a moment')
+                    return //show a friendly wait message and have the user reclick the start button 
+                    
+                }
                 
                 //for now
                 // Add if statements to check if the elements exist before accessing their values
@@ -1119,7 +1453,7 @@ function handleSpaceEvent() {
                 const speed_tOf_text = document.getElementById('speed');
                 if (speed_tOf_text) {
                     if(typeof(parseFloat(speed_tOf_text.value)) != 'number')  { quizSettings.speed_tOf_text = 0}else{
-                    quizSettings.speed_tOf_text = parseFloat(speed_tOf_text.value) * 1000;}
+                    quizSettings.speed_tOf_text = parseFloat(speed_tOf_text.value);}
                 }
                 
                 const selectedFlights = [];
@@ -1150,19 +1484,38 @@ function handleSpaceEvent() {
             quizSettings.quizMode = selquizMode;
                 console.log('Quiz Settings Saved:', quizSettings);
                 next.style.display = 'none';
+                
 
                 
                 if (quizSettings.numQuestions > 100 || quizSettings.numQuestions === 0)
                 { quizSettings.numQuestions = 20}
                 if(typeof(quizSettings.numQuestions) != 'number')  { quizSettings.numQuestions = 100}
                 if(typeof(quizSettings.lenOfTimer) != 'number')  { quizSettings.lenOfTimer = 0}
+                
                 async function Selectdata(){
+                
+
+                    
+                    if(dragEnabled){
+                        ver.style.display = 'none';
+                    }
                 if (selverses){
+                    delog(question_dict, 'frist vd')
                     verse_dict = {...verse_dict, ...question_dict}
-                    selVerses = Object.values(verse_dict).filter(Verse =>
+                    delog(verse_dict, 'Vers dict after add')
+
+                    selVerses = Object.values(verse_dict).filter(Verse =>{
                         
-                        quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type))
+                       
+                        const Test =  quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type);
+                     if(Test){
+                        return Test
                      }else{
+                        delog(Verse)
+                     }
+                    });
+                    
+                    }else{
                         quizSettings.numQuestions = clientAnswersLength;
                         selVerses = [];
                         Object.keys(clientanswers).forEach(key => {
@@ -1191,23 +1544,23 @@ function handleSpaceEvent() {
 
                     };
         async function WaitForLoad(){
+            
 
         await Selectdata();
+delog(selVerses, 'selverses')
     
-    if (typeof(verse_dict) != 'object'){
-     
-        
-        
-        alert('Content may be loading Please wait \n If you keep seeing this than there is connection error \n Please restart') }
+    speeddetext = quizSettings.speed_tOf_text;
+    Time = quizSettings.lenOfTimer
+    running = true
          await new_quote(
         quizSettings.quizMode,
         quizSettings.numQuestions,
-        quizSettings.verseSelection, quizSettings.speed_tOf_text)
+        quizSettings.verseSelection, speeddetext)
         progressBar.style.width = '0%';
-            dragElements();
-        
+        delog(selVerses)
+        dragElements();
         if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
-                quiztimer(quizSettings.lenOfTimer)} 
+                quiztimer(Time)} 
         }
         
                 
@@ -1217,17 +1570,78 @@ function handleSpaceEvent() {
             });
 
             btnTOModal.addEventListener('click', () =>{
-                    manageModal('Set quiz settings here');
+                    manageModal(`<div class="option-section">
+                <h3 class="section-title">Set Quiz Settings</h3>
+                <h3 class="section-title">Speed of Text (In Milliseconds)</h3>
+                <div class="range-display-container">
+                    <!-- This is your existing range input. -->
+                    <input type="range" id="speed1" name="numQuestions" value="0" min="0" max="4000">
+                    <!-- Add a new span element to display the current value. -->
+                    <span id="speedValue1">0</span>
+                </div>
+            </div>
+             <div class="option-section">
+                        <h3 class="section-title">Length of Timer (Length of zero will be no timer)</h3>
+                        <input type="number" id="secs1" name="numQuestions1" value="30" min="0" max="1000" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+                    <div class="option-section">
+                    <h3 class="section-title">Verse Selection</h3>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="type" value="d" id="d" >
+                            <span class="radio-custom"></span>
+                            Drag and Drop
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="type" value="t" id="t">
+                            <span class="radio-custom"></span>
+                            Text
+                        </label>
+                    </div>
+                </div>`
+            , true);
+           
+            
+            const speedInput1 = id('speed1'); // Gets the range input element.
+            const speedValueSpan1 = id('speedValue1'); // Gets the span element to display the value.
+            `speedValueSpan1.textContent = speeddetext;
+            speedValueSpan1.value = speeddetext;
+            id(secs1).value = Time;`
+            if(dragEnabled){
+            
+            id('d').checked = true
+            id('t').checked = false
+                    }else{
+                    id('t').checked = true
+                    id('d').checked = false
+            }
+            // Listen for the 'input' event, which fires continuously as the slider is moved.
+            speedInput1.addEventListener('input', (event) => {
+                // Update the text content of the span with the current value of the input.
+                speedValueSpan1.textContent = event.target.value;
+            });
             })
+            
                                         
             next.addEventListener("click", async () => {
+                
                 submitButton.style.display = 'block';
                 updateProgressBar();
                 counterToMax += 1;
 
-                 await new_quote('ftv', quizSettings.numQuestions , quizSettings.verseSelection, quizSettings.speed_tOf_text); 
-                if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'}else {
-                    quiztimer(quizSettings.lenOfTimer)}
+                 
+                
+                await new_quote(
+                    quizSettings.quizMode,
+                    quizSettings.numQuestions,
+                    quizSettings.verseSelection, speeddetext)
+                    //progressBar.style.width = '0%';
+                    //delog(selVerses)
+                    dragElements();
+                    if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
+                            quiztimer(Time)
+                        } 
+                    
             });
 
             
@@ -1239,3 +1653,4 @@ function handleSpaceEvent() {
 quizApp.start(); 
 
 //-- why are LOOKING at my code you are not allowed to read this message so u must tun an d i will kill u inn ur sllp imenat sllep no sllepp no sleep 
+
