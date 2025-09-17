@@ -74,10 +74,10 @@
                         <input type="number" id="secs" name="numQuestions" value="30" min="0" max="1000" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
                     </div>
                     <div class="option-section">
-                        <h3 class="section-title">Speed of Text (In seconds)</h3>
+                        <h3 class="section-title">Speed of Text (In milliseconds)</h3>
                         <div class="range-display-container">
                             <!-- This is your existing range input. -->
-                            <input type="range" id="speed" name="numQuestions" value="0" min="0" max="4000">
+                            <input type="range" id="speed" name="numQuestions" value="0" min="0" max="2000">
                             <!-- Add a new span element to display the current value. -->
                             <span id="speedValue">0</span>
                         </div>
@@ -98,10 +98,10 @@
                 <div class="option-section">
                     <h3 class="section-title">Flight</h3>
                     <div class="checkbox-container">
-                        <label class="toggle-label"><input type="checkbox" name="flight" value="A"> A</label>
-                        <label class="toggle-label"><input type="checkbox" name="flight" value="B"> B</label>
-                        <label class="toggle-label"><input type="checkbox" name="flight" value="C"> C</label>
-                        <label class="toggle-label"><input type="checkbox" name="flight" value="T"> T</label>
+                        <label class="toggle-label"><input type="checkbox" name="flight" value="A" checked> A</label>
+                        <label class="toggle-label"><input type="checkbox" name="flight" value="B" checked> B</label>
+                        <label class="toggle-label"><input type="checkbox" name="flight" value="C" checked> C</label>
+                        <label class="toggle-label"><input type="checkbox" name="flight" value="T" checked> T</label>
                     </div>
                 </div>
 
@@ -123,7 +123,13 @@
             </div>
 
            <div class="quiz-content">
-                <textarea spellcheck="false" placeholder="Enter Verse" id="verse" class="blueborder"></textarea>
+            <div id="questionNumber">1</div>
+            
+            <div class="text-container" id="quiz-text-content">
+                <h2 id="main-text"></h2>
+                <h2 id="second-text" class="blinking-text"></h2>
+            </div>
+            <textarea spellcheck="false" placeholder="Enter Verse" id="verse" class="blueborder"></textarea>
                <div id="versedrop" class="drag-zone draggable-container blueborder"> </div>
                <div id="verse-con" class="draggable-container drag-zone blueborder"> </div>
                 <!--<div class="quiz-footer">
