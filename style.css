@@ -1,3 +1,4 @@
+/* General Body Styles */
 body {
     margin: 0;
     padding: 0;
@@ -654,4 +655,82 @@ input[type='range'] {
     border: 2px solid #e74c3c;
     
     border-radius: 12px;
+}
+/* Hides the default radio input. */
+.radio-input {
+    display: none;
+}
+
+/* Custom radio button styling. */
+.custom-radio {
+    /* Sets the size of the custom radio button. */
+    width: 20px;
+    height: 20px;
+    /* Creates a circular shape. */
+    border-radius: 50%;
+    /* Adds a border. */
+    border: 2px solid #bdc3c7;
+    /* Sets the background color. */
+    background-color: #ecf0f1;
+    /* Ensures the element doesn't shrink. */
+    flex-shrink: 0;
+    /* Adds a small space to the right of the button. */
+    margin-right: 10px;
+    /* Adds a smooth transition for the color change. */
+    transition: all 0.2s ease-in-out;
+}
+
+/* Styles the custom radio button when it's checked. */
+.radio-input:checked + .custom-radio {
+    /* Changes the background color when checked. */
+    background-color: #3498db;
+    /* Adds a border color when checked. */
+    border-color: #2980b9;
+    /* Adds a subtle shadow. */
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Adds a small inner circle to the custom radio when it's checked. */
+.radio-input:checked + .custom-radio::after {
+    /* Creates the pseudo-element. */
+    content: '';
+    /* Positions the pseudo-element in the center of the radio button. */
+    position: relative;
+    top: 50%;
+    left: 50%;
+    /* Sets the size of the inner circle. */
+    width: 10px;
+    height: 10px;
+    /* Creates a circular shape. */
+    border-radius: 50%;
+    /* Sets the background color to white. */
+    background: white;
+    /* Positions the inner circle. */
+    transform: translate(-50%, -50%);
+    /* Adds a smooth transition for the appearance of the inner circle. */
+    transition: all 0.2s ease-in-out;
+}
+#questionNumber {
+    /* Positions the element in the top-right corner. */
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    /* Sets the size of the circle. */
+    width: 40px;
+    height: 40px;
+    /* Creates a circular shape. */
+    border-radius: 50%;
+    /* Sets the background color. */
+    background-color: #3498db;
+    /* Sets the text color. */
+    color: white;
+    /* Centers the number inside the circle using flexbox. */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Sets the font size and weight. */
+    font-size: 1.2rem;
+    font-weight: bold;
+    /* Adds a subtle shadow for a 3D effect. */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
