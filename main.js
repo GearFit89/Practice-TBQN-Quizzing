@@ -5,7 +5,11 @@ const quizApp = (function() {
 
     }
     let running = true;
-    
+    let genQuiz = false;
+    const testIsGenQuiz = id('isGenQuiz');
+    if(testIsGenQuiz){
+        genQuiz = true;
+    }
     const speedInput = id('speed'); // Gets the range input element.
             const speedValueSpan = id('speedValue'); // Gets the span element to display the value.
             
@@ -47,8 +51,9 @@ const quizApp = (function() {
             }
             const questionsText = await  questResponse.text()
             console.log('data from questions has been loaded as text', questionsText)
-
-            return processQuestions(questionsText)
+            const returnQ = await processQuestions(questionsText)
+            delog(returnQ)
+            return returnQ
 
 
         } catch (error) {
@@ -75,7 +80,8 @@ const quizApp = (function() {
            //console.log('Fetched data:', data); // Debugging log
     
             // Process the fetched data
-           return processQuotes(data);
+            const returnq = await processQuotes(data);
+            return returnq
         } catch (error) {
             console.error('Error loading quotes:', error);
         }
@@ -85,7 +91,7 @@ const quizApp = (function() {
     const updateClientInfo = (info, name, setItem = true) => {
         // Check if the user wants to set an item
         if (setItem) {
-            // Correctly stringify the info object
+             // Correctly stringify the info object
             const stringifiedInfo = JSON.stringify(info);
     
             // Correctly use localStorage.setItem with both a key (name) and a value
@@ -194,12 +200,20 @@ const quizApp = (function() {
         // If no unique word is found, return [null, -1]
         return [null, ];
     }
+    let question_dict2 = [];
+        let verse_dict2 = []
     let Time;
+    let exANs = [];
+    let altans = [];
+    let cleanans =[];
     let speeddetext;
     let ftvTriggerI;
     let trigChar;
+    let question_dict = []
     let QUEST;
     let randwords = [];
+    let qs = [];
+    
     let currerentVerse;
     let startTimer = false;
     let counterToMax = 0;
@@ -222,6 +236,7 @@ const quizApp = (function() {
     let timerid;
     let globalquestype;
     let quest;
+    let ftv;
     const morebtn = id("More")
     const next = id('next');
     const btnTOModal = id('BTN')
@@ -237,6 +252,7 @@ const quizApp = (function() {
     let numverses = 1;
     let verse_dict;
     let ANS;
+    let readyLoad =   false
     let ANS2;
     let isquote = false;
     let isftv = false;
@@ -247,12 +263,12 @@ const quizApp = (function() {
     let c = 0;// counter
     let selVerses =[];
      
-const delog = (ll='', lj='',pp='', plp='') =>{
+const delog = (...args) =>{
     if (deblog) {
-    console.log(ll, lj, pp, plp)
+    console.log(...args)
 }
 }    
-    function processQuestions(data) {
+    async function processQuestions(data) {
     const dataSplit = data.trim().split('\n');
     let questiondict = {};
 
@@ -313,7 +329,7 @@ const delog = (ll='', lj='',pp='', plp='') =>{
     console.log('processed quotes', questiondict);
     return questiondict;
  }
-    function processQuotes(quotesFTVs) {
+   async function processQuotes(quotesFTVs) {
         
         const data = quotesFTVs.trim().split("\n");
         let versedict = {};
@@ -366,23 +382,24 @@ const delog = (ll='', lj='',pp='', plp='') =>{
 
 
     }
+
     async function initializeQuiz() {
-        question_dict = await loadQuestions();
-        verse_dict = await loadQuotes();
-        if (!verse_dict || !question_dict) {
-            console.error('Failed to load verse_dict. Exiting quiz initialization.');
-            return;
+        try {
+            question_dict = await loadQuestions();
+            verse_dict = await loadQuotes();
+            console.log('Loaded question_dict:', question_dict);
+            console.log('Loaded verse_dict:', verse_dict);
+            if (!verse_dict || !question_dict) {
+                console.error('Failed to load verse_dict. Exiting quiz initialization.');
+                return;
+            }
+            readyLoad = true;
+        } catch (error) {
+            console.error('Error initializing quiz:', error);
         }
-        console.log('Quiz initialized with verse_dict');
-        console.log("Questions are good")
-        // Call dependent functions here
     }
-   
-        if (!clientanswers) {
-            clientanswers = {};
-            console.log("clientanswers initialized as an empty object.");
-        }
-        initializeQuiz();
+    
+         initializeQuiz();
 
 
         function manageModal(mtxt="hi", set=false, modalid='settings', mcon="modaldiv", closebtn='closeModalBtn'){
@@ -504,69 +521,152 @@ const delog = (ll='', lj='',pp='', plp='') =>{
             ver.ariaDisabled = 'true';
         }
         
-
-
-        function findTrigChar(list, _verse, vn, lEn=200){
-            let unique = true;
-            let og_v = _verse.split('')
-            let k = 1
-            let l = 1
-            let _q;
-            let f = true
-            _q = stripChar(_verse)
-            _q= _q.split('')
-            for(let i = 0; i < lEn; i++){
-            //list.forEach(v =>{
-                f = true;
-                for(v of list){
-                    if(v ==  vn ){
-                        unique = false
-                        f = false
-                        break;
-                    }
-                
-                    
-                    let Q = stripChar(v.verse)
-                    Q = Q.split('')
-                    
-                   
-                    //const charToStrip = new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ']);
+        function mapTchar(originalString, strippedIndex) {
+            // This function maps an index from a stripped string back to the original string.
+            let charCount = 0; // Initializes a counter for characters that are not stripped.
+            let originalIndex = -1; // Initializes the index in the original string.
         
-                        
-                 if(_q.slice(0, k).join('') === Q.slice(0, k).join('')){
-                            unique = false
-                            break;
-                            
-                   }
-                        
+            // Loop through the characters of the original string.
+            for (let i = 0; i < originalString.length; i++) {
+                const char = originalString[i]; // Gets the current character.
                 
-            }
-            //})
-            if(!unique){
-                
-                unique = true;
-                if(f){
-                k++};
-            }else{
-                let m = 0;
-                let n = 0;
-                for(let o of og_v){
-                    if(o === _q[m]){
-                        m++;
-
+                // Check if the character is not one of the stripped characters.
+                if (!new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ']).has(char)) {
+                    // If the counter matches the target stripped index, we found our original index.
+                    if (charCount === strippedIndex) {
+                        originalIndex = i; // Set the original index.
+                        break; // Exit the loop.
                     }
-                    n++;
-                    if(m === k){
-                        delog(n,'n')
-                        return [n, og_v[n]]
-                    }
+                    charCount++; // Increment the counter for non-stripped characters.
                 }
-                //return k
             }
+            
+            return originalIndex; // Return the found original index.
         }
-        return 'no';
+function findTrigChar(list, _verse, vn, lEn=9000){
 
-        };
+let unique = true;
+
+let og_v = _verse.split('')
+
+let k = 1
+
+let l = 1
+
+let _q;
+
+let f = true
+
+_q = stripChar(_verse)
+
+_q= _q.split('')
+
+for(let i = 0; i < lEn; i++){
+
+//list.forEach(v =>{
+
+
+for(v of list){
+
+// = true;
+
+if(stripChar(v.verse) === stripChar(_verse) ){
+
+///// unique = false
+
+//f = false
+
+continue
+
+}
+
+
+
+let Q = stripChar(v.verse)
+
+Q = Q.split('')
+
+
+
+//const charToStrip = new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ']);
+
+
+
+if(_q.slice(0, k).join('') === Q.slice(0, k).join('')){
+
+unique = false
+
+break;
+
+
+}
+
+
+
+}
+
+//})
+
+if(!unique){
+
+
+unique = true;
+
+
+k++
+
+}else{
+
+let m = 0;
+
+let n = 0;
+
+delog(k,'num found');
+delog('this is map', mapTchar(og_v, k))
+
+return mapTchar(og_v, k -1);
+
+for(let o of og_v){
+
+if(o === _q[m]){
+
+m++;
+
+
+
+}
+
+n++;
+
+if(m === k){
+
+delog(n,'n')
+
+return [n, og_v[n]]
+
+}
+
+}
+
+//return k
+
+}
+
+}
+
+return 'no';
+
+
+
+};
+let list= 'h';
+const verseToFind = "Hello, World! This is a test.";
+//const k = findTrigChar(list, verseToFind);
+
+ //const originalIndex = mapTchar(strippedVerse, verseToFind, k - 1);
+// Placeholder for delog and stripChar functions to make the code runnable.
+// In your actual application, tuld be properly defined.
+
     function levenshtein(a, b, Percent=75) {
         const matrix = [];
 
@@ -686,7 +786,7 @@ isrendered = false;
         };
         window.addEventListener('keydown', stopAnimation);
     
-        // This is the core logic
+        // This is the core logic of the whole code
         function typeWriter() {
             if (isStopped || wordIndex >= words.length) {
                 window.removeEventListener('keydown', stopAnimation);
@@ -769,7 +869,167 @@ function measure(item1, item2, split = false, splitValue = '') {
         };
 
     // this function checks user input
+    function checkAlt(ogphars) {
+        // This variable will hold the modified string.
+        let switched = stripChar(ogphars);
+    
+        // A standard for loop is used to iterate through the alternative answers.
+        for (let i = 0; i < altans.length; i++) {
+            // Gets the current alternative phrase from the altans array.
+            const altPhrase = stripChar(altans[i]);
+            // Gets the corresponding correct answer.
+            const correctPhrase = stripChar(corspondAns[i]);
+    
+            // Creates a regular expression to find the alternative phrase globally and case-insensitively.
+            // The escape function ensures special characters in the phrase are handled correctly.
+            const escapedAlt = altPhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escapedAlt, 'gi');
+    
+            // Tests if the original phrase contains the alternative phrase.
+            if (regex.test(switched)) {
+                // Replaces the entire alternative phrase with the corresponding correct phrase.
+                switched = switched.replace(regex, correctPhrase);
+                // Returns the corrected string immediately after the first match is found.
+               
+            }
+        }
+        // Returns the original phrase if no match was found.
+        return switched;
+    }
+         
+function manageAnswer(ans,  issplit=false, og =''){
+    //removes () and[] from answers
+    let inAns;
+    let lastWord;
+    let altPhar ='';
+      exANs = [];
+     altans = [];
+    cleanans = [];
+     corspondAns =[]
+    let isAlt = false;
+    let isEx = false;
+   
+    //iterator 
+    let ii = 0;
+    //let exANs = null;
+    if(!issplit){ inAns = ans.split(' ')}else{
+         inAns = ans;
+    }
+   //if(inAns.includes('(') || inAns.includes('[')){
+    for(let i of inAns){
+        if(i.includes('[') || isEx){
+            //maybe
+            isEx = true
+            exANs.push(i);
+            if(i.includes(']')){
+                isEx = false
+            }
+            
 
+        }else if(i.includes('(') || isAlt){
+        //i.includes('(') || isAlt){
+            //altans.pop()
+            isAlt = true
+            
+            altPhar += `${i} `;
+             if(i.includes(')') || i.includes(',')){
+              
+                corspondAns.push(lastWord);
+                altans.push(altPhar);
+                altPhar = '';
+
+
+             }
+            if(i.includes(')')){
+                isAlt = false;
+                
+                  //altans.push(altPhar.join(' '));
+            }
+            //
+        }else{
+            //altans.push(i)
+             lastWord = i
+            cleanans.push(i)
+        }
+    ii++;
+    
+       
+
+
+
+    }
+    const switched = checkAlt(og)
+    return [cleanans, altans, corspondAns, exANs, switched]
+   
+
+}
+
+    const test9 = manageAnswer('the child (Jesus the r, ruler) is going to the place (city) to see [and go]', false, 'the Jesus the r is going to the city')
+    delog(test9, 'test m ans');
+
+
+    function remover(pharse){
+
+
+    }
+    function ad(pr, ar, nu){
+        for(let i =0; i < nu; i++){
+           ar.push(pr);
+        }
+        
+
+    }
+   async function generateQuiz(quoteC = 3, ftvC = 2, lengthQuiz){
+        // quotes and ftvs
+        let qf = [];
+        //questions
+       
+        let atC = Math.floor(Math.random() * 4 +1)
+        let sqC = Math.floor(Math.random() * 4 +1)
+        const lenQ = lengthQuiz - quoteC + ftvC;
+        const alrand = sqC + atC;
+        let qC = lengthQuiz - alrand; 
+        //adds the stuff
+        ad('question',qs, qC)
+        ad('SQ:',qs, sqC)
+        ad('According to',qs, atC)
+        ad('quote',qf, quoteC)
+        ad('ftv',qf, ftvC)
+        qf = shuffleArray(qf);
+        qs = shuffleArray(qs);
+        let qfnum = 1;
+        let ii = 0;
+        let rAt = selVerses.filter(Verse=> Verse.type === 'According to' );
+        let rSq = selVerses.filter(Verse=> Verse.type === 'SQ:' )    
+        let rQ = selVerses.filter(Verse=> Verse.type === 'question' )
+        let rFQ =  selVerses.filter(Verse=> Verse.type === 'ftv/quote' )  
+        selVerses =[]                                     
+        for(let i = 0; i < lengthQuiz; i++){
+            if(i === qfnum){
+                //declare ftv globally
+                //ftv = qs[ii]
+              
+                   const yV =  shuffleArray(rFQ, true)[0]
+                   yV.type = qf[ii];
+                   selVerses.push(yV)
+                qfnum += 4;
+                ii++
+            }else{
+                if(qs[i] === 'question'){
+                    selVerses.push(shuffleArray(rQ, true)[0])
+                }else if(qs[i] === 'SQ:'){
+                    selVerses.push(shuffleArray(rSq, true)[0]);
+                }else{
+                    selVerses.push(shuffleArray(rAt, true)[0]);
+                }
+                
+            }
+
+        }
+        delog(selVerses, 'hope')
+return
+       
+    }
     function clear(par3) {
         morebtn.style.display = 'none';
         vD.classList.remove('correct', 'incorrect');
@@ -798,7 +1058,7 @@ function measure(item1, item2, split = false, splitValue = '') {
           clearInterval(timerid)
          subm.style.display = 'none';
 
-        console.log('quest valur at checkans:', quest)
+        delog('quest valur at checkans:', quest, ANS)
         let inVerse = ver.value
         id('correctbtn').style.display = "none";
         id('incorrectbtn').style.display = "none";
@@ -876,9 +1136,9 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
   };
   
    
-        console.log('quest valur at checkans after AI:', ANS)
-        
-       const result = checkAdvancedAnswer(inVerse, ANS);
+        delog('quest valur at checkans after AI:', ANS)
+        let result = manageAnswer(inVerse)[4];
+       result = checkAdvancedAnswer(inVerse, ANS);
          delog('Result of advanced check:', result); // Log the result for debugging.
          if (result === 'Correct') {
             id('correctbtn').style.display = "block";
@@ -995,6 +1255,7 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
         
         clearInterval(timerid);
     clear('quizHeader');
+    
         // Hide quiz scene and show start scene
         document.getElementsByTagName('main')[1].style.display = 'none';
     
@@ -1059,24 +1320,26 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
         }
         return array;
     }
-
+let currentQNum = 2;
+function upNumQ(params = currentQNum) {
+id('questionNumber').textContent = currentQNum
+currentQNum ++;
+    
+}
      const new_quote = async (_ftv ='quote', maxnum = 20, rand = 'random', speed= 0) => {
         next.style.display = 'none';
     if (counterToMax === maxnum) {
             showQuizSummary();
             return;} // Stop the function here
         let phars = '';
-        if (rand === "random") {
-            const randomIndex = Math.floor(Math.random() * selVerses.length);
-            cnum = randomIndex;
-        } else {
+       
             if (currentVerseIndex >= selVerses.length) {
                 currentVerseIndex = 1;
             }
             cnum = currentVerseIndex;
             currentVerseIndex++;
-        }
-        let ftv = selVerses[cnum].type;
+        
+         ftv = selVerses[cnum].type;
          
          let vtype;
         if (quizSettings.quizMode.includes('ftv')) {
@@ -1092,14 +1355,10 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
         if (isquote && isftv && ftv === 'ftv/quote') {
             vtype = 'both';
         }
-         const verse_dict2 = selVerses.filter(itemsel2=>{
-           return itemsel2.type === 'ftv/quote'
-        })
-        delog('question_dict','2')
-        const question_dict2 = selVerses.filter(itemsel=>{
-            return itemsel.type !== 'ftv/quote'
-        })
-        delog(question_dict2, verse_dict2);
+
+        
+
+       
 
          if(ftv === 'ftv/quote'){
             ftv = vtype
@@ -1132,6 +1391,8 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
             ftvTriggerI = findUniqueTriggerWord(words, verse_dict2, cnum , 5)[1];
             phars = first_5.join(' ')
             quest = words.slice(5).join(' ');
+            delog(quest)
+            if(quest) tChar = findTrigChar(verse_dict2, phars, 0, phars.split('').length)
             //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
               
             await delay_text(`Finish the Verse:`,'h4','quizHeader',0, 'purple', 5);
@@ -1140,6 +1401,7 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
             const verseData = selVerses[cnum];
             phars = verseData.ref;
             quest = verseData.verse;
+            tChar = findTrigChar(verse_dict2, quest, 0)
             //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
             
             await delay_text(`${selVerses[cnum].numVerses} Verse Quote:`,'h4','quizHeader',0,'purple');
@@ -1152,10 +1414,14 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
         QUEST = getaq[0];
         ANS = getaq[1];
         phars = `${QUEST}?`;
-        selVerses[cnum].verse = ANS;
+        selVerses[cnum].verse = QUEST;
         QUEST = QUEST.split(' ')
+        tChar = findTrigChar(question_dict2, QUEST.join(' '), 0, QUEST.join(' ').split('').length)
         ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
         QUEST = QUEST.join(' ');
+        if(!ANS){
+            manageModal('Opps a error happen please reset error code(ANS404)')
+        }
         `if(ANS.includes('(')){
           const sA =  ANS.split('(');
           ANS2 = sA[1];
@@ -1178,20 +1444,17 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
         QUEST = getaq[0];
         ANS = getaq[1];
         phars = `According To: ${QUEST}?`;
-        selVerses[cnum].verse = ANS;
+        selVerses[cnum].verse = QUEST;
         QUEST = QUEST.split(' ')
+        tChar = findTrigChar(question_dict2, QUEST.join(' '), 0, QUEST.join(' ').split('').length)
         //ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
         QUEST = QUEST.join(' ');
-        if(ANS.includes('(')){
-          const sA =  ANS.split('(');
-          ANS2 = sA[1];
-          ANS = sA[0];
+        
+        if(!ANS){
+            manageModal('Opps a error happen please reset; error code(ANS404)')
         }
-        if(ANS.includes('[')){
-            ANS =  ANS.split('[')[0]
-            
-          }
-        trigChar = findUniqueTriggerWord(QUEST.split(''), question_dict2, cnum , QUEST.length)[1];
+        
+        //trigChar = findUniqueTriggerWord(QUEST.split(''), question_dict2, cnum , QUEST.length)[1];
         await delay_text(`Question`,'h4','quizHeader',0,'purple');
         
         }
@@ -1203,20 +1466,16 @@ const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
         QUEST = getaq[0];
         ANS = getaq[1];
         phars = `${QUEST}?`;
-        selVerses[cnum].verse = ANS;
+        selVerses[cnum].verse = QUEST;
         QUEST = QUEST.split(' ')
-        tChar = findTrigChar(question_dict2, QUEST.join(' '), 0, 100)[0]
+        tChar = findTrigChar(question_dict2, QUEST.join(' '), 0, QUEST.join(' ').split('').length)
         ftvTriggerI = findUniqueTriggerWord(QUEST, question_dict2, cnum , QUEST.length)[1];
         QUEST = QUEST.join(' ');
-        if(ANS.includes('(')){
-          const sA =  ANS.split('(');
-          ANS2 = sA[1];
-          ANS = sA[0];
+        if(!ANS){
+            manageModal('Opps a error happen please reset error code(ANS404)')
         }
-        if(ANS.includes('[')){
-            ANS =  ANS.split('[')[0]
-            
-          }
+        
+          
         //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
         await delay_text(`Question`,'h4','quizHeader',0,'purple');
         
@@ -1324,6 +1583,7 @@ function dragElements(){
     let blocks;
     if(selVerses[cnum].type != 'ftv/quote'){
         blocks = ANS.split(' ');
+        blocks = manageAnswer(blocks, true)[0]
     selVerses.forEach(itemSelected => {
         const randWord = shuffleArray(itemSelected.verse.split(' '), true)[0];
         randwords.push(randWord);
@@ -1442,7 +1702,7 @@ function handleSpaceEvent() {
     if(Answer2[Answer2.length -1] != 's' && user_word[ user_word.length -1] === 's'){
         //add dom for
         id('puralbtn').style.display = 'block';
-    }
+    }else
     
      //normal comparsion
     if (Answer2 && levenshtein(stripChar(user_word), stripChar(Answer2), 53)) {
@@ -1472,7 +1732,7 @@ function handleSpaceEvent() {
                 const clientAnswersLength = Object.keys(clientanswers).length;
                 answers = [];
                 correctCount = 0;
-                if(!verse_dict || !question_dict){
+                if(!verse_dict || !question_dict || !readyLoad){
                     manageModal('Content is still loading please wait a moment')
                     return //show a friendly wait message and have the user reclick the start button 
                     
@@ -1568,11 +1828,11 @@ function handleSpaceEvent() {
                     selVerses = Object.values(verse_dict).filter(Verse =>{
                         
                        
-                        const Test =  quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type);
+                        const Test =  quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type) && Verse.verse;
                      if(Test){
                         return Test
                      }else{
-                        delog(Verse)
+                        //delog(Verse)
                      }
                     });
                     
@@ -1584,9 +1844,9 @@ function handleSpaceEvent() {
         const typeref = key.split('@');
         if (typeref.length === 3) {
             const type3 = typeref[0];
-            const ref3 = typeref[1];
+            const ref3 = typeref[1]                                                                                                                                                                           
             const numv3 = typeref[2];
-            const verseObj = Object.values(verse_dict).find(Verse => Verse.ref === ref3);
+            const verseObj = Object.values(verse_dict).find(Verse => Verse.ref === ref3 && Verse.type === type3);
             const verse3 = verseObj ? verseObj.verse : '';
             selVerses.push({
                 verse: verse3,
@@ -1601,18 +1861,64 @@ function handleSpaceEvent() {
         console.warn('Key is not a string:', key);
     }
 });
+
 }
 
+return;
                     };
         async function WaitForLoad(){
             
 
         await Selectdata();
+        async function loadgen(){
+            if(genQuiz){
+                let F;
+                let Q;
+                if(quizSettings.flights === 'T'){
+                    Q = 3;
+                    F = 2
+                    
+                }else if(quizSettings.flights === 'C'){
+                    Q = 2;
+                    F = 3
+                    
+                } else if(quizSettings.flights === 'B'){
+                    Q = 2;
+                    F = 3
+                    
+                } else if(quizSettings.flights === 'A'){
+                    Q = 2;
+                    F = 3
+                    
+                } 
+                 await generateQuiz();
+                return
+            }else{
+                return
+            }
+        }
+        await loadgen()
 delog(selVerses, 'selverses')
     
     speeddetext = quizSettings.speed_tOf_text;
     Time = quizSettings.lenOfTimer
     running = true
+    async function loadVerseDicts (){
+        verse_dict2 = selVerses.filter(itemsel2=>{
+         return itemsel2.type === 'ftv/quote'
+      })
+      delog('question_dict','2')
+       question_dict2 = selVerses.filter(itemsel=>{
+          return itemsel.type !== 'ftv/quote'
+      })
+      delog(question_dict2, verse_dict2);
+  };
+
+  await loadVerseDicts();
+   if (quizSettings.verseSelection === "random") {
+            selVerses = shuffleArray(selVerses);
+        } 
+       
          await new_quote(
         quizSettings.quizMode,
         quizSettings.numQuestions,
@@ -1620,14 +1926,17 @@ delog(selVerses, 'selverses')
         progressBar.style.width = '0%';
         delog(selVerses)
         dragElements();
+        //generateQuiz(2, 3, 20)
         if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
                 quiztimer(Time)} 
+                return;
         }
         
                 
-             
-                Start();
-                WaitForLoad();
+        await WaitForLoad();
+
+                 Start();
+                 return;
             });
 
             btnTOModal.addEventListener('click', () =>{
@@ -1662,7 +1971,7 @@ delog(selVerses, 'selverses')
                 </div>`
             , true);
            
-            
+           
             const speedInput1 = id('speed1'); // Gets the range input element.
             const speedValueSpan1 = id('speedValue1'); // Gets the span element to display the value.
             `speedValueSpan1.textContent = speeddetext;
@@ -1685,12 +1994,12 @@ delog(selVerses, 'selverses')
             
                                         
             next.addEventListener("click", async () => {
-                
+                upNumQ();
                 submitButton.style.display = 'block';
                 updateProgressBar();
                 counterToMax += 1;
 
-                 
+                 if(selVerses[cnum].type != 'ftv/quote') selVerses[cnum].verse = selVerses[cnum].aq;
                 
                 await new_quote(
                     quizSettings.quizMode,
@@ -1699,6 +2008,7 @@ delog(selVerses, 'selverses')
                     //progressBar.style.width = '0%';
                     //delog(selVerses)
                     dragElements();
+                    //generateQuiz(2,3,20)
                     if (quizSettings.lenOfTimer === 0){ timerbtn.style.display = 'none'} else{
                             quiztimer(Time)
                         } 
