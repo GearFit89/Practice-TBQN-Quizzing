@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "name": "yes",
+  "version": "1.0.0",
+  "description": "Quizzing logic and server",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GearFit89/Practice-TBQN-Quizzing.git"
+  },
+  "keywords": [],
+  "author": "John <jscram1775@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GearFit89/Practice-TBQN-Quizzing/issues"
+  },
+  "homepage": "https://github.com/GearFit89/Practice-TBQN-Quizzing#readme",
+  "devDependencies": {}
+}
