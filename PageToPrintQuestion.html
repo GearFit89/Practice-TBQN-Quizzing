@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Print Test</title>
+    <!-- Load Inter font for consistency -->
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles for the Test Harness (Non-Print View) */
+        body {
+            font-family: 'Inter', sans-serif; /* Set the default font */
+            background-color: #f4f4f4; /* Light background */
+            padding: 20px; /* Add padding around the content */
+            text-align: center; /* Center content */
+        }
+    
+        .button {
+            padding: 12px 24px; /* Set padding for the button */
+            margin-top: 20px; /* Add margin above the button */
+            background-color: #4f46e5; /* Indigo color for the button */
+            color: white; /* White text */
+            border: none; /* No border */
+            border-radius: 8px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 16px; /* Font size */
+            font-weight: 700; /* Bold font weight */
+            transition: background-color 0.2s; /* Smooth transition */
+            box-shadow: 0 4px #3730a3; /* Shadow for depth */
+        }
+    
+        .button:hover {
+            background-color: #3730a3; /* Darker shade on hover */
+        }
+        
+        /* PREVIEW MODE STYLES */
+        #printArea {
+            /* Now visible by default as a preview container */
+            display: block; 
+            margin: 20px auto; /* Center the container on the screen */
+            width: 90%; /* Use 90% of the screen width */
+            max-width: 1200px; /* Limit max width for readability */
+            background-color: white; /* White background for contrast */
+            padding: 20px; /* Add padding */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Clearer shadow for a lifted look */
+            text-align: left; /* Align text to the left */
+            min-height: 200px; /* Ensure a visible area even if empty */
+        }
+        
+        /* ----------------------------------------------------------------- */
+        /* PRINT AND PREVIEW CONTENT STYLES (Shared) */
+        /* ----------------------------------------------------------------- */
+        
+        /* 1. Base Font and Layout for Preview */
+        .print-header {
+            /* FIX: Corrected font family syntax for 'Times New Roman' */
+            font-family: Georgia, 'Times New Roman', Times, serif; 
+            font-size: 9pt; /* Smaller base font for max content per page */
+            color: #000;
+            margin: 0;
+            padding: 0;
+            text-align: left;
+        }
+    
+        /* 4. Print Header Styling (Centering, Removing Space, Adding Separator) */
+        .print-header {
+            text-align: center; /* Center the header text */
+            margin-bottom: 5pt; /* Space below the dividing line */
+            padding-bottom: 5pt; /* Padding above the dividing line */
+            border-bottom: 1px solid #000; /* Add a clear line separator */
+        }
+        
+        /* CRITICAL FIX: Remove default browser margins from h1 and p elements */
+        .print-header h1,
+        .print-header p {
+            margin: 0; /* Removes default top and bottom margins from the text elements */
+            padding: 0; /* Ensures no padding contributes to the space */
+            line-height: 1.2; /* Tighter line spacing */
+        }
+    
+        .print-title {
+            font-size: 14pt; /* Title font size */
+            font-weight: bold;
+        }
+    
+        /* 5. Highlighting Styles */
+        .highlight-ftv {
+            color: #8b5cf6 !important; /* Purple color for FTV reference */
+            font-weight: bold;
+        }
+        .highlight-word {
+            color: #4f46e5 !important; /* Blue color for highlighted words */
+            font-weight: bold;
+            text-decoration: underline; /* Add underline for better print visibility */
+        }
+        .highlight-char {
+            color: #B45000 !important; /* Darker orange/brown for highlighted characters */
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    
+        /* 6. Questions Grid Styling (Box Structure and Borders) */
+        .questions-grid {
+            width: 100%;
+            /* Comment: Apply a single solid border around the entire grid, now in dark slate gray */
+            border: 1px solid #475569; 
+            display: grid;
+            /* Column definition: 4 columns (20%, 10%, 30%, 40%) */
+            grid-template-columns: 20% 10% 30% 40%; 
+            gap: 0; /* Remove gap to make borders continuous */
+            page-break-inside: avoid; /* Prevents breaking inside a row, but not the entire grid */
+            /* FIX: Corrected font family syntax for 'Times New Roman' */
+            font-family: Georgia, 'Times New Roman', Times, serif; /* Apply font to content */
+            font-size: 9pt; /* Apply font size to content */
+            /* FIX: Ensure no unexpected space is below the header */
+            margin-top: 0; 
+        }
+    
+        .grid-header {
+            font-weight: bold;
+            background-color: #ccfbf1; /* Light teal background for headers */
+            padding: 6pt; 
+            font-size: 10pt; 
+            text-align: center; /* All headers centered */
+            /* Internal header borders match the new dark slate gray */
+            border-right: 1px solid #475569;
+            border-bottom: 1px solid #475569;
+        }
+        /* FIX: Remove right border from the last column header (the 4th column) */
+        .questions-grid .grid-header:nth-child(4n) { 
+            border-right: none;
+        }
+    
+        .grid-item {
+            padding: 6pt; 
+            word-wrap: break-word;
+            font-size: 9pt; 
+            /* FIX: Center alignment for all grid-item content */
+            text-align: center; 
+            /* Internal grid item borders are now a lighter slate gray */
+            border-right: 1px solid #94a3b8; 
+            border-bottom: 1px solid #94a3b8;
+        }
+        
+        /* Zebra striping - Target items of the 2nd, 4th, 6th, etc., rows for an alternate background color. (4 columns per row) */
+        .questions-grid .grid-item:nth-child(8n + 9),
+        .questions-grid .grid-item:nth-child(8n + 10), 
+        .questions-grid .grid-item:nth-child(8n + 11), 
+        .questions-grid .grid-item:nth-child(8n + 12) {
+            background-color: #f0f9ff; /* Very light blue/off-white for even rows */
+        }
+    
+        /* FIX: Ensure the last column items (the 4th column) don't have a right border */
+        .questions-grid .grid-item:nth-child(4n) {
+            border-right: none;
+        }
+        /* FIX: Remove bottom border from the last row items (last 4 items) */
+        .questions-grid div:nth-last-child(-n+4) {
+             border-bottom: none;
+        }
+        
+        /* ----------------------------------------------------------------- */
+        /* PRINT STYLES - Ensures clean output if user still prints manually */
+        /* ----------------------------------------------------------------- */
+        @media print {
+            /* 1. Global Reset for Print */
+            body {
+                margin: 0 !important; /* Comment: Eliminate default body margins to start content at top */
+                padding: 0 !important; /* Comment: Eliminate default body padding */
+            }
+    
+            /* 2. Hide Non-Print Elements */
+            body > *:not(#printArea):not(script) {
+                display: none !important; /* Comment: Hide everything except the print area */
+            }
+            
+            /* 3. Reset Print Area for Tight Printing & New Font */
+            #printArea {
+                padding: 0; /* Comment: Remove padding to eliminate blank space */
+                margin: 0; /* Comment: Remove margin to eliminate blank space */
+                box-shadow: none; /* Comment: Remove box shadow for printing */
+                width: 100%; /* Comment: Use full width for printing */
+                /* NEW FONT: Changed font stack for better number/letter clarity in print */
+                font-family: Verdana, Arial, sans-serif !important; 
+            }
+    
+            /* 4. Print Header Styling (ensure no space) */
+            .print-header {
+                margin: 0; /* Comment: Remove external margins */
+                padding: 0; /* Comment: Remove padding */
+                padding-bottom: 5pt; /* Comment: Add padding below header text */
+                text-align: center; /* Comment: Center header text */
+                border-bottom: 1px solid #000; /* Comment: Add separator line */
+            }
+            .print-header h1, .print-header p {
+                margin: 0; /* Comment: Remove default element margins */
+            }
+
+            /* 5. Questions Grid Styling */
+            .questions-grid {
+                display: grid; /* Comment: Use CSS grid for layout */
+                /* Column definition: 4 columns (20%, 10%, 30%, 40%) */
+                grid-template-columns: 20% 10% 30% 40%; 
+                gap: 0; /* Comment: Remove gap between cells */
+                /* FIX: Remove outer border, individual cells will provide all borders */
+                border: none !important; 
+                page-break-inside: auto; /* Comment: Allow page breaks between rows */
+                margin-top: 0; /* Comment: Remove top margin */
+            }
+
+            /* Print break settings for clean box breaks */
+            /* Comment: Ensure the first cell of a row knows a break can happen here, for clean break on row start */
+            .questions-grid .grid-item:nth-child(4n + 5) { 
+                page-break-before: auto; /* Comment: Allow page break before new row */
+            }
+            
+            .grid-header {
+                /* FIX: Added flex properties for absolute vertical and horizontal centering */
+                display: flex !important; /* Comment: Enable flexbox for centering */
+                align-items: center !important; /* Comment: Center vertically */
+                justify-content: center !important; /* Comment: Center horizontally */
+                /* FIX: Apply full borders to headers & NEW LIGHT GRAY COLOR */
+                border: 1px solid #ccc !important; /* Changed from #444 to #ccc (light gray) */
+                /* FIX: Remove background color */
+                background-color: transparent !important; /* Comment: Ensure no background color prints */
+                text-align: center; /* Comment: Horizontal alignment fallback */
+                white-space: normal; /* Comment: Allow text wrapping */
+                padding: 6pt; /* Comment: Set cell padding */
+                font-size: 9pt; /* Comment: Set font size */
+                font-family: Verdana, Arial, sans-serif !important; /* Apply new font to headers */
+            }
+            /* The header still needs a slightly darker border on the top and left to define the outer edge */
+             .questions-grid .grid-header:first-child,
+             .questions-grid .grid-header:nth-child(2),
+             .questions-grid .grid-header:nth-child(3),
+             .questions-grid .grid-header:nth-child(4) {
+                 /* Apply the slightly darker #444 border only to the very top row's border-top */
+                 border-top: 1px solid #444 !important;
+             }
+             .questions-grid .grid-header:nth-child(1),
+             .questions-grid .grid-header:nth-child(5n+1) {
+                 /* Apply the slightly darker #444 border only to the very first column's border-left */
+                 border-left: 1px solid #444 !important;
+             }
+            
+            /* REMOVED: The previous rule that removed border-right from the last column header (4th column)
+               The new full border rule now correctly adds the closing right border. */
+
+            .grid-item {
+                /* FIX: Added flex properties for absolute vertical and horizontal centering */
+                display: flex !important; /* Comment: Enable flexbox for centering */
+                align-items: center !important; /* Comment: Center vertically */
+                justify-content: center !important; /* Comment: Center horizontally */
+                /* FIX: Apply full borders to every item & NEW LIGHT GRAY COLOR */
+                border: 1px solid #ccc !important; /* Changed from #444 to #ccc (light gray) */
+                /* CRITICAL CHANGE: Set page-break-after to always auto. This helps the browser ensure */
+                /* a bottom line prints even when a row breaks right at the bottom of a page. */
+                page-break-after: auto !important;
+                /* FIX: Remove background color */
+                background-color: transparent !important; /* Comment: Ensure no background color prints */
+                text-align: center; /* Comment: Horizontal alignment fallback */
+                word-wrap: break-word; /* Comment: Ensure long text wraps */
+                white-space: normal; /* Comment: Allow text wrapping */
+                padding: 6pt; /* Comment: Set cell padding */
+                font-size: 9pt; /* Comment: Set font size */
+                font-family: Verdana, Arial, sans-serif !important; /* Apply new font to content */
+            }
+    
+            /* FIX: Ensure the left side border of the first column is a bit bolder to match the header */
+             .questions-grid .grid-item:nth-child(4n+1) {
+                 border-left: 1px solid #444 !important;
+             }
+
+             .question-block {
+        /* Comment: The primary rule: tells the browser to keep the entire block on one page */
+        page-break-inside: avoid; 
+        /* Comment: Modern alias for better cross-browser compatibility */
+        break-inside: avoid;
+    }
+    
+    .separator {
+        /* Comment: Helps prevent the separator line from starting a new page right after a question ends */
+        page-break-before: avoid;
+    }
+
+            
+            /* REMOVED: The previous rule that removed border-right from the last column item (4th column)
+               The new full border rule now correctly adds the closing right border. */
+            
+            /* REMOVED: The previous rule that removed border-bottom from the last row
+               The new full border rule now correctly adds the closing bottom border. */
+            
+            /* Only force *highlight* colors, not background colors */
+            .highlight-ftv, .highlight-word, .highlight-char {
+                -webkit-print-color-adjust: exact !important; /* Comment: Force color printing in Chrome/Safari */
+                color-adjust: exact !important; /* Comment: Force color printing in others */
+            }
+        }
+    </style>
+   
+   
+<body>
+    <div id="appContainer">
+        <h1 class="text-2xl font-bold">Print Functionality Test</h1>
+        <p>Click the button to preview the structured, printable question list.</p>
+        
+        <!-- Button to trigger the print function -->
+        <button id="printBtn" class="button">Print All Questions</button>
+    </div>
+
+    <!-- Container where the print content will be injected -->
+    <div id="printArea"></div> 
+
+    <script type="module">
+        import { QuizApp } from './main.js';
+        //when i change deblog to false all the the delog functions will stop 
+        QuizApp.deblog = true;
+        //updateClientInfo(this.selVerses, 'QuestionsToPrint', true) example
+        
+       let allQs = {};
+       //console.log(allQs, 'all')
+       const allquestionsinquizapp =  QuizApp.updateClientInfo(null, 'QuestionsToPrint', false);
+       const quizSettings = QuizApp.updateClientInfo(null, "QuizSettings" , false);
+    console.log(quizSettings)
+        //filter out based on settings 
+        //months, flights, quizMode, ischp, chapters
+        //console.log(allquestionsinquizapp)
+        //console.log(quizSettings)
+        const testUniqueObj = {}
+        let uniqueWordNum = 0;
+        let uniquecharNum = 0;
+        let tChar = 0;
+        let tWord = 0;
+        let ANS = '';
+        let quest = '';
+        let isrendered = false;
+        let startTimer = false;
+        let ANS2 = false;
+        let cnum = 0;
+        let VER = '';
+        let QUEST = '';
+        let question_dict2 = allquestionsinquizapp;
+        let ver = null;
+        //console.log(allquestionsinquizapp)
+    let  questions = allquestionsinquizapp.filter(Verse=>{
+        let Test = quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type) && Verse.verse;
+                               if(quizSettings.ischp) {
+                                if(quizSettings.chapters.includes(Verse.chapter)){
+                                        Test = true
+
+                                }else{
+                                  Test = false;
+                                }
+                            }
+                            if(Test){
+                            return Test;
+                                
+                            } else {
+                                //delog(Verse)
+                            }
+                        });
+              
+      
+       //need to filter out based on settings 
+ if (quizSettings.verseSelection === "randomByChps") {
+    let sortedRandChps = []
+        for (const chp of quizSettings.chapters)
+        {const setOfQsbyChp =  questions.filter(V=>V.chapter.includes(chp));
+           const randQbyChps =  QuizApp.shuffleArray(setOfQsbyChp);
+           sortedRandChps = [...sortedRandChps, ...randQbyChps]
+           QuizApp.delog(sortedRandChps)
+
+
+        }          
+        QuizApp.delog(sortedRandChps)
+                        questions = sortedRandChps
+                    }
+                    if (quizSettings.verseSelection === "random") {
+                        questions = QuizApp.shuffleArray(questions)
+                    }
+
+        // Comment: Dummy data structure for testing the print function
+        const MOCK_QUESTIONS = [
+            {
+                verse: "Matthew 1:02",
+                flight: "C",
+                question: "Who was the father of Isaac?",
+                answer: "Abraham"
+            },
+            {
+                verse: "Matthew 1:22-23",
+                flight: "A",
+                question: "According to Matthew 1:22-23, what had the Lord spoken by the prophet?",
+                answer: "\"Behold, the virgin shall conceive and bear a son, and they shall call his name Immanuel\""
+            },
+            {
+                verse: "Matthew 2:16",
+                flight: "T",
+                question: "Who did Herod have killed?",
+                answer: "All the male children in Bethlehem and in all that region who were two years old or under, according to the time that he had ascertained from the wise men."
+            },
+            {
+                ref: "Matthew 2:06",
+                flight: "B",
+                verse: "Who are by no means least among the rulers of Judah?",
+                answer: "Bethlehem."
+            }
+        ];
+       function settext(txt='dude u forgot the text :( ', elm='p',  par = '', delay = 0, COLOR = 0, id1 = 'false', id2 = 'f') {
+        return new Promise((resolve) => {
+            //const parent = this.id(par);
+            //this.isrendered = false;
+            //const textElement = document.createElement(elm);
+            let createdHTML = '';
+            if (typeof (COLOR) === 'string') {
+                textElement.style.color = COLOR;
+            }
+            //parent.appendChild(textElement);
+                        
+            const timeouts = [];
+            let isStopped = false;
+            let totalDelay = 0;
+            //this.ANS2 = false;
+            const words = txt.split(' ');
+            let wordIndex = 0;
+            let charIndex = 0;
+            let currentHTML = '';
+            let isHighlighted = false;
+            let isHighlighted2 = false;
+            let CHArNUm = 0;
+            // Helper function to stop the animation
+            const stopAnimation = (event) => {
+                
+                if (false) {
+                    event.preventDefault();
+                    if (isStopped) {
+                        this.isrendered = true;
+                        this.ver.disabled = false;
+                        resolve();
+                        return;
+                    }
+                    isStopped = true;
+                    for (const timeoutId of timeouts) {
+                        clearTimeout(timeoutId);
+                    }
+                    const remainingWords = words.slice(wordIndex);
+                    if (this.selVerses[this.cnum].type != 'SQ:') {
+                         ('Remaining words:', remainingWords); // Debugging log
+                        const remainingText = remainingWords.join(' ');
+                        const tx = currentHTML + remainingText;
+                        
+                        this.quest = remainingText + ' ' + this.quest;
+                        this.ANS = remainingText + ' ' + this.ANS;
+                        document.getElementById('pleasefinish').style.display = 'block';
+                        this.ver.placeholder = "Don't forget to enter the last word on the screen";
+                    }
+                    this.startTimer = true;
+                    window.removeEventListener('keydown', stopAnimation);
+                }
+            };
+            //window.addEventListener('keydown', stopAnimation);
+            
+            // This is the core logic of the whole code
+            const typeWriter = () => {
+                if (isStopped || wordIndex >= words.length) {
+                    window.removeEventListener('keydown', stopAnimation);
+                     //this.isrendered = true;
+                    //this.ver.disabled = false;
+                    //this.startTimer = true;
+                    createdHTML= `<${elm}>${createdHTML}</${elm}>`;
+                    resolve(createdHTML);
+                    return createdHTML ;
+                }
+                
+                const word = words[wordIndex] + (wordIndex === words.length - 1 ? '' : ' ');
+                const char = word[charIndex];
+                
+                // Check if the current word should be highlighted
+                if (wordIndex === id1) {
+                    if (!isHighlighted) {
+                        currentHTML += '<span class="highlight-word">';
+                        isHighlighted = true;
+                    }
+                } else {
+                    if (isHighlighted) {
+                        currentHTML += '</span>';
+                        isHighlighted = false;
+                    }
+                }
+                if (CHArNUm === id2) {
+                    if (!isHighlighted2) {
+                        currentHTML += '<span class="highlight-char">';
+                        isHighlighted2 = true;
+                    }
+                } else {
+                    if (isHighlighted2) {
+                        currentHTML += '</span>';
+                        isHighlighted2 = false;
+                    }
+                }
+                
+                currentHTML += char;
+                // ('Current HTML:', currentHTML, createdHTML); // Debugging log
+                createdHTML = currentHTML;
+                CHArNUm++;
+                charIndex++;
+                if (charIndex >= word.length) {
+                    charIndex = 0;
+                    wordIndex++;
+                }
+                
+                setTimeout(typeWriter, delay);
+            };
+            
+            typeWriter();
+        });
+    } const printBtn = document.getElementById('printBtn');
+    async function loadVerseDicts(inquestions) {
+        const {figureMonths} = QuizApp.hightestMonth(quizSettings.months)
+        
+                                const allQuotesFtvs = QuizApp.fliterOutQs(Object.values(allQs), {m: figureMonths, f: quizSettings.selectedFlights, t: ['ftv/quote']})
+                        const allQuestions = QuizApp.fliterOutQs(Object.values(allQs), {m: figureMonths, f: quizSettings.selectedFlights, t: ['question', 'SQ:', 'According to']})
+                        const quoteRefArr = allQuotesFtvs.map(Verse => Verse.ref);
+                               QuizApp.delog( Object.values(allQs, 'verse dicts'));
+                    
+                       
+                        //QuizApp.delog(allQuotesFtvs);
+                        
+                        //const quoteRefArr = inquestions.map(Verse => Verse.ref);
+                        QuizApp.delog(allQuestions, allQuotesFtvs, quoteRefArr);
+                    return {allQuestions, allQuotesFtvs, quoteRefArr}
+                    }
+    /**
+         * Generates the HTML content for printing, structured in a grid layout.
+         * @param {Array<Object>} questions - An array of question objects to print.
+         * @returns {string} The fully formed HTML content string.
+         *   async function loadVerseDicts() {
+                                 const figureMonths = this.hightestMonth(this.quizSettings.months)
+                        this.verse_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['ftv/quote']})
+                        
+                        this.delog('question_dict', '2');
+                        this.question_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['question', 'According to', 'SQ:']})
+                        
+                        this.quoteRefArr = this.verse_dict2.map(Verse => Verse.ref);
+                        this.delog(this.question_dict2, this.verse_dict2, this.quoteRefArr, Object.values(this.verse_dict, 'verse dicts'));
+                    }
+         */
+
+
+       async function generatePrintContent(inquestions) {
+            let htmlContent = ''; // Comment: Initialize the string for accumulating HTML content
+printBtn.textContent = 'Loading'
+            // Comment: Create the printable header with metadata
+            htmlContent += `
+                <div class="print-header">
+                    <div class="print-title">Bible Quizzing Questions for Study</div>
+                    <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                    <p><strong>Source:</strong> Print Test Harness</p>
+                    <p><strong>Columns:</strong> Verse Reference (15%), Flight Type (5%), Question (40%), Answer/Verse (40%).</p>
+                </div>
+            `;
+
+            htmlContent += '<div class="questions-grid">'; // Comment: Start the questions grid container
+
+            // Comment: Define and add the column headers
+            const headers = [
+                "Verse Reference",
+                "Flight",
+                "Question",
+                "Answer/Verse"
+            ];
+            
+            headers.forEach(header => {
+                htmlContent += `<div class="grid-header">${header}</div>`; // Comment: Add each column header to the grid
+            });
+
+            // Comment: Loop through all the mock question data to create rows
+         ({ allQs } =  await QuizApp.initializeQuiz())
+         console.log('all', allQs)
+            const {allQuestions, allQuotesFtvs, quoteRefArr} = await loadVerseDicts(inquestions);
+ // (inquestions, 'inquestions', allQuestions, allQuotesFtvs, quoteRefArr)
+            let question = '';
+            let answer = '';
+            console.log(inquestions, 'inquestions')
+            for(const q of inquestions) {
+                //let isFTV = false;
+                //console.log(q, 'q in loop')
+               let ref = q.ref;
+                if(q.type != 'ftv/quote'){
+                question = q.type === 'SQ:' ? `SQ: ${q.verse.split('?')[0]}?` : q.type === 'question' ? `${q.verse.split('?')[0]}?` :`According to ${q.verse.split('?')[0]}?` ;
+                 answer = q.verse.split('?')[1];
+                 //QuizApp.delog('showing question')
+                //console.log('question before trigger', question)
+                testUniqueObj.allqs = allQuestions
+                const questionfortrig = `${q.verse.split('?')[0]}?`
+                let { uniqueWordNum, uniquecharNum} = await  QuizApp.findUniqueTriggerWord(questionfortrig.split(' '), allQuestions, null, questionfortrig.split(' ').length)
+                if(q.type === 'SQ:') uniqueWordNum += 1; uniquecharNum += 4;
+                if(q.type === 'According to') uniqueWordNum += 2; uniquecharNum += 10;
+                testUniqueObj[`Questions${question}`] = uniqueWordNum;
+                const htmlForTriggr =  await settext(question, 'span', '', 0, false, uniqueWordNum, uniquecharNum); 
+            question = htmlForTriggr;
+            }else{
+                //console.log(q, 'quote')
+                 question = 'FTV/Quote';
+                 answer = q.verse;
+                 `const {uniquecharNum} =  await  QuizApp.findUniqueTriggerWord(q.ref.split(' '), quoteRefArr, 'F', answer.split(' ').length)
+               // QuizApp.delog('showing quote')
+               ref =  await settext(answer, 'span', '', 0, false, -1, uniquecharNum); `
+            
+               let htmlForTriggr;
+
+               const { uniqueWordNum, uniquecharNum } = await  QuizApp.findUniqueTriggerWord(answer.split(' '), allQuotesFtvs, null, answer.split(' ').length)
+            
+                 htmlForTriggr =  await settext(answer, 'span', '', 0, false, uniqueWordNum, uniquecharNum); 
+            
+                answer = htmlForTriggr;
+            }
+                //QuizApp.delog('htmlForTriggr', answer)
+            
+
+                // Comment: Add the Verse Reference data (15% width)
+                htmlContent += `<!--newVerse--><div class="grid-item">${ref}</div>`;
+                  //(q.ref, 'q.ref') 
+                // Comment: Add the Flight Type data (5% width)
+                htmlContent += `<div class="grid-item">${q.flight}</div>`; 
+                  //(q.flight, 'q.flight')
+                // Comment: Add the Question data (40% width)
+                htmlContent += `<div class="grid-item">${question}</div>`; 
+                  //(question, 'question')
+                // Comment: Add the Answer/Verse data (40% width)
+                htmlContent += `<div class="grid-item">${answer}</div>`; 
+        }
+
+            htmlContent += '</div>'; // Comment: Close the questions grid container
+console.log(htmlContent, 'htmlContent')
+printBtn.textContent = 'Done'
+            return htmlContent; // Comment: Return the complete HTML string
+        }
+
+        /**
+         * Main function to prepare and initiate the print process.
+         */
+       async function  initPrintFunctionality() {
+            const printArea = document.getElementById('printArea'); // Comment: Get the designated area for print content
+
+            if (!printArea) {
+                console.error("Print area container not found."); // Comment: Log error if container is missing
+                return;
+            }
+            
+            const questionsToPrint = questions || MOCK_QUESTIONS; // Comment: Use the mock data for printing
+
+            const content = await generatePrintContent(questionsToPrint) // Comment: Generate the HTML content
+            console.log(testUniqueObj)
+            printArea.innerHTML = content; // Comment: Insert the generated content into the print area
+            
+            window.print(); // Comment: Open the native browser print dialog
+        }
+
+        // Comment: Attach the event listener to the button on document load
+        document.addEventListener('DOMContentLoaded', () => {
+            const printBtn = document.getElementById('printBtn');
+             // Comment: Find the Print Questions button
+            if (printBtn) {
+                printBtn.addEventListener('click', initPrintFunctionality);
+                //console.log('test', testUniqueObj) // Comment: Attach the print function
+            }
+        });
+    </script>
+</body>
+</html>
