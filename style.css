@@ -382,9 +382,9 @@ a {
     /* A friendly blue color. */
     color: white;
     /* White text for contrast. */
-    padding: 12px 20px;
+    padding: 1% 2%;
     /* Ample padding for a good button size. */
-    margin: 8px;
+    margin: 3px; 
     /* Space between each button. */
     border-radius: 25px;
     /* Fully rounded corners for a modern "pill" shape. */
@@ -811,4 +811,370 @@ input[type='range'] {
 }
 .print-button-link svg {
     stroke: white;
+}
+/* Comment: Styles for the Settings Icon Button */
+.settings-icon-btn {
+    /* Comment: Position the button absolutely in the top-left corner */
+    position: absolute;
+    top: 15px; /* Comment: Distance from the top edge */
+    left: 15px; /* Comment: Distance from the left edge */
+    
+    background: none; /* Comment: No background by default */
+    border: none; /* Comment: No border */
+    cursor: pointer; /* Comment: Pointer cursor on hover */
+    padding: 8px; /* Comment: Padding for a good click area */
+    border-radius: 50%; /* Comment: Make it circular */
+    
+    /* Comment: Smooth transition for hover effects */
+    transition: all 0.2s ease-in-out; 
+    
+    /* Comment: Ensure it sits on top of other content */
+    z-index: 10;
+}
+
+/* Comment: Styles for the SVG icon itself */
+.settings-icon-btn svg {
+    /* Comment: Sets the icon color (a subtle gray) */
+    stroke: #9ca3af; 
+    width: 20px; /* Comment: Icon size */
+    height: 20px; /* Comment: Icon size */
+    transition: stroke 0.2s ease-in-out; /* Comment: Smooth color change */
+}
+
+/* Comment: Hover effect: change color and add a subtle background */
+.settings-icon-btn:hover {
+    background-color: #f3f4f6; /* Comment: Light background on hover */
+}
+
+.settings-icon-btn:hover svg {
+    stroke: #4f46e5; /* Comment: Change icon color to indigo on hover */
+}
+#quiz-timer2 {
+    /* Define the size of the circular timer (120px by 120px). */
+    width: 120px; 
+    /* Define the height of the circular timer. */
+    height: 120px;
+    /* Make the element perfectly circular. */
+    border-radius: 50%; 
+    /* Use Flexbox to center the contents horizontally and vertically. */
+    display: flex;
+    /* Center items along the main axis (horizontal). */
+    justify-content: center;
+    /* Center items along the cross axis (vertical). */
+    align-items: center;
+    /* Define a custom property for the fill percentage, starting at 0%. */
+    --fill-percent: 0%; 
+    
+    /* Use conic-gradient for the filling effect, based on the --fill-percent variable. */
+    background: conic-gradient(
+        /* Color the filled portion (Green), defined by --fill-percent. */
+        rgb(76, 175, 80) 0% var(--fill-percent), 
+        /* Color the empty portion (Light Gray), starting where the fill ends. */
+        #e0e0e0 var(--fill-percent) 100% 
+    );
+
+    /* Use a mask to create a hollow effect (a donut shape) for the progress bar. */
+    mask: radial-gradient(
+        /* Start the gradient from the center. */
+        farthest-side, 
+        /* Make the center transparent (calc(100% - 15px) is the hole size). */
+        transparent calc(100% - 15px), 
+        /* Make the outer ring solid (#000) where the gradient is visible. */
+        #000 calc(100% - 15px)
+    );
+}
+
+/* Style for the central text display (now containing only the large number). */
+.timer-display2 {
+    /* Ensure the text is rendered on top of the mask/background. */
+    z-index: 2; 
+    /* Use flex to ensure the large number is perfectly centered. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Set the color for the text. */
+    color: #4b5563; /* Tailwind gray-700 */
+}
+#review{
+    border-radius: 16px;
+    border-color:black ;
+    height: 250px;
+    overflow: scroll;
+    display: flex;
+    
+    flex-wrap: wrap;
+}
+#review > :nth-child(odd){
+    background-color:lightgray;
+} 
+#startreview{
+    display: none;
+    width: 100%;
+    
+}
+.hidden{
+    display:none;
+}
+.review-button {
+    /* Inherit base styles */
+    
+    
+    background: linear-gradient(45deg, #17a2b8, #20c997); /* Engaging gradient from teal to green */
+    color: #ffffff;
+    box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4); /* Pronounced shadow for emphasis */
+}
+
+.review-button:hover {
+    transform: scale(1.03); /* Slightly larger scale for engagement */
+    box-shadow: 0 8px 20px rgba(23, 162, 184, 0.6);
+}
+.quiz-button {
+    border: none; /* Remove default border */
+    border-radius: 8px; /* Slightly rounded corners for a modern look */
+    padding: 12px 24px; /* Generous padding for easy clicking */
+    font-size: 16px; /* Readable font size */
+    font-weight: 600; /* Semi-bold text */
+    cursor: pointer; /* Indicate interactivity */
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s; /* Smooth transitions */
+    text-transform: uppercase; /* Professional look */
+    letter-spacing: 0.5px;
+}
+
+.quiz-button:hover {
+    transform: translateY(-2px); /* Subtle lift effect on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow on hover */
+}
+
+.quiz-button:active {
+    transform: translateY(0); /* Press down effect on click */
+    box-shadow: none;
+}
+#retry {
+    /* Inherit base styles */
+    
+    background-color: #007bff; /* Bright, professional blue */
+    color: #ffffff; /* White text for contrast */
+}
+
+#retry:hover {
+    background-color: #0056b3; /* Darken on hover */
+}
+.overflow-set{
+    height: 500px;
+    overflow: scroll;
+}
+.overflow-set-modal{
+    height: 300px;
+    overflow: scroll;
+}
+/*
+ * ---------------------------------------
+ * CIRCULAR TIMER STYLES
+ * ---------------------------------------
+ */
+
+ .timer-circle {
+    /* --- 1. Custom Properties (Variables) --- */
+    /* Define the main properties for easy modification and JS access */
+    --timer-size: 80px;       /* Width and height of the circle */
+    --timer-color: #3498db;    /* Color of the remaining time (e.g., blue) */
+    --track-color: #ecf0f1;    /* Color of the elapsed time / background (light gray) */
+    
+    /* THIS IS THE KEY: Your JavaScript will update this variable.
+       '1' means 100% full (start). '0' means 0% full (end). 
+       Example: 0.5 would be 50% full.
+    */
+    --progress: 1;             
+  
+    /* --- 2. Shape and Positioning --- */
+    width: var(--timer-size);
+    height: var(--timer-size);
+    border-radius: 50%;
+    
+    /* Use Flexbox to center the number in the middle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Position relative is good practice if you want to add effects later */
+    position: relative;
+    
+    /* Add a subtle shadow to give it depth, which can be interpreted as the "moves down" effect */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    
+    /* --- 3. Circular Progress Effect (Conic Gradient) --- */
+    /* This creates a pie-chart effect. The value of --progress controls the fill. */
+    background: conic-gradient(
+      /* The main timer color fills up to the progress point */
+      var(--timer-color) calc(var(--progress) * 360deg), 
+      /* The track color fills the rest of the circle */
+      var(--track-color) 0deg
+    );
+    
+    /* Smoothly transition the background when the progress variable changes */
+    transition: background 0.3s linear;
+  }
+  
+  /* ---------------------------------------
+   * STYLES FOR THE NUMBER IN THE MIDDLE
+   * --------------------------------------- */
+  
+  .timer-number {
+    /* To make the number legible on the background */
+    background-color: white; 
+    /* Make the background slightly smaller than the container to create the ring effect */
+    width: calc(var(--timer-size) - 20px); 
+    height: calc(var(--timer-size) - 20px);
+    border-radius: 50%;
+    
+    /* Re-center the text within its new, smaller white circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Text styling */
+    font-family: 'Inter', sans-serif; /* Use your preferred font */
+    font-size: calc(var(--timer-size) / 3); /* Sizing the font relative to the circle */
+    font-weight: 700;
+    color: #2c3e50; /* Darker text color */
+  }
+  
+  /* Optional: Subtle animation for the number itself as time runs out */
+  .timer-number.warning {
+    color: #e74c3c; /* Change color when time is low */
+    animation: pulse 1s infinite alternate;
+  }
+  
+  @keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+  }
+  
+  #f-btn {
+    background-color: #6c63ff; /* Purple background */
+    color: #ffffff; /* White text */
+    padding: 12px 24px; /* Add sufficient padding */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 16px; /* Increase font size for better readability */
+    font-weight: bold; /* Make the text bold */
+    text-align: center; /* Center the text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center text horizontally */
+    align-items: center; /* Center text vertically */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+
+  #f-txt{
+   
+    color:white;
+  }
+  #more-words{
+    border-radius: 8px;
+    border-color: purple;
+    background-color: white;
+  }
+  /* Style for the "More Words" button */
+#more-words {
+    border-radius: 8px;
+    border: 2px solid #6c63ff; /* Purple border */
+    background-color: #ffffff; /* White background */
+    color: #6c63ff; /* Purple text */
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#more-words:hover {
+    background-color: #6c63ff; /* Purple background on hover */
+    color: #ffffff; /* White text on hover */
+}
+
+/* Style for the "Correct" button */
+#correctbtn {
+    background-color: #28a745; /* Green background */
+    color: #ffffff; /* White text */
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    display: none;
+    cursor: default;
+}
+
+/* Style for the "Incorrect" button */
+#incorrectbtn {
+    background-color: #dc3545; /* Red background */
+    color: #ffffff; /* White text */
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    display: none;
+    cursor: default;
+}
+
+/* Style for the "Retry" button */
+#retry {
+    background-color: #007bff; /* Bright blue background */
+    color: #ffffff; /* White text */
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#retry:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Style for the "Finish" button */
+#f-btn {
+    background-color: #6c63ff; /* Purple background */
+    color: #ffffff; /* White text */
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#f-btn:hover {
+    background-color: #4b47cc; /* Darker purple on hover */
+}
+
+/* Style for the review questions section */
+#review {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 16px; /* Space between items */
+    padding: 16px;
+    background-color: #f8f9fa; /* Light gray background */
+    border-radius: 8px;
+    border: 1px solid #ddd; /* Subtle border */
+    max-height: 300px; /* Limit height */
+    overflow-y: auto; /* Scroll if content overflows */
+}
+
+#review > p {
+    background-color: #ffffff; /* White background for each item */
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    font-size: 14px;
+    color: #333; /* Dark text */
+}
+#new-quiz{
+
+    margin: 20%;
+    height:45px;
+    width: 100%;
+    text-wrap:auto;
 }
