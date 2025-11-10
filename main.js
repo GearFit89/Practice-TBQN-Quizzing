@@ -457,6 +457,9 @@ class QuizCompanion {
                 }
             });
         }
+        this.stopTimer = false
+        this.isDeep  = false;
+        this.isend = false;
         this.subFinish  = this.id('submit-finish')
        this.stopDiv = this.id('stop-text');
        if(this.stopDiv) this.stopDiv.style.display = 'none'
@@ -592,7 +595,7 @@ class QuizCompanion {
             });
         }
         this.STATE = 'local'
-        this.URL = this.STATE === 'local' ? 'localhost:3000': 'render web';
+        this.URL = this.STATE === 'local' ? 'http://localhost:3000': 'render web';
 
         this.books = ['Matthew', 'Jonah']
         this.progressBar = this.id('progressBar')
@@ -719,7 +722,15 @@ class QuizCompanion {
             console.error('Error loading quotes:', error);
         }
     }
-    
+    deepStudy (type) {
+        if(type === 'new'){
+             
+        } else if(type === 'check'){
+
+        }else{
+
+        }
+    }
     updateClientInfo(info, name, setItem = true) {
         // Check if the user wants to set an item
         if (setItem) {
@@ -1142,6 +1153,7 @@ hightestMonth(inMonths){
     }
     
     correct(result) {
+        this.id("correctbtnQ").style.display = 'none';
         if(this.subFinish) this.subFinish.style.display = 'none';
         if(!this.selVerses[this.cnum] || this.selVerses[this.cnum].ref){
             console.warn(this.selVerses[this.cnum])
@@ -1225,7 +1237,7 @@ hightestMonth(inMonths){
            if(this.selVerses.length === 0) console.warn('empty selVerses')
            return 
         }
-        this.currentVerseIndex++;
+       
         this.delog(this.clientanswers); // Log the object to see the updated data.
         //this.ver.ariaDisabled = 'true';
     }
@@ -1293,15 +1305,16 @@ hightestMonth(inMonths){
         return Block.textContent.trim();
     }).join(' ');
     this.delog(entered_words, 'ew 1305', this.txt)
-    this.id('f-btn').classList.remove('f-btn-black')
+   // this.id('f-btn').classList.remove('f-btn-black')
     if(this.stripChar(this.ver.value) === this.stripChar(this.txt) || this.stripChar(entered_words) === this.stripChar(this.txt)){
-        f_txt.innerHTML = 'Question Correct';
-        this.id('f-btn').classList.add('correct1')
+        //f_txt.innerHTML = 'Question Correct';
+        //this.id('f-btn').classList.add('correct1')
         btn.disabled = true;
           this.retryBtn.style.display = 'none'
+          this.subFinish.style.display = 'none'
         subm.style.display = 'block';
         this.ver.placeholder = 'Answer the question';
-        
+        this.id("correctbtnQ").style.display = 'block'
         this.stop = false;
         //this.clear('quizHeader');
         this.ver.value = ''
@@ -1309,7 +1322,7 @@ hightestMonth(inMonths){
          this.vC.innerHTML = ''
          this.dragElements();
             textElement.innerHTML = this.txt;
-        //this.correct('wrong');
+        
 
     }else{
         this.answers.push({
@@ -1329,7 +1342,7 @@ hightestMonth(inMonths){
             this.clear('quizHeader');
             await this.retryRun();
         };
-        this.retryBtn.addEventListener('click', this.retryHandler);
+        this.retryBtn.addEventListener('click', this.retryHandler, {once:true});
   this.id('f-btn').classList.add('f-incorrect')
   this.correct('wrong');
     }
@@ -1338,11 +1351,12 @@ hightestMonth(inMonths){
     
     delay_text(txt, elm = 'p', par = 'quizHeader', delay = 0, COLOR = 0, id1 = 'false', id2 = 'f') {
         return new Promise((resolve) => {
+         
             const parent = this.id(par);
             this.isrendered = false;
             const textElement = document.createElement(elm);
           
-            if(typeof id1 === 'number'){
+            if(typeof id1 === 'number' || typeof id2 === 'number'){
                 this.stopDiv.style.display='block';
 
 
@@ -1359,6 +1373,7 @@ hightestMonth(inMonths){
                 id1 = '';
                 id2= '';
             }
+            const one = {once:true};
             const timeouts = [];
             this.timeouts = timeouts;
             let isStopped = false;
@@ -1373,6 +1388,10 @@ hightestMonth(inMonths){
             let isHighlighted = false;
             let isHighlighted2 = false;
             let CHArNUm = 0;
+            if(timeouts)
+                for (const timeoutId of timeouts) {
+                    clearTimeout(timeoutId);
+                }
             // Helper function to stop the animation
             const stopAnimation = (event) => {
 
@@ -1386,22 +1405,27 @@ hightestMonth(inMonths){
     if (event && typeof event.preventDefault === 'function') {
         event.preventDefault(); // This line caused the error
     }
-    
+    for (const timeoutId of timeouts) {
+        clearTimeout(timeoutId);
+    }
               console.warn(isStopped)
                     if (isStopped) {
                          this.stopDiv.style.display === 'none'
                         this.isrendered = true;
                         this.ver.disabled = false;
                         resolve();
-                        //return;
+                        return;
                     }
-                    isStopped = true;
+                  
                    this.done = false
                    
                     const questionEl = this.id('q')
                     const wordsdisplayed = textElement.innerHTML;
                     let moreBtn = ` <button id="more-words">More</button>`;
-                    questionEl.innerHTML+= moreBtn;
+                    if(!questionEl) console.warn('q u uoid is not htere hrer herrre')
+                       
+                    console.warn(currentHTML)
+                    questionEl.innerHTML= `${currentHTML} ${moreBtn}`;
                     
                     const more = this.id('more-words');
                     this.id('quizHeader').addEventListener('click', (event)=>{
@@ -1416,7 +1440,7 @@ hightestMonth(inMonths){
                     if(this.done) {this.stop=false; this.dragElements();return}
                     
                     const remainingWords = words.slice(wordIndex);
-                    if (this.selVerses[this.cnum].type != 'SQ:') {
+                    if (this.selVerses[this.cnum].type !== 'SQ:' && this.ftv !== 'ftv') {
                         
                     
                        
@@ -1431,7 +1455,7 @@ hightestMonth(inMonths){
                         btn.disabled = false   
                         this.dragElements(this.txt)
                         this.subFinish.style.display = 'block'
-                        if(f_submit) this.subFinish.addEventListener('click', this.finish.bind(this, textElement, timeouts))
+                        if(f_submit) this.subFinish.addEventListener('click', this.finish.bind(this, textElement, timeouts), one)
                         //this.retry = this.id('retry');
                       
                        
@@ -1443,13 +1467,21 @@ hightestMonth(inMonths){
                         //this.ANS = remainingText + ' ' + this.ANS;
                         //document.getElementById('pleasefinish').style.display = 'block';
                         this.ver.value = `${words.slice(0, wordIndex)} `;
+                    }else{
+                        console.warn('spik')
                     }
+
                     this.startTimer = true;
                     window.removeEventListener('keydown', stopAnimation);
+                    ///hope thias don't casue ps 
+                    isStopped = true;
+                    resolve()
+                    return;
               
                 }
             };
             const stop = ()=>{
+                if(stopThis) return;
                 window.removeEventListener('keydown', stopAnimation);
                 isStoppedEvent= true;
                 console.warn('stopping')
@@ -1459,18 +1491,20 @@ hightestMonth(inMonths){
                
             }
             //this.id('quizHeader').addEventListener('click', ()=>{stopAnimation('stop')})
-            window.addEventListener('keydown', stopAnimation);
-            this.stopDiv .addEventListener('click', stop)
+            window.addEventListener('keydown', stopAnimation, {once:true});
+            this.stopDiv .addEventListener('click', stop, {once:true})
             // This is the core logic of the whole code
             const typeWriter = () => {
-                if (isStopped || wordIndex >= words.length) {
+                if (isStopped || wordIndex >= words.length || this.isend) {
                      this.stopDiv.style.display = 'none'
                     window.removeEventListener('keydown', stopAnimation);
                     this.isrendered = true;
                     this.ver.disabled = false;
                     this.startTimer = true;
                     this.id('quizHeader').removeEventListener('click', stopAnimation)
-                
+                    for (const timeoutId of timeouts) {
+                        clearTimeout(timeoutId);
+                    }
                     resolve();
                     return;
                 }
@@ -1695,6 +1729,7 @@ hightestMonth(inMonths){
     }
     
     clear(par3) {
+          this.id("correctbtnQ").style.display = 'none';
          this.subFinish.style.display = 'none';
         console.warn(this.currentVerseIndex, 'clear');
         this.finishQ.style.display = 'none';
@@ -1720,6 +1755,7 @@ hightestMonth(inMonths){
     }
     
     checkAns() {
+        this.isend = true;
         console.warn(this.currentVerseIndex, 'check ans');
         const displayAns = this.ANS;
         this.ANS &&=  this.manageAnswer(this.ANS, false)[0].join(' ');
@@ -1838,7 +1874,10 @@ hightestMonth(inMonths){
                 this.morebtn.style.display = 'block';
             }
             
-        } else {
+        } else  if(this.isDeep){
+            this.deepStudy('check');
+        }
+            else{
             // drag and drop elements
             const Blocks = Array.from(this.vD.children);
             let entered_words = Blocks.map(Block => {
@@ -1871,6 +1910,7 @@ hightestMonth(inMonths){
         }
     }
 upTimerNew(remainingSeconds, totalDurationSeconds) {
+    if(this.stopTimer)return;
         const timerElement = document.getElementById('quizTimer');
         const numberElement = timerElement.querySelector('.timer-number');
         
@@ -1926,7 +1966,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         this.progressBar.style.width = `${progressPercentage}%`;
     }
    async  retryRun(){
-        this.currentVerseIndex--;
+        //this.currentVerseIndex--;
         await this.new_quote(
             this.quizSettings.quizMode,
             this.quizSettings.numQuestions,
@@ -1954,6 +1994,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                 clearTimeout(time);
             }
         }
+        this.stopTimer = true;
         // Hide quiz scene and show start scene
         document.getElementsByTagName('main')[1].style.display = 'none';
         this.id('quizTimer').style.display = 'none'
@@ -1984,11 +2025,14 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         this.id('incorrectbtn').style.display = "none";
         this.plsc.style.display = 'none';
         //this.running = false;
+        this.isend = true;
+        this.id('quizTimer').style.display = 'none'
         this.updateClientInfo(this.clientanswers, 'storedQsArray', true);
         // Display summary
         const totalQuestions = this.quizSettings.numQuestions;
         const correctAnswers = this.correctCount;
         delog(this.answers)
+        this.isend =  false;
         if(r==='r'){
             this.delay_text(`Review Complete!`, 'h2', 'quizHeader', 0, 'green');
             this.delay_text(`Corrected all questions`, 'p', 'quizHeader', 0, 'purple');
@@ -2001,7 +2045,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
        
         const review = this.id('review');
        
-   
+
        
         const nextQuiz = this.id('new-quiz')
          nextQuiz.style.display = 'block'
@@ -2014,9 +2058,12 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
             const a = this.id('startreview');
             a.style.display = 'block';
             a.addEventListener('click', async(e)=>{
+          
                 review.style.display = 'none';
                 this.numberElement.style.display = 'flex';
                 this.id('quizTimer').style.display = 'flex'
+                this.isend = false;
+                this.stopTimer = false;
             
                   this.micBtn.style.display = 'block'
         micBtn.style.display = 'block'
@@ -2143,7 +2190,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         
        
         this.cnum = this.currentVerseIndex;
-        //this.currentVerseIndex++;
+      
         
         this.ftv = this.selVerses[this.cnum].type;
         if(this.ftv === 'ftv' || this.ftv === 'quote'||  this.ftv === 'ftv/quote'){
@@ -2204,7 +2251,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                  //tChar =  this.verse_dict2, phars, 0, phars.split('').length);
                 //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
                 
-                await this.delay_text(`Finish the Verse:`, 'h4', 'quizHeader', 0, 'purple', 5);
+                await this.delay_text(`Finish the Verse:`, 'h4', 'quizHeader', 0, 'purple');
             } else if (this.ftv === 'quote') {
                 const aq = this.selVerses[this.cnum].verse;
                 this.selVerses[this.cnum].aq = aq;
@@ -2279,8 +2326,9 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                 
                 //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
                 await this.delay_text(`Question`, 'h4', 'quizHeader', 0, 'purple');
-            } else {
-                this.delog('failed at new', this.ftv);
+            } else if(this.ftv === 'deep') {
+                this.deepStudy('new')
+            }else{this.delog('failed at new', this.ftv);
             }
         }
         this.startTimer = false;
@@ -2293,6 +2341,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
     
     setupDropZone(containerId) {
         const container = document.getElementById(containerId);
+        
         //clear all child blocks
         if (this.dragEnabled === false) {
             container.style.display = 'none';
@@ -2335,7 +2384,8 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         // Get the container for the draggable words.
         const draggableContainer = document.getElementById('verse-con');
         const dropContainer = document.getElementById('versedrop');
-        
+        dropContainer.innnerHTML = ''
+          draggableContainer.innnerHTML = ''
         // Split the verse into individual words to create separate buttons.
         const rnum = Math.floor(Math.random() * 3 + 1);
         let blocks;
@@ -2804,7 +2854,9 @@ let currentRecognition = null;
             ////////////////NEXT EVENT ////////////////////
             ////////////////////////////////////////////// 
             this.next.addEventListener("click", async () => {
-                
+                this.isend = false;
+                console.warn( this.currentVerseIndex,'cVI going up', this.currentVerseIndex +1 )
+                this.currentVerseIndex++;
                 //this.cnum = this.currentVerseIndex; //
                 this.prevScenes.push(this.card.innerHTML);
                 this.sceneIndex++;
