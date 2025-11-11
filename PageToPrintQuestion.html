@@ -313,9 +313,10 @@
     <div id="printArea"></div> 
 
     <script type="module">
-        import { QuizApp } from './main.js';
-        //when i change deblog to false all the the delog functions will stop 
-        QuizApp.deblog = true;
+        import { QuizCompanion } from './main.js';
+        //when i change deblog to false all the the delog functions will stopconst 
+        const QuizApp = new QuizCompanion(false)
+    
         //updateClientInfo(this.selVerses, 'QuestionsToPrint', true) example
         
        let allQs = {};
