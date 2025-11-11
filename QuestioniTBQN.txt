@@ -90,7 +90,7 @@ Matthew 3:12 T According to Matthew 3:12, what is in his hand? His winnowing for
 Matthew 3:12 T With what will he burn the chaff? Unquenchable fire
 Matthew 3:13 C Why did Jesus come from Galilee to the Jordan? To be baptized by John (John the Baptist)
 Matthew 3:14 B Who would have prevented Jesus from being baptized? John (John the Baptist)
-Matthew 3:14 C SQ: Who said it and to whom was it said, " I need to be baptized by you, and do you come to me?" John (John the Baptist) said it to Jesus
+Matthew 3:14 C SQ: Who said it and to whom was it said, "I need to be baptized by you, and do you come to me?"John (John the Baptist) said it to Jesus
 Matthew 3:14-15 A SQ: Who said it, to whom was it said, and what was the reply, "I need to be baptized by you, and do you come to me?" John (John the Baptist) said it to Jesus. "Let it be so now, for thus it is fitting for us to fulfill all righteousness."
 Matthew 3:15 T SQ: Who said it and to whom was it said, "Let it be so now, for thus it is fitting for us to fulfill all righteousness"? Jesus said it to John (John the Baptist)
 Matthew 3:15 A According to Matthew 3:15, who consented? John (John the Baptist)
@@ -377,7 +377,7 @@ Matthew 8:24 B Who was asleep while the boat was being swamped? Jesus
 Matthew 8:25 C SQ: Who said it and to whom was it said, "Save us, Lord. We are perishing"? The disciples said it to Jesus
 Matthew 8:25-26 A SQ: Who said it, to whom was it said, and what was the reply, "Save us, Lord. We are perishing"? The disciples said it to Jesus. "Why are you afraid, O you of little faith?"
 Matthew 8:26 T What did Jesus rebuke? The winds and the sea
-Matthew 8:27 C Who marveled, saying, "What sort of man is this, that even winds and sea obey him?" The men (Jesus' disciples)
+Matthew 8:27 C Who marveled, saying, "What sort of man is this, that even winds and sea obey him?  The men (Jesus' disciples)
 Matthew 8:27 C Even what obey Jesus? Winds and sea
 Matthew 8:28 C Out of what did two demon-possessed men come? The tombs
 Matthew 8:28 B Who were so fierce that no one could pass that way? Two demon-possessed men
@@ -561,7 +561,7 @@ Matthew 11:10 C Who will I send before your face? My messenger
 Matthew 11:10 C What will my messenger prepare before you? Your way
 Matthew 11:11 B Who is greater than John the Baptist? The one who is least in the kingdom
 Matthew 11:11 C Than whom is no one greater among those born of women? John the Baptist
-Matthew 11:12 A From whom has the kingdom of heaven suffered violence? The days of John the Baptist until now
+Matthew 11:12 A When has the kingdom of heaven suffered violence? The days of John the Baptist until now
 Matthew 11:12 C What has the kingdom of heaven suffered from the days of John the Baptist until now? Violence
 Matthew 11:12 T By what do the violent take it? Force
 Matthew 11:13 C What are prophesied until John? All the Prophets and the Law
@@ -962,7 +962,7 @@ Matthew 16:27 C In whose glory is the Son of Man going to come? His Father's
 Matthew 16:27 A According to Matthew 16:27, what will the Son of Man repay each person? According to what he has done
 Matthew 16:28 T Until when will some standing here not taste death? They see the Son of Man coming in his kingdom
 Matthew 16:28 B In what will the Son of Man come? His kingdom
-Matthew 16::09 C How many loaves for the five thousand? Five
+Matthew 16 :09 C How many loaves for the five thousand? Five
 Jonah 1:01 C What came to Jonah? The word of the LORD
 Jonah 1:01 A Of whom was Jonah the son? Amittai
 Jonah 1:02 C Who was to arise and go to Nineveh? Jonah
@@ -1091,7 +1091,7 @@ Jonah 4:06 C What did the LORD God appoint? A plant
 Jonah 4:06 A What might be a shade over Jonah's head? A plant God appointed
 Jonah 4:06 C From what did a plant save Jonah? His discomfort
 Jonah 4:06 C Because of what was Jonah exceedingly glad? The plant
-Jonah 4:07 T When did God appoint a worm? When dawn came up the next day
+Jonah 4:07 T When did God appoint a worm? When dawn came up the next day 
 Jonah 4:07 A What attacked the plant? A worm that God appointed
 Jonah 4:07 C What happened when a worm attacked the plant? It withered
 Jonah 4:08 B What did God appoint when the sun rose? A scorching east wind
