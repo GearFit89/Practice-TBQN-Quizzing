@@ -1,3 +1,152 @@
+/**
+ * @class  QuizCompanion
+ * @description
+ * The `QuizCompanion` class is a comprehensive utility designed to manage and facilitate quiz-related functionalities. 
+ * It handles quiz initialization, question generation, answer validation, user interaction, and more. 
+ * The class is highly configurable and supports various quiz types, including quotes, FTVs, and questions.
+ * 
+ * @param {boolean} debugMode - Enables or disables debug logging for the class.
+ * @param {string} type - The type of quiz being managed (e.g., "review", "study").
+ * @param {object|string} config - Configuration for the quiz. Can be an object for settings, an array for questions, or "nothing" for default behavior.
+ * 
+ * @property {boolean} deblog - Indicates whether debug mode is enabled.
+ * @property {string} QUIZID - A unique identifier for the quiz session.
+ * @property {string} QUIZTYPE - The type of quiz being managed.
+ * @property {object} quizSettings - Stores settings for the quiz, such as highlight mode and speed of text.
+ * @property {object} question_dict - Stores processed question data.
+ * @property {object} verse_dict - Stores processed quote/FTV data.
+ * @property {Array} selVerses - The selected verses/questions for the quiz.
+ * @property {Array} answers - Stores the user's answers and their correctness.
+ * @property {boolean} isrendered - Indicates whether the quiz content is fully rendered.
+ * @property {boolean} running - Indicates whether the quiz is currently running.
+ * @property {boolean} isend - Indicates whether the quiz has ended.
+ * @property {number} correctCount - Tracks the number of correct answers.
+ * @property {number} currentQNum - Tracks the current question number.
+ * @property {number} Time - Stores the timer length for the quiz.
+ * @property {number} speeddetext - Stores the speed of text display in milliseconds.
+ * @property {boolean} dragEnabled - Indicates whether drag-and-drop functionality is enabled.
+ * @property {string} STATE - Indicates the current state of the application (e.g., "local").
+ * @property {string} URL - The base URL for fetching data.
+ * @property {Array} quizMonths - Stores information about quiz months and their corresponding chapters.
+ * @property {Array} books - Stores the list of books used in the quiz.
+ * @property {Array} questTypes - Stores the types of questions supported by the quiz.
+ * @property {Array} qs - Stores the types of questions for the current quiz session.
+ * @property {Array} timeouts - Stores timeout IDs for managing delayed text rendering.
+ * 
+ * @method Start()
+ * @description Starts the quiz by displaying the main quiz scene and hiding the start scene.
+ * 
+ * @method initializeQuiz()
+ * @description Initializes the quiz by loading questions and quotes/FTVs, and processes them into usable formats.
+ * @returns {Promise<object>} Returns an object containing all questions and quotes/FTVs.
+ * 
+ * @method loadQuestions()
+ * @description Fetches and processes question data from a file.
+ * @returns {Promise<object>} Returns a dictionary of processed questions.
+ * 
+ * @method loadQuotes()
+ * @description Fetches and processes quote/FTV data from a file.
+ * @returns {Promise<object>} Returns a dictionary of processed quotes/FTVs.
+ * 
+ * @method processQuestions(data)
+ * @description Processes raw question data into a structured format.
+ * @param {string} data - The raw question data as a string.
+ * @returns {object} A dictionary of processed questions.
+ * 
+ * @method processQuotes(data)
+ * @description Processes raw quote/FTV data into a structured format.
+ * @param {string} data - The raw quote/FTV data as a string.
+ * @returns {object} A dictionary of processed quotes/FTVs.
+ * 
+ * @method generateQuiz(quoteC, ftvC, lengthQuiz)
+ * @description Generates a quiz by selecting and shuffling questions and quotes/FTVs.
+ * @param {number} quoteC - The number of quotes to include.
+ * @param {number} ftvC - The number of FTVs to include.
+ * @param {number} lengthQuiz - The total length of the quiz.
+ * @returns {Promise<void>}
+ * 
+ * @method checkAns()
+ * @description Validates the user's answer and updates the quiz state accordingly.
+ * @returns {boolean} Returns true if the answer is correct, false otherwise.
+ * 
+ * @method correct(result)
+ * @description Updates the quiz state based on whether the user's answer is correct or incorrect.
+ * @param {string} result - The result of the answer ("right" or "wrong").
+ * 
+ * @method delay_text(txt, elm, par, delay, COLOR, id1, id2)
+ * @description Renders text with a typing animation and optional highlighting.
+ * @param {string} txt - The text to render.
+ * @param {string} elm - The HTML element to use for rendering.
+ * @param {string} par - The parent element ID.
+ * @param {number} delay - The delay between each character in milliseconds.
+ * @param {string} COLOR - The color of the text.
+ * @param {number|string} id1 - The word index to highlight.
+ * @param {number|string} id2 - The character index to highlight.
+ * @returns {Promise<void>}
+ * 
+ * @method findUniqueTriggerWord(ARRAY, _obj, currentVerseNumber, classwordname, classCHAR, stop)
+ * @description Finds a unique trigger word or character in a verse.
+ * @param {Array} ARRAY - The array of words in the current verse.
+ * @param {Array|object} _obj - The object or array of other verses to compare against.
+ * @param {string} currentVerseNumber - The current verse number.
+ * @param {string} classwordname - The CSS class for highlighting words.
+ * @param {string} classCHAR - The CSS class for highlighting characters.
+ * @param {boolean} stop - Whether to stop at the unique word.
+ * @returns {Promise<object>} Returns an object containing the unique word and character indices.
+ * 
+ * @method manageAnswer(ans, issplit, og)
+ * @description Processes and manages the correct answer, including alternative answers and exceptions.
+ * @param {string} ans - The correct answer.
+ * @param {boolean} issplit - Whether the answer is already split into words.
+ * @param {string} og - The original user input.
+ * @returns {Array} Returns an array containing the processed answer components.
+ * 
+ * @method levenshtein(a, b, Percent)
+ * @description Calculates the Levenshtein distance between two strings.
+ * @param {string} a - The first string.
+ * @param {string} b - The second string.
+ * @param {number} Percent - The percentage similarity threshold.
+ * @returns {boolean|number} Returns true if the similarity is above the threshold, otherwise returns the distance.
+ * 
+ * @method updateClientInfo(info, name, setItem)
+ * @description Updates or retrieves client information from localStorage.
+ * @param {object} info - The information to store.
+ * @param {string} name - The key for localStorage.
+ * @param {boolean} setItem - Whether to set or get the item.
+ * @returns {object|null} Returns the stored information or null if not found.
+ * 
+ * @method fliterOutQs(inquestions, ob)
+ * @description Filters questions based on specified criteria.
+ * @param {Array} inquestions - The array of questions to filter.
+ * @param {object} ob - The filtering criteria.
+ * @returns {Array} Returns the filtered questions.
+ * 
+ * @method sortBy(inquestions, mode)
+ * @description Sorts questions based on the specified mode.
+ * @param {Array} inquestions - The array of questions to sort.
+ * @param {string} mode - The sorting mode ("alpha" or "trigger").
+ * @returns {Array} Returns the sorted questions.
+ * 
+ * @method clear(par3)
+ * @description Clears the current quiz state and resets the UI.
+ * @param {string} par3 - The parent element ID to clear.
+ * 
+ * @method hightestMonth(inMonths)
+ * @description Determines the highest month and its corresponding chapters.
+ * @param {Array} inMonths - The array of months to evaluate.
+ * @returns {object} Returns an object containing the highest month and chapters.
+ * 
+ * @method manageModal(mtxt, set, modalid, mcon, closebtn, btntxt, onModalClose, onModalOpen)
+ * @description Manages the display and behavior of a modal dialog.
+ * @param {string} mtxt - The modal text content.
+ * @param {boolean} set - Whether to apply settings on modal close.
+ * @param {string} modalid - The modal element ID.
+ * @param {string} mcon - The modal content element ID.
+ * @param {string} closebtn - The close button element ID.
+ * @param {string} btntxt - The close button text.
+ * @param {Function} onModalClose - Callback for when the modal closes.
+ * @param {Function} onModalOpen - Callback for when the modal opens.
+ */
 const SETTINGSHTML = `<!--settings head--><div id="settings-full">
     <div id="startScene" class="start-scene-container">
         <div class="start-scene-card" id="overflow-set">
@@ -223,84 +372,7 @@ prevoiusScene(){
  }
 
  
-  function timer2_0 () {
-     // Define the total time for the timer in seconds.
-     const totalTime = 30; 
-     // Get the circular timer element by its ID.
-     const timerEl = document.getElementById('quiz-timer');
-     // Get the inner display area for the numbers.
-     const displayEl = timerEl.querySelector('.timer-display');
-     // Get the status message element below the timer.
-     const statusEl = document.getElementById('status-message');
-     // Initialize the time left counter to the total time.
-     let timeLeft = totalTime; 
-     // Flag to track the running state of the timer.
-     let isRunning = false;
-     // Variable to hold the interval ID for stopping the timer later.
-     let timerInterval;
-
-     function getStatusMessage(time) {
-         // Check if time is positive.
-         if (time > 0) {
-             // Return remaining time message.
-             return `Time remaining: ${time} seconds`;
-         // Check if time is zero.
-         } else if (time === 0) {
-             // Return time up message.
-             return 'Time is up! Timer completed.';
-         }
-         // Default ready message.
-         return 'Timer ready. Restart the page to run again.';
-     }
-
-     function updateTimer() {
-         // Decrease the time left by 1 second.
-         timeLeft--; 
-         
-         // Calculate the percentage of time that has elapsed (0% to 100%).
-         const elapsedPercentage = ((totalTime - timeLeft) / totalTime) * 100;
-         
-         // Set the custom CSS property to update the conic-gradient fill visually.
-         timerEl.style.setProperty('--fill-percent', `${elapsedPercentage}%`); 
-         
-         // Update the display with the large, prominent countdown number.
-         displayEl.innerHTML = `<span class="text-4xl font-extrabold">${timeLeft}</span>`; 
-         
-         // Update the status message below the timer.
-         statusEl.textContent = getStatusMessage(timeLeft);
-
-         // Check if the timer has reached zero or less.
-         if (timeLeft <= 0) {
-             // Stop the interval.
-             clearInterval(timerInterval); 
-             // Set the running flag to false.
-             isRunning = false;
-             // Change timer background to red for final state indication.
-             timerEl.style.backgroundColor = '#f44336'; 
-             // Ensure the progress bar is 100% full.
-             timerEl.style.setProperty('--fill-percent', `100%`); 
-             // Change the number color to white for contrast.
-             displayEl.style.color = '#fff';
-         }
-     }
-
-     function startTimer() {
-         // Check if the timer is not already running.
-         if (!isRunning) {
-             // Start the interval, calling updateTimer() every 1 second.
-             timerInterval = setInterval(updateTimer, 1000); 
-             // Set the running flag to true.
-             isRunning = true;
-             // Initial setup for the display text with the starting time.
-             displayEl.innerHTML = `<span class="text-4xl font-extrabold">${totalTime}</span>`;
-             // Initial status message setup.
-             statusEl.textContent = getStatusMessage(totalTime);
-         }
-     }
-
-     // Wait for the window to fully load before starting the timer.
-       
-  }
+  
 /**
  * Initializes and starts the Web Speech API (SpeechRecognition) for voice recording and transcription.
  * This function requires browser support for the SpeechRecognition interface (e.g., Chrome, Edge).
@@ -370,14 +442,36 @@ if(toStop) toStop()
 
 
 
+const mockQuestions = [
+    { ref: "Matthew 11:07-08", id: 1, verse: "Where, did Jesus ask, did the crowds go out to see a man dressed in soft clothing? The wilderness?", month: "october" },
+    { ref: "Matthew 11:08", id: 2, verse: "Where are those who wear soft clothing? In kings' houses", month: "november" },
+    { ref: "Matthew 11:09", id: 3, verse: "Who is more than a prophet? John (John the Baptist)", month: "december" },
+    { ref: "Matthew 11:09", id: 4, verse: "About whom did Jesus say, 'Yes, I tell you, and more than a prophet'? John (John the Baptist)", month: "january" },
+    { ref: "Matthew 11:10", id: 5, verse: "Who will I send before your face? My messenger", month: "february" },
+    { ref: "Matthew 11:10", id: 6, verse: "What will my messenger prepare before you? Your way", month: "march" },
+    { ref: "Matthew 11:11", id: 7, verse: "Who is greater than John the Baptist? The one who is least in the kingdom", month: "october" },
+    { ref: "Matthew 11:11", id: 8, verse: "Than whom is no one greater among those born of women? John the Baptist", month: "november" },
+    { ref: "Matthew 11:12", id: 9, verse: "When has the kingdom of heaven suffered violence? The days of John the Baptist until now", month: "december" },
+    { ref: "Matthew 11:12", id: 10, verse: "What has the kingdom of heaven suffered from the days of John the Baptist until now? Violence", month: "january" },
+    { ref: "Matthew 11:12", id: 11, verse: "By what do the violent take it? Force", month: "february" }
+];
 
-class QuizCompanion {
-    constructor(debugMode=true, config='nothing', type ) {
-  
+
+class
+
+QuizCompanion {
+    constructor(debugMode=true, type ,config='nothing') {
+      this.debugLogs = [];
+      console.log(this.debugLogs) ///lilve array 
         this.id = (word) => {
             let word1 = document.getElementById(word);
             return word1;
         };
+        this.allQuestionsTrigs  = [];
+    this. numVs = [1,2,3]
+                        this.quotesSorted = {}
+                        this.ftvsSorted = {};
+
         this.manageModal = (mtxt = "hi", set = false, modalid = 'settings', mcon = "modaldiv", closebtn = 'closeModalBtn', btntxt='Ok', onModalClose='', onModalOpen='') =>{
             const modal = this.id(modalid);
             const modalContent = this.id(mcon);
@@ -722,11 +816,65 @@ class QuizCompanion {
             console.error('Error loading quotes:', error);
         }
     }
-    deepStudy (type) {
-        if(type === 'new'){
-             
-        } else if(type === 'check'){
+    async setTrigForAllMonths(verse, isFtv=false){
+        const mockQuestions = [
+            { ref: "Matthew 11:07-08", id: 1, verse: "Where, did Jesus ask, did the crowds go out to see a man dressed in soft clothing? The wilderness?", month: "october" },
+            { ref: "Matthew 11:08", id: 2, verse: "Where are those who wear soft clothing? In kings' houses", month: "november" },
+            { ref: "Matthew 11:09", id: 3, verse: "Who is more than a prophet? John (John the Baptist)", month: "december" },
+            { ref: "Matthew 11:09", id: 4, verse: "About whom did Jesus say, 'Yes, I tell you, and more than a prophet'? John (John the Baptist)", month: "january" },
+            { ref: "Matthew 11:10", id: 5, verse: "Who will I send before your face? My messenger", month: "february" },
+            { ref: "Matthew 11:10", id: 6, verse: "What will my messenger prepare before you? Your way", month: "march" },
+            { ref: "Matthew 11:11", id: 7, verse: "Who is greater than John the Baptist? The one who is least in the kingdom", month: "october" },
+            { ref: "Matthew 11:11", id: 8, verse: "Than whom is no one greater among those born of women? John the Baptist", month: "november" },
+            { ref: "Matthew 11:12", id: 9, verse: "When has the kingdom of heaven suffered violence? The days of John the Baptist until now", month: "december" },
+            { ref: "Matthew 11:12", id: 10, verse: "What has the kingdom of heaven suffered from the days of John the Baptist until now? Violence", month: "january" },
+            { ref: "Matthew 11:12", id: 11, verse: "By what do the violent take it? Force", month: "february" }
+        ];
+        this.notriggers = [];
+        let htmlArr = verse.verse.split(' ');
+        
+        
+        let arr_of_question = ( verse.verse.includes('?') ? verse.verse.split('?')[0] : verse.verse).split(' ')
+      
+        let allMonthsV =  this.quizMonths.map(m=>m[0])
+        const MonthIndex =  allMonthsV.findIndex(v=> v === verse.month);
+       const allMonths = allMonthsV.filter(m=>allMonthsV.slice(MonthIndex,).includes(m))
+       console.warn(allMonthsV, MonthIndex, allMonths, 1259, verse.month, verse)
+        let list = isFtv  || verse.type ==='ftv/quote' ?   Object.values(this.verse_dict).filter(v=>v.type==='ftv/quote'):  Object.values(this.question_dict)
+        let  trigs = [];
+        let  test = []
+        let uniqueWordNum = -2;
+        let qsForM = [];
+        let uinqueWord = 'nothing'
+        console.log('htmlArr', htmlArr)
+        for (let i = 0; i < allMonths.length; i++) {
+            const monthName = allMonths[i];
+           const monthSel = allMonthsV.slice(0, i+1+MonthIndex) //set the months for each loop
+         qsForM = list.filter(q=>monthSel.includes(q.month ))
+         console.warn('all', monthSel, monthName, qsForM, htmlArr, arr_of_question, uniqueWordNum,uinqueWord)     
+             if(!qsForM) console.error('bad abd bad abd abd qsforrrrrrrrrrrrr ms ')
+        const   unique = await this.findUniqueTriggerWord(arr_of_question, qsForM, '', monthName)
+    uniqueWordNum = unique.uniqueWordNum;
+          uinqueWord =  arr_of_question[uniqueWordNum]
+          htmlArr[uniqueWordNum] = `<span class="${monthName}">${uinqueWord}</span>`;
+console.warn( unique || 'hi')
+            trigs.push({month: monthName, htmlArr: htmlArr,  id: verse.id, trigNum:uniqueWordNum, word:uinqueWord, question:verse})
+            test.push({month: monthName, htmlArr: htmlArr, verse: verse.verse, id: verse.id, t:uniqueWordNum})
+           
+        }
+        this.allQuestionsTrigs.push({trigs:trigs, id: verse.id} )
 
+         const  htmlToDisplay = htmlArr.join(' ').split('?')[0]
+        return {test, trigs, htmlArr, uniqueWordNum, htmlToDisplay}
+    }
+/*must be callback funcitons
+@<lllll>*/ 
+    
+    deepStudy (type, ...args) {
+        if(type === 'new'){
+           this. newStudy(...args)
+        } else if(type === 'check'){
+            this.checkStudy(...args)
         }else{
 
         }
@@ -776,7 +924,17 @@ class QuizCompanion {
         if(args){
         if (this.deblog) {
             //this.delog(...args);
-            console.log(...args)
+         this.debugLogs.push(...args)
+            
+        }
+    }
+    }
+    delog2(...args) {
+        //checks for debug mode 
+        if(args){
+        if (this.deblog) {
+            //this.delog(...args);
+         console.log(...args)
             
         }
     }
@@ -823,7 +981,7 @@ class QuizCompanion {
     
     stripChar(input, messaa = 'errorr!!!' ) {
         // Define the set of characters to be stripped
-        const charToStrip = new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ']);
+        const charToStrip = new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ', '\n', '\r', '\t', '[', ']', '{', '}', '—', '–', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0','|']);
         
         // Helper function to process a single string
         const processString = (str) => {messaa='no message'
@@ -853,17 +1011,18 @@ class QuizCompanion {
  // NOTE: This file assumes the existence of 'this.stripChar' and 'this.delog' methods on the class instance.
 
 async findUniqueTriggerWord(ARRAY, _obj, currentVerseNumber = '', classwordname='highlightWord', classCHAR = false, stop=false) {
-    if (!Array.isArray(ARRAY) || typeof _obj !== 'object' || _obj === null) {
+    if (!Array.isArray(ARRAY) || _obj === null) {
         console.error('Invalid input: ARRAY must be an array and _obj must be an object.');
         return { uniqueWordNum: -1, uniquecharNum: -1, absoluteCharIndex: -1 };
     }
     let logForchar = []
-let htmlTigDisplay;
+let htmlToDisplay;
 let notquote = true;
 if(currentVerseNumber === 'F') notquote = false
     const currentFullVerse = ARRAY.join(' ');
 let obj;
 let vOfV;
+let htmlArr;
 
     if(notquote){
      obj = _obj.filter(v => {
@@ -878,7 +1037,7 @@ let vOfV;
      });
      
 }
-if(obj.length === _obj.length) console.error('filter Error', obj)
+if(obj.length === _obj.length) console.error('filter Error', obj, ARRAY)
     //this.delog('Filtered obj:', obj);
     //this.delog('Current full verse:', currentFullVerse);
 
@@ -932,6 +1091,7 @@ if(obj.length === _obj.length) console.error('filter Error', obj)
                       if (notquote && ARRAY[uniqueWordNum][0]) 
                         {offset = ARRAY[uniqueWordNum][0].includes('"') ? 1 :0;}
                       let Verse = [...ARRAY];
+                     
                       Verse[uniqueWordNum] = `<span class=${classwordname}>${Verse[uniqueWordNum]}</span>`;
                        
                       
@@ -939,8 +1099,10 @@ if(obj.length === _obj.length) console.error('filter Error', obj)
                      
                       if(classCHAR) Verse[uniqueWordNum].split('')[j+offset] = `<span class=${classCHAR}>${Verse[uniqueWordNum][j+offset]}</span>`
                     if(stop)  Verse.splice(uniqueWordNum+1)
+                     htmlArr=  [...Verse]
+                       
                       Verse = Verse.join(' ') 
-                      htmlTigDisplay = `${Verse}`
+                      htmlToDisplay = `${Verse}`
                       const spaceoffset = ARRAY.slice(0, uniqueWordNum).length === 0 ? 0 :1;  
                     this.delog( ARRAY.slice(0, uniqueWordNum).join(' '), 'test')
                     absoluteCharIndex =  ARRAY.slice(0, uniqueWordNum).join(' ').length + j + offset + spaceoffset;
@@ -954,13 +1116,13 @@ if(obj.length === _obj.length) console.error('filter Error', obj)
             }
             this.delog(logForchar);
                     //this.delog(uniqueWordNum, uniquecharNum, 'unique stuff')
-                    return { uniqueWordNum, uniquecharNum, htmlTigDisplay};
+                    return { uniqueWordNum, uniquecharNum, htmlToDisplay, htmlArr, absoluteCharIndex};
                 
             
         }
     }
 
-    return { uniqueWordNum, uniquecharNum, absoluteCharIndex };
+    return { uniqueWordNum, uniquecharNum, absoluteCharIndex,htmlToDisplay, htmlArr};
 }
 /*// Total Absolute Index (1-based, assuming string indices are 0-based):
                     // (Raw prefix length) + (Raw unique prefix length)
@@ -971,12 +1133,7 @@ if(obj.length === _obj.length) console.error('filter Error', obj)
                     uniquecharNum = absoluteCharIndex; 
                     
                     // --- END FIX --- */
-    delog(...args) {
-        //checks for debug mode 
-        if (this.deblog) {
-            console.log(...args);
-        }
-    }
+    
 hightestMonth(inMonths){
    const higestmoth =  this.quiMonths.indexOf(inMonths[inMonths.length -1]);
    const figureMonths = this.quiMonths.slice(0, higestmoth + 1);
@@ -1142,8 +1299,12 @@ hightestMonth(inMonths){
         } catch (error) {
             console.error('Error initializing quiz:', error);
         }
+
         const allQs = {...this.verse_dict, ...this.question_dict}
-    return { allQs }
+        localStorage.setItem('allQuestions', JSON.stringify({allQs}));
+        const QUESTIONS = this.question_dict;
+        const VERSES = this.verse_dict;
+    return { allQs, QUESTIONS, VERSES }
     }
     
    
@@ -1243,7 +1404,28 @@ hightestMonth(inMonths){
     }
     
    
-    
+ levenshteinDistance = (a, b) => {
+        const matrix = Array.from({ length: a.length + 1 }, (_, i) =>
+            Array.from({ length: b.length + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
+        );
+
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                if (a[i - 1] === b[j - 1]) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j - 1] + 1
+                    );
+                }
+            }
+        }
+        return matrix[a.length][b.length];
+    };
+
+
     
     levenshtein(a, b, Percent = 75) {
         const matrix = [];
@@ -1874,8 +2056,8 @@ hightestMonth(inMonths){
                 this.morebtn.style.display = 'block';
             }
             
-        } else  if(this.isDeep){
-            this.deepStudy('check');
+        } else  if(this.selVerses[this.cnum].type === 'deep'){
+            this.deepStudy('check', this.ver.value, this.selVerses[this.cnum].answer);
         }
             else{
             // drag and drop elements
@@ -2327,14 +2509,16 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                 //trigChar = findUniqueTriggerWord(QUEST.join(' ').split(''), question_dict2, cnum , QUEST.length)[1];
                 await this.delay_text(`Question`, 'h4', 'quizHeader', 0, 'purple');
             } else if(this.ftv === 'deep') {
+                console.warn('deep study mode');    
                 this.deepStudy('new')
             }else{this.delog('failed at new', this.ftv);
             }
         }
         this.startTimer = false;
         this.delog(tChar, 'tc', this.ftvTriggerI, 'ftv1');
-        await this.delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', uniqueWordNum, uniquecharNum);
+        if(this.ftv !== 'deep') {await this.delay_text(`${phars}`, 'p', 'quizHeader', speed, 'black', uniqueWordNum, uniquecharNum);
        if(isd) this.dragElements()
+       }
         // Update the progress bar after a new question is loaded
         return this.quest, phars;
     }
@@ -2478,6 +2662,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
     }
     
     handleSpaceEvent() {
+        
         if (this.isVerse) {
             let Answer2;
             this.plsc.style.display = 'none';
@@ -2522,6 +2707,10 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
             }
         }
     }
+    idFinder(id){
+      const idFound  = Object.values(this.verse_dict).find(q=>q.id === id);
+      return idFound || false;
+    }
     get HTML(){
         const top= this.SHEAD
         const foot= this.SFOOT;
@@ -2531,7 +2720,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         const modal = this.dialogue;
         return {top, foot, body, full, scene, modal}
     }
-   async startApp(settings=this.quizSet) {
+   async startApp(settings=this.quizSet, customQuestions=[]) {
     this.quizSettings = settings;
     if(!this.quizSettings){ console.error('nothing in settings'); this.manageModal('An error has happened. Contact support');return new Error('quizSettings empty')}
     this.answers = [];
@@ -2569,7 +2758,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                     
                     if(this.next) this.next.style.display = 'none';
                     delog(this.selVerses)
-                    if (this.selverses && this.selVerses.length === 0 ) {
+                    if (this.selverses && this.selVerses.length === 0  && customQuestions.length === 0) {
                         this.delog(this.question_dict, 'frist vd');
                         this.verse_dict = { ...this.verse_dict, ...this.question_dict };
                         this.delog(this.verse_dict, 'Vers dict after add');
@@ -2608,10 +2797,13 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                                 
                 
                         })
-                        if(this.selVerses.length === 0) console.error('ops')
+                       console.warn( this.setTrigForAllMonths(this.selVerses[7]));
+                        if(this.selVerses.length === 0) {this.manageModal('No questions selected');
+        return 'stop'}; //show a friendly wait message and have the user reclick the start button
                         //add the incorrect and correct propties to selVerses
                         
                     } else {
+                        this.selVerses = customQuestions
                         console.warn('please fix', this.selVerses)
                         //this.quizSettings.numQuestions = clientAnswersLength;
                         //this.selVerses;
@@ -2622,7 +2814,9 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                 async function WaitForLoad() {
                     
                     
-                    await Selectdata.bind(this)();
+                   const state =  await Selectdata.bind(this)();
+                   if (state === 'stop') return;
+                    this.delog2(this.selVerses, 'selverses after select data');
                     async function loadgen(d20 = 20) {
                         if (this.genQuiz) {
                             let F;
@@ -2651,21 +2845,28 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                         }
                     }
                     
-                    this.delog(this.selVerses, 'selverses');
+                    this.delog2(this.selVerses, 'selverses');
                     
                     this.speeddetext = this.quizSettings.speed_tOf_text;
                     this.Time = this.quizSettings.lenOfTimer;
                     this.running = true;
                     async function loadVerseDicts() {
-                                 const {figureMonths} = this.hightestMonth(this.quizSettings.months)
+                        
+                    
+                           const {figureMonths} = this.hightestMonth(this.quizSettings.months)
                         this.verse_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['ftv/quote']})
                         
-                        this.delog('question_dict', '2');
+                        this.delog2('question_dict', '2');
                         this.question_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['question', 'According to', 'SQ:']})
-                        
+                     this.  numVs.forEach(v=> { this.ftvsSorted[v] = this.verse_dict2.filter(verse=> verse.numVerses === v)})
+                        this.delog2(this.ftvsSorted, 'sorted quotes by num verses');
+                       
                         this.quoteRefArr = this.verse_dict2.map(Verse => Verse.ref);
-                        this.delog(this.question_dict2, this.verse_dict2, this.quoteRefArr, Object.values(this.verse_dict, 'verse dicts'));
-                    }
+                        this.quoteSorted = this.numVs.map(v=> this.ftvsSorted[v].map(ve=>ve.ref));
+                    this.delog2('all dicts', this.question_dict2, this.verse_dict2, this.quoteRefArr, Object.values(this.verse_dict, 'verse dicts'));
+                   
+                    
+                }
                     
                     await loadVerseDicts.bind(this)();
                     this.ftvQ = ['ftv', 'quote']
@@ -2674,7 +2875,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                     }else if(this.quizSettings.verseSelection === "alphabet"){
                         this.selVerses = this.sortBy(this.selVerses);
                         this.questionsMap = this.selVerses.map(v=>{
-                            if(v.type === 'ftv/quoteh'){
+                            if(v.type === 'ftv/quote'){
                                 v.type = ftvQ[Math.floor(Math.random())];
                             }
                             v.state = 'none';
@@ -2890,83 +3091,474 @@ let currentRecognition = null;
 
 }
 
-class Sockets{
-    constructor(wsPro='ws://localhost:3030'){
-        this.clientWs = new WebSocket(wsPro)
-    this.sessionWs ={}
-    this.sessionWs.res = {};
-    }
-   async handleConnection(calbfn, onClose, onError){
+
+
+  class BaseStudy extends QuizCompanion{
+    constructor(debugMode, config){
+        super(debugMode, 'deep_study', config)
+        this.studyCommandIdMap = {
+            where: ['beginning', 'second', 'atVersesEnd', 'end'],
+            usedFor: ['MEMORY', 'QUIZ', 'EXTRA'],
+            // Numerical ID 1 corresponds to the command for reviewing the passage structure.
+            1: "review_structure", 
+            // Numerical ID 2 corresponds to the command for reciting the entire passage.
+            2: "recite_passage",
+            // Numerical ID 3 corresponds to the command for focusing on a small chunk.
+            3: "focus_chunk",
+            // Numerical ID 4 corresponds to the command for typing the small chunk.
+            4: "type_chunk",
+            // Numerical ID 5 corresponds to the command for typing the entire verse.
+            5: "type_verse",
+            // Numerical ID 6 corresponds to the command for practicing difficult words.
+            6: "practice_difficult",
+            // Numerical ID 7 corresponds to the command for a general review of all content.
+            7: "review_all"
+        };
+        
+        this.memoryStudyCommands = {
+            // The overall category or depth level of these commands.
+            type: "deep", 
+        // three types currentVerse, content, missedWordsToUse
+            // An array containing specific study commands and their intended use cases.
+            commands: [
+                {
+                    // The type of learning (deep memorization).
+                    type: "deep", 
+                    // Unique, non-random numerical identifier (mapped to 'review_structure').
+                    id: 1, 
+                    // Command focusing on reviewing the entire passage's context and flow.
+                    statement: "Study the text", 
+                    content:'content',
+                    // Use case simplified to a single word for sorting/filtering.
+                    used_for: "QUIZ" ,
+                    where: 'beginning',
+                    hasAns: false
+                   
+                },
+                {
+                    // The type of learning (deep memorization).
+                    type: "deep", 
+                    // Unique, non-random numerical identifier (mapped to 'recite_passage').
+                    id: 2, 
+                    // Command requiring the user to speak or type the whole memorized passage.
+                    statement: "Recite the entire passage from memory", 
+                    content:'currentVerse',
+                    // Use case simplified to a single word for sorting/filtering.
+                    used_for: "EXTRA" ,
+                     where: 'second'
+                     ,
+                     hasAns: true
+                },
+                {
+                    // The type of learning (deep memorization).
+                    type: "deep", 
+                    // Unique, non-random numerical identifier (mapped to 'focus_chunk').
+                    id: 3, 
+                    // Command directing the user's attention to a small, current phrase or verse.
+                    statement: "Focus memorizing on the current chunk of words", 
+                    // Use case simplified to a single word for sorting/filtering.
+                    content: 'chunk',
+                    used_for: "MEMORY" ,
+                     where: 'beginning',
+                     hasAns: false
+                },
+                {
+                    // The type of learning (deep memorization).
+                    type: "deep", 
+                    // Unique, non-random numerical identifier (mapped to 'type_chunk').
+                    id: 4, 
+                    // Command requiring the user to type out the specific chunk they are studying.
+                    statement: "Type the current chunk of words", 
+                    content: 'chunk',
+                    // Use case simplified to a single word for sorting/filtering.
+                    used_for: "MEMORY" ,
+                     where: 'beginning',
+                     hasAns: true
+                },
+                { 
+                    // The type of learning (deep memorization).
+                    type: "deep", 
+                    // Unique, non-random numerical identifier (mapped to 'type_verse').
+                    id: 5, 
+                    // Command demanding typing of the complete verse for rigorous testing.
+                    statement: "Type the full text from memory", 
+                    content: 'content',
+                    // Use case simplified to a single word for sorting/filtering.
+                    used_for: "MEMORY" ,
+                    for:'quiz',
+                     where: 'beginning',
+                     hasAns: true
+                },
+                 {
+                    // The type of learning (deep memorization).
+                    type: "deep", 
+                    // Unique, non-random numerical identifier (mapped to 'type_verse').
+                    id: 8, 
+                    // Command demanding typing of the complete verse for rigorous testing.
+                    statement: "Type the full verse from memory", 
+                    content: 'currentVerse', 
+                    // Use case simplified to a single word for sorting/filtering.
+                    used_for: "EXTRA" ,
+                    for:'verse',
+                     where: 'beginning',
+                     hasAns: true
+                },
+                { 
+                    // The type of learning (deep memorization).
+                    type: "deep", 
+                    // Unique, non-random numerical identifier (mapped to 'practice_difficult').
+                    id: 6, 
+                    // Command to engage with words previously marked as difficult or forgotten.
+                    statement: "Practice difficult or forgotten words", 
+                    content: 'missedWordsToUse',
+                    // Use case simplified to a single word for sorting/filtering.
+                    used_for: "EXTRA" ,
+                    end:true,
+                    where: 'atVersesEnd',
+                    hasAns: true
+                },
+                { 
+                    // The type of learning (deep memorization).
+                    type: "deep", 
+                    // Unique, non-random numerical identifier (mapped to 'review_all').
+                    id: 7, 
+                    // Command for a general, broad review of all recently learned content.
+                    statement: "Review all learned concepts and verses", 
+                    content : 'content',
+                    end:true,
+                    // Use case simplified to a single word for sorting/filtering.
+                    used_for: "EXTRA" ,
+                    where: 'end',
+                    hasAns: true
+                }
+            ]
+        };
+        this.answer;
+        this.question;
+        this.questVRef;
+        this.missedWords ={}
+        this.currrentId;
+       this.chunk= null;
+       this.anwserSectionHtml = `<div id="text-area-container" class="text-area-container";">
+
+       <textarea spellcheck="false" placeholder="Enter Text" id="verse" class="blueborder invisible-text" style="position:absolute></textarea>
+       
+       <div id="text-area-shadow" class="text-area-shadow blueborder"></div>
+       
+   </div>
+       `;
+        //html stuff
+        this.shadow = this.id('textarea-shadow');
+        this.textarea = this.id('verse');
+        this.textarea.classList.add('invisible-text');
+        this.textarea.addEventListener('input', (e) => {
+            this.shadow.innerText = e.target.value;
+            this.shadow.style.height = e.target.scrollHeight + "px";
+        console.log('input event', e.target.value);
+        console.log('shadow text', this.shadow.innerText);
+        console.log('shadow height', this.shadow.style.height);
+        //end html stuff
       
-        this.clientWs.onclose = (event)=>{
-            if(!event.wasClean) console.error('error with unclean close', event)
-                          console.log('conection closed', event);
-           // if(typeof (calbfn === 'function')) //onClose()
-            
+        });
+         
+    }
+    //html 
+  
+    newStudy(htmlElm= 'h3'){
+      const area  =    this.id('quizHeader');
+      const verseData = this.selVerses[this.cnum];
+      area .innerHTML = `<${htmlElm}> ${this.selVerses[this.cnum].statement}</${htmlElm}>`;
+      this.answerDeep = this.selVerses[this.cnum].answer;
+      this.chunk = this.selVerses[this.cnum].chunk || null; 
+      if(!this.answerDeep) this.updateHtmlWithNextBtn()
+     
+  let display =`<div class="deep-display">${this[ verseData.display  ] || "Error with loading content"}</div>`;
+  this.id('answerSection').innerHTML =   verseData.hasAns ? this.anwserSectionHtml: display; 
+
+
+}
+    updateHtmlWithNextBtn(){
+        this.next.style.display = 'block';
+    }
+    htmlState(toDisplay){
+      return   toDisplay.map(word=>`<span class="${word.status}">${word.word}</span>`).join(' ')
+
+    }
+
+    checkStudy(enteredAnswer){
+        const cleanEntered = enteredAnswer.split(' ').map(w => stripChar(w)).filter(w=>w); //the filter reomves empty strings
+        
+    const cleanAnswer = this.answer.split(' ').map(w => stripChar(w)).filter(w=>w); //the filter reomv
+      const {correctedAnswer, missedWords}  = this.spellCheck(cleanAnswer, cleanEntered, { threshold: 2, correction: true });
+    if(this.stripChar(correctedAnswer.join(' ')) === this.stripChar(this.answer)){
+            ///directly send to corrrect if complete match
+            const wordData = this.missedWords[this.currrentId];
+            if (wordData && wordData.diff !== undefined) {
+                // Directly use the valid reference for assignment.
+                wordData.diff -= 1; 
+            }
+          this.correct('right')
+        }else{
+           this.correct('wrong')
+           console.log('missed words', missedWords, this.currrentId);
+           this.findWordsCount(cleanAnswer, cleanEntered) // id to be figuerd out
+           this.rankedMissedWords = this.missedWords.sort( (a,b) => b.missed - a.missed );
+          
+           this.missedWordsList = this.randkedMissedWords.slice(0, 6).map( mw => mw.word); //top six missed words
+           this.missedWordsToUse = this. missedWordsList.join(' ');
+           console.log('missed words list', this.missedWordsList)
         }
-        this.clientWs.onerror = (error)=>{
-            console.error('error',error);
-            //if(typeof (calbfn === 'function')) //onError()
-            
+
+    }
+    
+        /// implement later need code now!!!!
+        spellCheck(answer=[], enteredAnswer=[], options = { threshold: 2, correction: true }) {
+               const correctedAnswer = [];
+            const misspelledWords = [];
+
+            for (let i = 0; i < answer.length; i++) {
+                const actualWord = answer[i];
+                const enteredWord = enteredAnswer[i] || "";
+
+                const distance = this.levenshteinDistance(actualWord.toLowerCase(), enteredWord.toLowerCase());
+
+                if (distance <= options.threshold) {
+                    correctedAnswer.push(options.correction ? actualWord : enteredWord);
+                } else {
+                    correctedAnswer.push(enteredWord);
+                    misspelledWords.push(enteredWord);
+                }
+            }
+                this.corAnswers = correctedAnswer;
+                this.misspelledWords = misspelledWords;
+            return { correctedAnswer, misspelledWords };
+        
+    }
+    findWordsCount(answer=[], enteredAnswer=[], id, resetID=true){
+        if(resetID) this.missedWords[id] = []
+       for  (word of answer){
+            const countOfWordEntered  = enteredAnswer.filter(eWord => eWord === word).length;
+            const actualCountOfWord  = answer.filter(aWord => aWord === word).length;
+            console.log('count of word', word, countOfWord)
+            const diff = actualCountOfWord - countOfWordEntered;
+            if(diff === 0) continue;
+            // negative diff means they entered more than required
+            this.missedWords[id] .push( {word: word, missed:diff})
+        }
+        return this.missedWords[id];
+       //this should use the whole context to find missing words what algorithm?
+       //this algorithim right here : 
+    }
+    setWordState(answer=[], enteredAnswer=[]){
+    let wordStates ,  missedWords = [];
+        let wordsInAnswerMap = [...answer]; // Create a copy of the answer array to track used words.
+         // Index to track the user's current token position.
+         for(let i=0; i < enteredAnswer.length; i++){
+            const actualWord = i >= answer.length ? false: answer[i]
+            const userWord = enteredAnswer[i]; // Get the corresponding word from the user's input at the current position.
+            let status = 'missed'; // Default status if no match is found.
+            if(actualWord && actualWord === userWord){ // If the words match at the current position (perfect sequence).
+                status = 'correct'; // Mark as correctly placed.
+                wordsInAnswerMap.splice(i, 1); // Remove the matched word from the map.
+         }else if(answer.includes(userWord)){
+            status = 'misplaced';
+           if(actualWord) wordsInAnswerMap.splice(i, 1); // Remove the matched word from the map.
+         }else{
+            status = 'incorrect';
+         }
+        
+         wordStates.push( {word: actualWord, status: status ,index:i} )
+         if(enteredAnswer.includes(actualWord) === false && actualWord){
+            status = 'missed';
+            console.log('missed at',  i, actualWord)
+            missedWords.push({word: actualWord, index:i})
+         }  
+
+    }
+    this.wordStates = wordStates;
+return {wordStates, missedWords}
+}
+actualQuestState(anwser =[], states, missed){
+    const status = ['correct', 'missed']
+ missed.forEach(m =>{
+   states[ m.index ] = m;
+ })
+
+
+
+}
+    initWords(verseOrQuest, chunkLen=5){
+        this.wholeContent = verseOrQuest;
+        this.contentwords = verseOrQuest.split(' ');
+        const len = this.contentwords.length;
+        this.chunks = []
+        const verselens =  chunkLen
+     //////////////////math is good/////////////////////////////////
+     ///console.log('math', verselens, leftOver, (len / 5))
+     for(let i =0; i < len; i += verselens){
+      const sectionRow = this.contentwords.slice(i, i + verselens);
+      this.chunks.push(sectionRow) 
+
+
+  
+     }
+     return this.chunks;
+    }
+}
+    class VerseStudy extends BaseStudy { 
+        constructor(verses){
+            super()
+            this.verses  =  verses  || localStorage.getItem('deepStudyVerses') || false; // the current value of this key will have the verse needed to study
+            console.log('verseStudy')
         }
     }
-    emit(func, data = {}, ...eventArgs) {
-        return new Promise((resolve) => {
-            this.clientWs.onopen  = (event)=>{
-                console.log('conection on', event);
-                //if(typeof (calbfn === 'function')) //calbfn()
-                
+    class QuizStudy extends BaseStudy { 
+        constructor(questionID, type, chunkLen=3){
+            super()
+            this.type = type
+   this.chunkLen =  chunkLen
+           this.chunkLen = chunkLen;
+          
+                     
             
-            // 1. Create a unique ID for this request
-            const requestId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
-            console.log(requestId)
-            // 2. Send the message with the unique ID
+            this.onVInit(questionID)
+
+           
+
+            
+        }
+    formatQuizStudy (chunks, commands, currentQObject, extras) {
+            const questionsObject = chunks.map( (chunk, i) => { 
+            console.log(`Chunk ${i + 1}:`, chunk.join(' '));
+            if(i === 0) commands.filter( cmd => cmd.where !== 'second' )
+                
+          const studyQuestions  =  commands.map(cmd=>({type:'deep', cmdId:`${cmd.id}`, id:`${i}#${cmd.id}`, statement:cmd.statement, chunck:chunk.join(' '),  answer: cmd.hasAns ? chunk.join(' '):false, display:cmd.content, ...currentQObject}))
+                        
+                    
+            return studyQuestions;
+
+
+           })
+           return questionsObject.flat()
+          }
+        async   onVInit( id){
+           id = new Number(id)
+           const type = this.type;
+            const  {allQs}  = await this.initializeQuiz()
+                this.allContent = allQs;
+               
+                this.content = Object.values(this.allContent).find(vq => {  return vq.id == id} ) 
+                this.currentQObject = this.content
+                console.log(id, 'id in study', allQs, this.content,  Object.values(this.allContent))
+                this.content = this.content.verse
+                if(type !== 'both') this.content = type === 'anwser' ? this.content.split('?')[1] : this.content.split('?')[0];
+                [this.question, this.answer ] = this.content.split('?')
+           
+              const chunks = this.initWords(this.content, this.chunkLen)
+              delog(chunks, 'chunks')
+              const commands = this.memoryStudyCommands.commands.filter( cmd => cmd.used_for !== 'EXTRA' )
+              const extras =  this.memoryStudyCommands.commands.filter( cmd => cmd.used_for === 'EXTRA' )
+               
+           
+             this.selVerses= this.formatQuizStudy(chunks, commands, this.currentQObject, extras);
+             console.log( this.selVerses);
+             const settings = {
+                numQuestions: this.selVerses.length,
+                lenOfTimer: 0,
+                speed_tOf_text: 0,
+                verseSelection: 'inOrder',
+                quizMode: ['MEMORY', 'QUIZ'],
+                months: [],
+                ischp: false,
+                flights: ['A', 'B', 'C', 'T'],
+                selectedFlights: ['A', 'B', 'C', 'T'],
+            }
+             this.quizSettings = settings;
+             console.log('quiz settings for deep study', this.quizSettings);
+             
+             this.startApp(settings, this.selVerses);
+                      }
+    }
+
+
+class Sockets {
+    // COMMENT: Defines the constructor to initialize the connection and state.
+    constructor(wsPro = 'ws://localhost:3030') {
+        this.clientWs = new WebSocket(wsPro); // COMMENT: Creates the WebSocket instance.
+        this._connectionPromise = new Promise((resolve, reject) => { // COMMENT: Creates a Promise that resolves only when the WS connection is open.
+            this.clientWs.onopen = (event) => { // COMMENT: Sets the correct handler for when the connection is established.
+                console.log('Connection established.');
+                resolve(this.clientWs); // COMMENT: Resolves the Promise, signaling the connection is ready.
+            };
+            // Optional: Handle connection errors here to reject the promise quickly
+            this.clientWs.onerror = (error) => {
+                console.error('WebSocket Error:', error);
+                reject(error);
+            };
+        });
+        // COMMENT: No need for this.sessionWs = {}; as response tracking is handled by the Promise.
+    }
+
+    // COMMENT: Sets up essential error and close handlers. No need for await/async here.
+    handleConnection(onClose, onError) {
+        this.clientWs.onclose = (event) => { // COMMENT: Defines the handler for connection closure.
+            if (!event.wasClean) console.error('Error with unclean close', event);
+            console.log('Connection closed', event);
+            if (typeof onClose === 'function') onClose(); // COMMENT: Correctly calls the external onClose callback if provided.
+        };
+        this.clientWs.onerror = (error) => { // COMMENT: Defines the handler for connection errors.
+            console.error('Error', error);
+            if (typeof onError === 'function') onError(error); // COMMENT: Correctly calls the external onError callback if provided.
+        };
+        // NOTE: The onopen handler is handled in the constructor via _connectionPromise.
+    }
+
+    // COMMENT: Primary method for sending a message and awaiting a specific response.
+    async emit(func, data = {}, ...eventArgs) {
+        // 1. Await the connection readiness promise (The most critical fix).
+        await this._connectionPromise; // COMMENT: Pauses execution until the WebSocket is confirmed to be OPEN (readyState = 1).
+
+        return new Promise((resolve, reject) => {
+            // 2. Create a unique ID for this request.
+            const requestId = Date.now().toString() + Math.random().toString(36).substring(2, 9); // COMMENT: Generates a reliable unique request identifier.
+
+            // 3. Define the temporary listener to wait for the specific response.
+            const messageListener = (messageEvent) => {
+                let res;
+                try {
+                    res = JSON.parse(messageEvent.data);
+                } catch (e) {
+                    console.error("Failed to parse incoming message:", e);
+                    return;
+                }
+
+                // 4. Check if the incoming message is the response we are waiting for.
+                if (res.responseToId === requestId) {
+                    // 5. Success! Remove the temporary listener to clean up.
+                    this.clientWs.removeEventListener('message', messageListener); // COMMENT: Removes the specific listener instance to prevent memory leaks and confusion.
+
+                    // 6. Resolve the Promise with the response data.
+                    resolve(res); // COMMENT: Returns the server response to the calling code.
+                }
+            };
+            
+            // 7. Attach the temporary listener *before* sending the request.
+            this.clientWs.addEventListener('message', messageListener); // COMMENT: Attaches the message listener specifically for this request's resolution.
+
+            // 8. Send the message payload.
             const payload = {
                 func: func,
                 args: eventArgs,
                 payload: data,
-                requestId: requestId // Add the ID to the payload
+                requestId: requestId // COMMENT: Includes the unique ID for the server to reference in its response.
             };
-            this.clientWs.send(JSON.stringify(payload));
-
-            // 3. Temporarily set up a handler to wait for this specific response ID
-            const messageListener = (messageEvent) => {
-                const res = JSON.parse(messageEvent.data);
-                
-                // 4. Check if the incoming message is the response we are waiting for
-                if (res.responseToId === requestId) {
-                    // It is the correct response!
-                    
-                    // 5. Remove the temporary listener to clean up
-                    this.clientWs.removeEventListener('message', messageListener);
-                
-                console.log(res, 'wss return ')
-                
-                this.sessionWs.res[requestId] = res
-               //if(app[res?.func]) app[res.func](...res.args);
-                    // 6. Resolve the Promise with the response data
-                    resolve(res);
-                }
-            };
-            
-            // Comment: Use addEventListener for multiple handlers, not onmessage assignment
-          this.clientWs.addEventListener('message', messageListener);
-        }
+            this.clientWs.send(JSON.stringify(payload)); // COMMENT: Transmits the final JSON payload.
         });
-
     }
-    async asyncEmit(event, payload) {
-    
 
-       await this.handleConnection()
-        let testWs;
-        testWs = await this.emit(event, payload, 'hi');
-        console.log(testWs);
-        const serverAction = testWs
-        return serverAction
-        }
-    
-}
+    // COMMENT: Removed the redundant asyncEmit method. 'emit' is already asynchronous and returns a Promise.
+    // The user can simply call: const serverAction = await socketsInstance.emit(event, payload);
+} 
 function setQuizSetings (app){
     const quizSettings = {}
    
@@ -3091,13 +3683,17 @@ function setQuizSetings (app){
    return quizSettings;
 }
 const debug = true;
+const logs =  []
 function delog(...args){
     if(!debug) return;
-    let cou = 0
-    function closeMagic(){cou++}
-    closeMagic()
+    let cou = 0;
+    console.log(logs)
+    const closeMagic = ()=>cou++;
+    logs.push(cou +' ', ...args)
+   return closeMagic()
 
-    console.log(cou +' ', ...args)
+   
 }
+//new QuizCompanion
 //const QuizApp = new quizCompanion()
-export { QuizCompanion, Sockets, HtmlContentHandling, delog, startVoiceRecognition, setQuizSetings, SETTINGSHTML}
+export { debug, QuizCompanion, Sockets, HtmlContentHandling, delog, startVoiceRecognition, setQuizSetings, SETTINGSHTML, VerseStudy, QuizStudy}

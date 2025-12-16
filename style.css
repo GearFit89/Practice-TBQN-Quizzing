@@ -1,4 +1,4 @@
-/* General Body Styles */
+/*  General Body Styles */
 body {
     margin: 0;
     padding: 0;
@@ -223,6 +223,7 @@ body {
 }
 
 textarea {
+    z-index:1;
     width: 90%;
     min-height: 120px;
     padding: 15px;
@@ -1178,3 +1179,41 @@ input[type='range'] {
     width: 100%;
     text-wrap:auto;
 }
+.extra-margin{
+    margin: 10px;
+} 
+.textarea-shadow    {
+    position: relative;
+    width: 90%;
+    z-index: 2;
+    min-height: 120px;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    overflow:auto;
+}
+.invisible-text {
+    color: transparent; /* Makes the text color transparent */
+    text-shadow: none; /* Removes any text shadow */
+    user-select: none; /* Prevents text selection */
+}
+.textarea-shadow:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(52, 152, 219, 0.2);
+}
+/*
+|--------------------------------------------------------------------------
+| MONTHLY UNDERLINE CLASSES
+|--------------------------------------------------------------------------
+| Classes for text-decoration-color, text-decoration-line, and thickness.
+*/
+
+/* --- MOST DISTINCTIVE MONTHS (Oct - Mar) - Vibrant, 3px thick --- */
+
