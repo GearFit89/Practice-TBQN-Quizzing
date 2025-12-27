@@ -38,7 +38,7 @@
         import { QuizCompanion } from './main.js';
         //when i change deblog to false all the the delog functions will stop 
         //Quiz.deblog = true;
-        //updateClientInfo(this.selVerses, 'QuestionsToPrint', true) example
+        //updateClientInfo(selVerses, 'QuestionsToPrint', true) example
         const Quiz = new QuizCompanion(false)
         let allQs = {};
         //console.log(allQs, 'all')
@@ -157,22 +157,32 @@ function adjustTextSize(sizeChange) {
         let ver = null;
         //console.log(allquestionsinquizapp)
         let questions = allquestionsinquizapp.filter(Verse => {
-            let Test = quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type) && Verse.verse;
-            if (quizSettings.ischp) {
-                if (quizSettings.chapters.includes(Verse.chapter)) {
-                    Test = true
-
-                } else {
-                    Test = false;
-                }
-            }
-            if (Test) {
-                return Test;
-
-            } else {
-                //delog(Verse)
-            }
-        });
+            let Test = quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type) && quizSettings.chapters.includes(Verse.chapter)
+                            if( i==10){
+                            const isMonthIncluded = quizSettings.months.includes(Verse.month); // Checks the first condition: month inclusion
+                            console.log("Month Inclusion Check:", isMonthIncluded);
+                            
+                            // 2. Check if the Verse flight is included in the allowed flights
+                            const isFlightIncluded = quizSettings.flights.includes(Verse.flight); // Checks the second condition: flight inclusion
+                            console.log("Flight Inclusion Check:", isFlightIncluded, Verse);
+                            
+                            // 3. Check if the Verse type is included in the allowed quiz modes
+                            const isQuizModeIncluded = quizSettings.quizMode.includes(Verse.type); // Checks the third condition: quiz mode inclusion
+                            console.log("Quiz Mode Inclusion Check:", isQuizModeIncluded);
+                            
+                            // 4. Check if the Verse chapter is included in the allowed chapters
+                            const isChapterIncluded = quizSettings.chapters.includes(Verse.chapter); // Checks the fourth condition: chapter inclusion
+                            console.log("Chapter Inclusion Check:", isChapterIncluded);
+                            
+                            // 5. The final overall result of the original statement
+                            const test = isMonthIncluded && isFlightIncluded && isQuizModeIncluded && isChapterIncluded; // Combine the results to get the final boolean value
+                            console.log("Final Test Result:", test);
+                            }
+                            //if(!Test) console.warn(Verse)
+                            return Test;
+                                
+                
+                        })
 
 
         //need to filter out based on settings 
@@ -254,14 +264,14 @@ function adjustTextSize(sizeChange) {
              * @param {Array<Object>} questions - An array of question objects to print.
              * @returns {string} The fully formed HTML content string.
              *   async function loadVerseDicts() {
-                                     const figureMonths = this.hightestMonth(this.quizSettings.months)
-                            this.verse_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['ftv/quote']})
+                                     const figureMonths = hightestMonth(quizSettings.months)
+                            verse_dict2 = fliterOutQs(Object.values(verse_dict), {m: figureMonths, f: quizSettings.selectedFlights, t: ['ftv/quote']})
                             
-                            this.delog('question_dict', '2');
-                            this.question_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['question', 'According to', 'SQ:']})
+                            delog('question_dict', '2');
+                            question_dict2 = fliterOutQs(Object.values(verse_dict), {m: figureMonths, f: quizSettings.selectedFlights, t: ['question', 'According to', 'SQ:']})
                             
-                            this.quoteRefArr = this.verse_dict2.map(Verse => Verse.ref);
-                            this.delog(this.question_dict2, this.verse_dict2, this.quoteRefArr, Object.values(this.verse_dict, 'verse dicts'));
+                            quoteRefArr = verse_dict2.map(Verse => Verse.ref);
+                            delog(question_dict2, verse_dict2, quoteRefArr, Object.values(verse_dict, 'verse dicts'));
                         }
              */
 /**
@@ -388,6 +398,7 @@ function adjustTextSize(sizeChange) {
             printBtn.textContent = 'Initializing Questions...';
             ({ allQs } = JSON.parse(localStorage.getItem('allQuestions') || JSON.stringify(await Quiz.initializeQuiz()))  ) 
             printBtn.textContent = 'Loading Question...';
+           /// verse_dict = allQs
             console.log('all', allQs)
             const { allQuestions, allQuotesFtvs, quoteRefArr } = await loadVerseDicts(inquestions);
             // (inquestions, 'inquestions', allQuestions, allQuotesFtvs, quoteRefArr)
@@ -414,7 +425,7 @@ function adjustTextSize(sizeChange) {
                     //console.log('question before trigger', question)
                    // testUniqueObj.allqs = allQuestions
                     const questionfortrig = `${q.verse.split('?')[0]}?`
-                    let { uniqueWordNum, htmlToDisplay } = await Quiz.setTrigForAllMonths(q) //uiz.findUniqueTriggerWord(questionfortrig.split(' '), allQuestions, null, 'highlight-word', 'highlight-char')
+                    let { uniqueWordNum, htmlToDisplay } = await Quiz.setTrigForAllMonths(q,  allQuestions) //uiz.findUniqueTriggerWord(questionfortrig.split(' '), allQuestions, null, 'highlight-word', 'highlight-char')
                     if (q.type === 'SQ:') htmlToDisplay = `${q.type} ${htmlToDisplay}`///uniquecharNum += 4;
                     if (q.type === 'According to') htmlToDisplay = `<p>${q.type} ${htmlToDisplay}</p>`
                     testUniqueObj[`Questions${question}`] = 'test'

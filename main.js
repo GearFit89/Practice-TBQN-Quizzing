@@ -462,13 +462,20 @@ class
 QuizCompanion {
     constructor(debugMode=true, type ,config='nothing') {
       this.debugLogs = [];
+      this.errors ={}
       console.log(this.debugLogs) ///lilve array 
         this.id = (word) => {
+            const defluatWord = {style: {display:'block'}, message: `Element with id "${word}" not found.`};
             let word1 = document.getElementById(word);
+            if(!word1) {    console.error(`Element with id "${word}" not found.`); }
             return word1;
         };
         this.allQuestionsTrigs  = [];
     this. numVs = [1,2,3]
+    this.chpsNums = new Set([])
+    this.booksNums = new Set([])
+    this.flights = ['A', "B", "C", "T"]
+    if( this.id('study-anchor')) this.setHref = this.id('study-anchor');
                         this.quotesSorted = {}
                         this.ftvsSorted = {};
 
@@ -611,9 +618,9 @@ QuizCompanion {
         if (resetclient) {
             this.selverses = false;
             resetclient.addEventListener('click', () => {
-                localStorage.removeItem('storedQsArray');
+                localStorage.removeItem('storedQs');
                 this.selVerses= [];
-                this.updateClientInfo(this.selVerses, 'storedQsArray', true);
+                this.updateClientInfo(this.selVerses, 'storedQs', true);
                 alert('Client Data has been reset');
             });                
         }
@@ -733,7 +740,7 @@ QuizCompanion {
         this.vD = this.id('versedrop');
         this.vC = this.id('verse-con');
         //move this line 
-        this.clientanswers = this.updateClientInfo(null, 'storedQsArray', false) || {};
+       
         this.delog(this.clientanswers);
         this.correctCount = 0;
         this.plsc = this.id('pleasebtn');
@@ -816,7 +823,27 @@ QuizCompanion {
             console.error('Error loading quotes:', error);
         }
     }
-    async setTrigForAllMonths(verse, isFtv=false){
+    async loadCompleteQuestionDict(){
+        console.log(this.ftvsSorted)
+       const { allQs } =  JSON.parse(localStorage.getItem('allQuestions') || JSON.stringify(await this.initializeQuiz()))  
+       const allContent = {...this.clientanswers, ...allQs }
+       console.warn('allContent', allContent, allQs, this.clientanswers)   
+       let  allQuestions = []
+      for(const q of  Object.values(  allContent )){
+        const {monthsTrigs:trigs} ={op:'op'} ///await  this.setTrigForAllMonths(q);
+          if(q.aq) q.aq = null;
+       const   [question, answer] = q.verse.includes('?') ?  q.verse.split('?'): ['ftv/quote', q.verse]
+          allQuestions.push( {...q, trigs, answer, question})
+
+     }
+     console.warn('allQuestions', allQuestions)
+     localStorage.setItem('allQuestions', JSON.stringify({allQuestions}))
+     return allQuestions
+    }
+    async setTrigForAllMonths(verse, dict=false){
+        if(typeof verse !== 'object') {
+            verse = this.allQs[verse]
+        }
         const mockQuestions = [
             { ref: "Matthew 11:07-08", id: 1, verse: "Where, did Jesus ask, did the crowds go out to see a man dressed in soft clothing? The wilderness?", month: "october" },
             { ref: "Matthew 11:08", id: 2, verse: "Where are those who wear soft clothing? In kings' houses", month: "november" },
@@ -832,40 +859,47 @@ QuizCompanion {
         ];
         this.notriggers = [];
         let htmlArr = verse.verse.split(' ');
-        
-        
+     await this.loadVerseDicts(false)
+    
+        let monthsTrigs = {}
         let arr_of_question = ( verse.verse.includes('?') ? verse.verse.split('?')[0] : verse.verse).split(' ')
       
         let allMonthsV =  this.quizMonths.map(m=>m[0])
         const MonthIndex =  allMonthsV.findIndex(v=> v === verse.month);
        const allMonths = allMonthsV.filter(m=>allMonthsV.slice(MonthIndex,).includes(m))
-       console.warn(allMonthsV, MonthIndex, allMonths, 1259, verse.month, verse)
-        let list = isFtv  || verse.type ==='ftv/quote' ?   Object.values(this.verse_dict).filter(v=>v.type==='ftv/quote'):  Object.values(this.question_dict)
+       //console.warn(allMonthsV, MonthIndex, allMonths, 1259, verse.month, verse)
+       let list = dict;
+       
+       if(!dict) { list =   verse.type ==='ftv/quote' ?   this.ftvsSorted[verse.numVerses]:  Object.values(this.question_dict) }
+        if(!list ) list = mockQuestions;
         let  trigs = [];
         let  test = []
         let uniqueWordNum = -2;
         let qsForM = [];
         let uinqueWord = 'nothing'
-        console.log('htmlArr', htmlArr)
+       // console.log(list, this.ftvsSorted, 'list')
+        //console.log('htmlArr', htmlArr)
         for (let i = 0; i < allMonths.length; i++) {
             const monthName = allMonths[i];
            const monthSel = allMonthsV.slice(0, i+1+MonthIndex) //set the months for each loop
          qsForM = list.filter(q=>monthSel.includes(q.month ))
-         console.warn('all', monthSel, monthName, qsForM, htmlArr, arr_of_question, uniqueWordNum,uinqueWord)     
+         ///console.warn('all', monthSel, monthName, qsForM, htmlArr, arr_of_question, uniqueWordNum,uinqueWord)     
              if(!qsForM) console.error('bad abd bad abd abd qsforrrrrrrrrrrrr ms ')
         const   unique = await this.findUniqueTriggerWord(arr_of_question, qsForM, '', monthName)
     uniqueWordNum = unique.uniqueWordNum;
           uinqueWord =  arr_of_question[uniqueWordNum]
           htmlArr[uniqueWordNum] = `<span class="${monthName}">${uinqueWord}</span>`;
-console.warn( unique || 'hi')
+//console.warn( unique || 'hi')
+            monthsTrigs[monthName] = uniqueWordNum;
             trigs.push({month: monthName, htmlArr: htmlArr,  id: verse.id, trigNum:uniqueWordNum, word:uinqueWord, question:verse})
             test.push({month: monthName, htmlArr: htmlArr, verse: verse.verse, id: verse.id, t:uniqueWordNum})
            
         }
         this.allQuestionsTrigs.push({trigs:trigs, id: verse.id} )
 
-         const  htmlToDisplay = htmlArr.join(' ').split('?')[0]
-        return {test, trigs, htmlArr, uniqueWordNum, htmlToDisplay}
+         const  htmlToDisplay = htmlArr.join(' ').split('?')[0] + '?' || 'Error rendering content'
+
+        return {test, trigs, htmlArr, uniqueWordNum, htmlToDisplay, monthsTrigs}
     }
 /*must be callback funcitons
 @<lllll>*/ 
@@ -918,7 +952,27 @@ console.warn( unique || 'hi')
     }
     
     
-    
+    spellCheck(answer=[], enteredAnswer=[], options = { threshold: false, correction: true, percent: 0.4}) {
+        const correctedAnswer = [];
+     const misspelledWords = [];
+    if(!options.threshold) options.threshold = Math.ceil(answer.length * (options.percent));
+     for (let i = 0; i < answer.length; i++) {
+         const actualWord = answer[i];
+         const enteredWord = enteredAnswer[i] || "";
+
+         const distance = this.levenshteinDistance(actualWord.toLowerCase(), enteredWord.toLowerCase());
+
+         if (distance <= options.threshold) {
+             correctedAnswer.push(options.correction ? actualWord : enteredWord);
+         } else {
+             correctedAnswer.push(enteredWord);
+             misspelledWords.push(enteredWord);
+         }
+     }
+         this.corAnswers = correctedAnswer;
+         this.misspelledWords = misspelledWords;
+     return { correctedAnswer, misspelledWords };
+    }
     delog(...args) {
         //checks for debug mode 
         if(args){
@@ -978,11 +1032,55 @@ console.warn( unique || 'hi')
                return  byVerseAbet;
 
           }    
+          checkAnswer (answer=[], enteredAnswer=[]) {
+
+            const commonWords = ['the', 'and', 'is', 'in', 'to', 'of', 'a', 'that', 'it', 'on', 'for', 'with', 'as', 'was', 'at', 'by', 'an', 'be', 'this', 'from'];
+           const cleanAns = answer.split(' ').map(w=>this.stripChar(w))
+           const cleanEntrAns = enteredAnswer.split(' ').map(w=>this.stripChar(w))
+           const {correctedAnswer, misspelledWords} = this.spellCheck(cleanAns, cleanEntrAns, { correction:true})
+              this.delog('correctedAnswer', correctedAnswer, 'misspelledWords', misspelledWords)
+       const    fixedAns =   correctedAnswer.filter(word=> !commonWords.includes(word.toLowerCase())) || []
+            const entrCout =  this.wordsCount(fixedAns)
+            const ansCout =  this.wordsCount(answer)
+            coutState= {}
+            for (let i in entrCout){
+                if(!ansCout[i]){
+                    coutState[i] = 'extraIncorrectWords';
+                    continue;
+                }
+                if(entrCout[i] === ansCout[i]){
+                   coutState[i] = 'correct'
+                }else if(entrCout[i -1] === ansCout[i]  || entrCout[i -3] === ansCout[i] || entrCout[i -2] === ansCout[i]){
+
+                }
+               
+            }
+
+            if(Object.values( coutState).every(e=> e === 'correct') || fixedAns.join(' ') === answer.join(' ')){
+                return true;
+            }else {
+                return false;
+            }
+          }
+          wordsCount(input=[]){
+            const objectCount = {};
+            input.forEach(w => {objectCount[w] = 0}); /// initilaizes teh count
+            input.forEach(word => {
+                if (objectCount.hasOwnProperty(word)) {
+                    objectCount[word] += 1;
+                } else {
+                    objectCount[word] = 1;
+                }
+            });
+            return objectCount;
+
+          }
     
-    stripChar(input, messaa = 'errorr!!!' ) {
+    stripChar(input, nums=false, messaa = 'errorr!!!' ) {
         // Define the set of characters to be stripped
-        const charToStrip = new Set(['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ', '\n', '\r', '\t', '[', ']', '{', '}', '—', '–', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0','|']);
-        
+        const charToStripArr = ['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ', '\n', '\r', '\t', '[', ']', '{', '}', '—', '–', '|'];
+        if(nums) charToStripArr.push('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+        const charToStrip = new Set(charToStripArr);
         // Helper function to process a single string
         const processString = (str) => {messaa='no message'
             // Ensure the input is a string before proceeding
@@ -1037,7 +1135,7 @@ let htmlArr;
      });
      
 }
-if(obj.length === _obj.length) console.error('filter Error', obj, ARRAY)
+if(obj.length === _obj.length) this.errors['filter Error']=  [obj, ARRAY];
     //this.delog('Filtered obj:', obj);
     //this.delog('Current full verse:', currentFullVerse);
 
@@ -1216,6 +1314,9 @@ hightestMonth(inMonths){
                 const questAns = match[4];
                 let chp = ref1.split(' ')[1].split(':')[0];
                 if(monthName === 'march') chp = 'Jonah';
+                const book1 = ref1.split(' ')[0]
+                this.chpsNums.add(chp)
+                this.booksNums.add(book1)
                 questiondict[this.c] = {
                     flight: flight1,
                     verse: questAns,
@@ -1223,7 +1324,8 @@ hightestMonth(inMonths){
                     month: monthName,
                     type: type1,
                     chapter: chp,
-                    id:this.c
+                    id:this.c,
+                    book:book1
                 };
             }
         }
@@ -1269,6 +1371,9 @@ hightestMonth(inMonths){
                     this.numverses = 1;
                 }
                   if(monthName === 'march') chp = 'Jonah';
+                  const book1 = ref1.split(' ')[0]
+                  this.chpsNums.add(chp)
+                  this.booksNums.add(book1)
                 versedict[this.c] = {
                     flight: flight1,
                     verse: verse1,
@@ -1277,7 +1382,8 @@ hightestMonth(inMonths){
                     type: 'ftv/quote',
                     numVerses: this.numverses,
                     chapter: chp,
-                    id:this.c
+                    id:this.c,
+                    book:book1,
                 };
             }
         }
@@ -1286,6 +1392,9 @@ hightestMonth(inMonths){
     }
     
     async initializeQuiz() {
+       let allQs = {}
+    
+
         try {
             this.question_dict = await this.loadQuestions();
             this.verse_dict = await this.loadQuotes();
@@ -1300,11 +1409,20 @@ hightestMonth(inMonths){
             console.error('Error initializing quiz:', error);
         }
 
-        const allQs = {...this.verse_dict, ...this.question_dict}
+         this. allQs = {...this.verse_dict, ...this.question_dict}
+          allQs = {...this.verse_dict, ...this.question_dict}
         localStorage.setItem('allQuestions', JSON.stringify({allQs}));
+        
+        this.clientanswers = JSON.parse(localStorage.getItem('storedQs') || '{}')
+      
+        console.log('clientanswers initialized:', this.clientanswers);
+        if(!this.clientanswers) console.error('run run run clinent ans not wold run ')
+         
+
         const QUESTIONS = this.question_dict;
         const VERSES = this.verse_dict;
-    return { allQs, QUESTIONS, VERSES }
+        const DATA  = {...this.clientanswers, ...allQs}
+    return { allQs, QUESTIONS, VERSES, DATA }
     }
     
    
@@ -1398,7 +1516,13 @@ hightestMonth(inMonths){
            if(this.selVerses.length === 0) console.warn('empty selVerses')
            return 
         }
-       
+        try {
+           const stored =  localStorage.getItem('storedQs');
+           const data = { ...JSON.parse(stored || '{}'), ...this.clientanswers};
+            localStorage.setItem('storedQs', JSON.stringify(data));
+        } catch (error) {
+            console.warn('Could not save to localStorage:', error);
+        }
         this.delog(this.clientanswers); // Log the object to see the updated data.
         //this.ver.ariaDisabled = 'true';
     }
@@ -1892,7 +2016,7 @@ hightestMonth(inMonths){
                 //ftv = qs[ii]
                 
                 const yV = this.shuffleArray(rFQ, true)[0];
-                yV.type = qf[ii];
+               if(yV) yV.type = qf[ii];
                 this.selVerses.push(yV);
                 qfnum += 4;
                 ii++;
@@ -2166,6 +2290,12 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
     }
     showResults(r) {
         // Stop the timer
+        try {
+            localStorage.setItem('storedQs', JSON.stringify(this.clientanswers));
+        } catch (error) {
+            console.warn('Could not save to localStorage:', error);
+        }
+        
         this.vC.style.display = 'none';
         this.vD.style.display = 'none';
         
@@ -2209,7 +2339,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         //this.running = false;
         this.isend = true;
         this.id('quizTimer').style.display = 'none'
-        this.updateClientInfo(this.clientanswers, 'storedQsArray', true);
+       // this.updateClientInfo(this.clientanswers, 'storedQs', true);
         // Display summary
         const totalQuestions = this.quizSettings.numQuestions;
         const correctAnswers = this.correctCount;
@@ -2266,6 +2396,9 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                 this.clear('review');
                 //make the loop repeat forever
                 this.currentVerseIndex = 0;
+                 loadCompleteQuestionDict(); ///despite this being an async function it helps to save user waitimg 
+
+
                 this.quizSettings.numQuestions = 10000000000000;
                 await this.new_quote(
                     this.quizSettings.quizMode,
@@ -2412,11 +2545,14 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         const qh = 'quizHeader';
         this.currerentVerse = this.selVerses[this.cnum];
         let ftvTriggerI;
+        this.verData = this.selVerses[this.cnum];
+        const verData = this.selVerses[this.cnum];
         let uniqueWordNum;
         let uniquecharNum;
         this.QUEST = '';
         let tChar = 'ingore';
         //if(selVerses[cnum].type === 'ftv/quote'){
+      if(this.setHref)  this.setHref.href = `/quiz_Study.html#quiz-${this.verData.id || 450}`;
         if (true) {
             if (this.ftv === 'ftv') {
                 const aq = this.selVerses[this.cnum].verse;
@@ -2425,7 +2561,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                 const verseText = this.selVerses[this.cnum].verse;
                 const words = verseText.split(' ');
                 const first_5 = words.slice(0, 5);
-                ({uniqueWordNum, uniquecharNum} = await this.findUniqueTriggerWord(words, this.verse_dict2, this.cnum, 5));
+                ({uniqueWordNum, uniquecharNum} = await this.findUniqueTriggerWord(words, this.ftvsSorted[verData.numVerses], this.cnum, 5));
                 
                 phars = first_5.join(' ');
                 this.quest = words.slice(5).join(' ');
@@ -2442,7 +2578,7 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                 phars = verseData.ref;
                 this.quest = verseData.verse;
                 //tChar = findTrigChar(verse_dict2, quest, 0)
-                ({uniquecharNum} =  await this.findUniqueTriggerWord(phars.split(' '), this.quoteRefArr, "F"));
+                ({uniquecharNum} =  await this.findUniqueTriggerWord(phars.split(' '), this.quotesSorted[verData.numVerses], "F"));
                 uniquecharNum ++;
                 await this.delay_text(`${this.selVerses[this.cnum].numVerses} Verse Quote:`, 'h4', 'quizHeader', 0, 'purple');
             } else if (this.ftv === 'SQ:') {
@@ -2720,6 +2856,49 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         const modal = this.dialogue;
         return {top, foot, body, full, scene, modal}
     }
+    timer (){
+        if(this.stopTimer){
+            this.stopTimer = false
+            return;
+        }
+        //this keeps time of how long in total the user has taken to complete the quiz
+        this. seconds,  this.minutes  = 0;
+        
+        function timerfunc(){
+            if(this.stopTimer) {clearInterval(timerID); this.endTime = `${this.minutes}:${this.seconds}`; return};
+            this.seconds++;
+            if(seconds === 60){
+                this.minutes++;
+                this.seconds = 0;
+            }
+        
+        }
+       const timerID =  setInterval(timerfunc.bind(this), 1000);
+    }
+    async  loadVerseDicts(dict2=true) {
+                        
+             if (dict2)     {
+        const {figureMonths} = this.hightestMonth(this.quizSettings.months)
+     this.verse_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['ftv/quote']})
+     
+   ///  this.delog2('question_dict', '2');
+     
+     
+     this.question_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['question', 'According to', 'SQ:']})
+             }
+  else{
+   this.verse_dict2 = Object.values(this.verse_dict).filter(Verse => Verse.type === 'ftv/quote');
+   this.question_dict2 = Object.values(this.verse_dict).filter(Verse => Verse.type === 'question' || Verse.type === 'According to' || Verse.type === 'SQ:');
+  }
+     this.  numVs.forEach(v=> { this.ftvsSorted[v] = this.verse_dict2.filter(verse=> verse.numVerses === v)})
+     ///this.delog2(this.ftvsSorted, 'sorted quotes by num verses');
+    
+     this.quoteRefArr = this.verse_dict2.map(Verse => Verse.ref);
+     this.quotesSorted = this.numVs.map(v=> this.ftvsSorted[v].map(ve=>ve.ref));
+ ///this.delog2('all dicts', this.question_dict2, this.verse_dict2, this.quoteRefArr, Object.values(this.verse_dict, 'verse dicts'));
+
+ 
+}
    async startApp(settings=this.quizSet, customQuestions=[]) {
     this.quizSettings = settings;
     if(!this.quizSettings){ console.error('nothing in settings'); this.manageModal('An error has happened. Contact support');return new Error('quizSettings empty')}
@@ -2729,12 +2908,13 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
         this.manageModal('Content is still loading please wait a moment');
         return; //show a friendly wait message and have the user reclick the start button
     }
+    console.error(this.errors)
     let checker = false;
         const submitButton = this.id('submit');
         if (submitButton) {
             submitButton.addEventListener("click", () => this.checkAns());
             //window.addEventListener("click", () => this.checkAns());
-        }
+        }  
         
         if (this.ver) {
             this.ver.addEventListener('input', () => {
@@ -2850,39 +3030,25 @@ upTimerNew(remainingSeconds, totalDurationSeconds) {
                     this.speeddetext = this.quizSettings.speed_tOf_text;
                     this.Time = this.quizSettings.lenOfTimer;
                     this.running = true;
-                    async function loadVerseDicts() {
-                        
                     
-                           const {figureMonths} = this.hightestMonth(this.quizSettings.months)
-                        this.verse_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['ftv/quote']})
-                        
-                        this.delog2('question_dict', '2');
-                        this.question_dict2 = this.fliterOutQs(Object.values(this.verse_dict), {m: figureMonths, f: this.quizSettings.selectedFlights, t: ['question', 'According to', 'SQ:']})
-                     this.  numVs.forEach(v=> { this.ftvsSorted[v] = this.verse_dict2.filter(verse=> verse.numVerses === v)})
-                        this.delog2(this.ftvsSorted, 'sorted quotes by num verses');
-                       
-                        this.quoteRefArr = this.verse_dict2.map(Verse => Verse.ref);
-                        this.quoteSorted = this.numVs.map(v=> this.ftvsSorted[v].map(ve=>ve.ref));
-                    this.delog2('all dicts', this.question_dict2, this.verse_dict2, this.quoteRefArr, Object.values(this.verse_dict, 'verse dicts'));
-                   
                     
-                }
-                    
-                    await loadVerseDicts.bind(this)();
+                    await this.loadVerseDicts;
                     this.ftvQ = ['ftv', 'quote']
                     if (this.quizSettings.verseSelection === "random") {
                         this.selVerses = this.shuffleArray(this.selVerses);
                     }else if(this.quizSettings.verseSelection === "alphabet"){
                         this.selVerses = this.sortBy(this.selVerses);
-                        this.questionsMap = this.selVerses.map(v=>{
-                            if(v.type === 'ftv/quote'){
-                                v.type = ftvQ[Math.floor(Math.random())];
-                            }
-                            v.state = 'none';
-                            return v;
-                        })
-                        this.delog(this.questionsMap)
+                       
                     }
+                    const ftvQ = ['ftv', 'quote'];
+                    this.questionsMap = this.selVerses.map(v=>{
+                        if(v.type === 'ftv/quote'){
+                            v.type = ftvQ[Math.floor(Math.random())];
+                        }
+                        v.state = 'none';
+                        return v;
+                    })
+                    this.delog(this.questionsMap)
                     await loadgen.bind(this)();
                     
                    
@@ -3089,13 +3255,20 @@ let currentRecognition = null;
         }
     }
 
+
 }
+
 
 
 
   class BaseStudy extends QuizCompanion{
     constructor(debugMode, config){
         super(debugMode, 'deep_study', config)
+        this.say = 'text'; //or passage
+        // this.content also menas verse  and passage means all content in verse study
+        // while content is used for the whole text in quizStudy 
+
+        
         this.studyCommandIdMap = {
             where: ['beginning', 'second', 'atVersesEnd', 'end'],
             usedFor: ['MEMORY', 'QUIZ', 'EXTRA'],
@@ -3127,46 +3300,21 @@ let currentRecognition = null;
                     // Unique, non-random numerical identifier (mapped to 'review_structure').
                     id: 1, 
                     // Command focusing on reviewing the entire passage's context and flow.
-                    statement: "Study the text", 
-                    content:'content',
+                    statement: "Study the highlighted words", 
+                    content:'highlightedContent',
                     // Use case simplified to a single word for sorting/filtering.
                     used_for: "QUIZ" ,
                     where: 'beginning',
                     hasAns: false
                    
                 },
-                {
-                    // The type of learning (deep memorization).
-                    type: "deep", 
-                    // Unique, non-random numerical identifier (mapped to 'recite_passage').
-                    id: 2, 
-                    // Command requiring the user to speak or type the whole memorized passage.
-                    statement: "Recite the entire passage from memory", 
-                    content:'currentVerse',
-                    // Use case simplified to a single word for sorting/filtering.
-                    used_for: "EXTRA" ,
-                     where: 'second'
-                     ,
-                     hasAns: true
-                },
-                {
-                    // The type of learning (deep memorization).
-                    type: "deep", 
-                    // Unique, non-random numerical identifier (mapped to 'focus_chunk').
-                    id: 3, 
-                    // Command directing the user's attention to a small, current phrase or verse.
-                    statement: "Focus memorizing on the current chunk of words", 
-                    // Use case simplified to a single word for sorting/filtering.
-                    content: 'chunk',
-                    used_for: "MEMORY" ,
-                     where: 'beginning',
-                     hasAns: false
-                },
+             
+               
                 {
                     // The type of learning (deep memorization).
                     type: "deep", 
                     // Unique, non-random numerical identifier (mapped to 'type_chunk').
-                    id: 4, 
+                    id: 2, 
                     // Command requiring the user to type out the specific chunk they are studying.
                     statement: "Type the current chunk of words", 
                     content: 'chunk',
@@ -3179,35 +3327,37 @@ let currentRecognition = null;
                     // The type of learning (deep memorization).
                     type: "deep", 
                     // Unique, non-random numerical identifier (mapped to 'type_verse').
-                    id: 5, 
+                    id: 3, 
                     // Command demanding typing of the complete verse for rigorous testing.
-                    statement: "Type the full text from memory", 
-                    content: 'content',
+                    statement: "Type all chunks just learned from memory", 
+                    content: 'chunkSlice',
                     // Use case simplified to a single word for sorting/filtering.
                     used_for: "MEMORY" ,
                     for:'quiz',
                      where: 'beginning',
                      hasAns: true
                 },
-                 {
-                    // The type of learning (deep memorization).
-                    type: "deep", 
-                    // Unique, non-random numerical identifier (mapped to 'type_verse').
-                    id: 8, 
-                    // Command demanding typing of the complete verse for rigorous testing.
-                    statement: "Type the full verse from memory", 
-                    content: 'currentVerse', 
-                    // Use case simplified to a single word for sorting/filtering.
-                    used_for: "EXTRA" ,
-                    for:'verse',
-                     where: 'beginning',
-                     hasAns: true
-                },
+                {
+                   // The type of learning (deep memorization).
+                   type: "deep", 
+                   // Unique, non-random numerical identifier (mapped to 'type_verse').
+                   id: 4, 
+                   // Command demanding typing of the complete verse for rigorous testing.
+                   statement: `Type the full ${this.say || 'passage'} from memory`, 
+                   content: 'content',
+                   // Use case simplified to a single word for sorting/filtering.
+                   used_for: "MEMORY" ,
+                   for:'quiz',
+                    where: 'end',
+                    hasAns: true
+               },
+                  
                 { 
                     // The type of learning (deep memorization).
                     type: "deep", 
                     // Unique, non-random numerical identifier (mapped to 'practice_difficult').
-                    id: 6, 
+                    id: 5, 
+                    name:'missed',
                     // Command to engage with words previously marked as difficult or forgotten.
                     statement: "Practice difficult or forgotten words", 
                     content: 'missedWordsToUse',
@@ -3220,17 +3370,19 @@ let currentRecognition = null;
                 { 
                     // The type of learning (deep memorization).
                     type: "deep", 
-                    // Unique, non-random numerical identifier (mapped to 'review_all').
-                    id: 7, 
-                    // Command for a general, broad review of all recently learned content.
-                    statement: "Review all learned concepts and verses", 
-                    content : 'content',
-                    end:true,
+                    // Unique, non-random numerical identifier (mapped to 'practice_difficult').
+                    id: 6, 
+                    name:'review',
+                    // Command to engage with words previously marked as difficult or forgotten.
+                    statement: "Recite all verses learned ", 
+                    content: 'passage',
                     // Use case simplified to a single word for sorting/filtering.
                     used_for: "EXTRA" ,
+                    end:true,
                     where: 'end',
                     hasAns: true
-                }
+                },
+               
             ]
         };
         this.answer;
@@ -3239,21 +3391,54 @@ let currentRecognition = null;
         this.missedWords ={}
         this.currrentId;
        this.chunk= null;
-       this.anwserSectionHtml = `<div id="text-area-container" class="text-area-container";">
+       this.anwserSectionHtml = `
 
-       <textarea spellcheck="false" placeholder="Enter Text" id="verse" class="blueborder invisible-text" style="position:absolute></textarea>
+       <textarea spellcheck="false" placeholder="Enter Text" id="verse" class="blueborder invisible-text" style="position:absolute;"></textarea>
        
-       <div id="text-area-shadow" class="text-area-shadow blueborder"></div>
+       <div id="textarea-shadow" class="textarea-shadow blueborder"></div>
        
-   </div>
+   
        `;
         //html stuff
+        this.section =  this.id('answer-section')
+        this.section.innerHTML = this.anwserSectionHtml;     
+       
+        if (this.id('new-quiz')) this.id('new-quiz').style.display = 'none';
+        if (this.id('studyBtn')) this.id('studyBtn').style.display = 'none';
+        if (this.id('quizTimer')) this.id('quizTimer').style.display = 'none';
+        if (this.id('progressBar2')) this.id('progressBar2').style.display = 'block';
+        if (this.id('progressBar')) {
+            this.id('progressBar').style.width = '0%';
+            this.id('progressBar').style.display = 'block';
+        }
+        this.card = this.id('quiz-card');
+       
+          //this.next = this.id('nextBtn');
         this.shadow = this.id('textarea-shadow');
         this.textarea = this.id('verse');
         this.textarea.classList.add('invisible-text');
+         const textType = 't';
+        if (textType === 't') {
+            this.vD.style.display = 'none';
+            this.vC.style.display = 'none';
+            this.ver.style.display = 'block';
+            this.dragEnabled = false;
+        } else {
+            this.vD.innerHTML = '';
+            this.vC.innerHTML = '';
+            this.ver.value = '';
+            this.vD.style.display = 'block';
+            this.vC.style.display = 'block';
+            this.ver.style.display = 'none';
+            
+            if (this.isrendered) {
+                this.dragElements();
+            }
+            this.dragEnabled = true
+                }
         this.textarea.addEventListener('input', (e) => {
             this.shadow.innerText = e.target.value;
-            this.shadow.style.height = e.target.scrollHeight + "px";
+           /// this.shadow.style.height = e.target.scrollHeight + "px";
         console.log('input event', e.target.value);
         console.log('shadow text', this.shadow.innerText);
         console.log('shadow height', this.shadow.style.height);
@@ -3267,13 +3452,13 @@ let currentRecognition = null;
     newStudy(htmlElm= 'h3'){
       const area  =    this.id('quizHeader');
       const verseData = this.selVerses[this.cnum];
-      area .innerHTML = `<${htmlElm}> ${this.selVerses[this.cnum].statement}</${htmlElm}>`;
-      this.answerDeep = this.selVerses[this.cnum].answer;
+      area .innerHTML = `<${htmlElm} class="statement> ${this.selVerses[this.cnum].statement}</${htmlElm}>`;
+      this.answer = this.selVerses[this.cnum].answer 
       this.chunk = this.selVerses[this.cnum].chunk || null; 
       if(!this.answerDeep) this.updateHtmlWithNextBtn()
      
-  let display =`<div class="deep-display">${this[ verseData.display  ] || "Error with loading content"}</div>`;
-  this.id('answerSection').innerHTML =   verseData.hasAns ? this.anwserSectionHtml: display; 
+  let display =`<div class="deep-display">${verseData.display || "Error with loading content"}</div>`;
+  this.id('answerSection').innerHTML =   verseData.anwser ? this.anwserSectionHtml: display; 
 
 
 }
@@ -3312,10 +3497,10 @@ let currentRecognition = null;
     }
     
         /// implement later need code now!!!!
-        spellCheck(answer=[], enteredAnswer=[], options = { threshold: 2, correction: true }) {
+        spellCheck(answer=[], enteredAnswer=[], options = { threshold: false, correction: true, percent: 0.4}) {
                const correctedAnswer = [];
             const misspelledWords = [];
-
+           if(!options.threshold) options.threshold = Math.ceil(answer.length * (options.percent));
             for (let i = 0; i < answer.length; i++) {
                 const actualWord = answer[i];
                 const enteredWord = enteredAnswer[i] || "";
@@ -3383,7 +3568,7 @@ actualQuestState(anwser =[], states, missed){
  missed.forEach(m =>{
    states[ m.index ] = m;
  })
-
+return states;
 
 
 }
@@ -3398,11 +3583,21 @@ actualQuestState(anwser =[], states, missed){
      for(let i =0; i < len; i += verselens){
       const sectionRow = this.contentwords.slice(i, i + verselens);
       this.chunks.push(sectionRow) 
-
-
-  
      }
-     return this.chunks;
+       for (let i = 0; i < len; i += verselens) { // Loops through the length of the array in steps of verselens
+            const indexChunk = []; // Creates a temporary array for the current chunk of indexes
+            
+            // Loop to fill the chunk with index numbers
+            for (let j = i; j < i + verselens && j < len; j++) { // Ensures we don't exceed the total length
+                indexChunk.push(j); // Adds the current word index to the chunk
+            }
+    
+            this.indexChunks.push(indexChunk); // Pushes the array of indexes into the main chunks array
+        }
+        
+        return [this.chunks, this.indexChunks]; // Returns the nested array of indexes
+    
+     //return this.chunks;
     }
 }
     class VerseStudy extends BaseStudy { 
@@ -3427,13 +3622,26 @@ actualQuestState(anwser =[], states, missed){
 
             
         }
-    formatQuizStudy (chunks, commands, currentQObject, extras) {
-            const questionsObject = chunks.map( (chunk, i) => { 
+    formatQuizStudy (chunkes, commands, currentQObject, content, extras) {
+        const [chunks, indexes] = chunkes
+            const questionsObject = chunks.map( (chunk, i, chunkArr) => { 
             console.log(`Chunk ${i + 1}:`, chunk.join(' '));
-            if(i === 0) commands.filter( cmd => cmd.where !== 'second' )
+            if(i === 0) commands.filter( cmd => cmd.where !== 'second' );
+           const chunkSlice = chunkArr.slice(0, i + 1).flat().join(' ');
+           const highlightedContent = content.split(' ').map( (word, j) => indexes[i].includes(j) ? `<span class="highlighted">${word}</span>` : word ).join(' ');
                 
-          const studyQuestions  =  commands.map(cmd=>({type:'deep', cmdId:`${cmd.id}`, id:`${i}#${cmd.id}`, statement:cmd.statement, chunck:chunk.join(' '),  answer: cmd.hasAns ? chunk.join(' '):false, display:cmd.content, ...currentQObject}))
-                        
+          const studyQuestions = commands.map(cmd => ({
+            ...currentQObject, // Spreads existing properties from the base object
+            type: 'deep', // Sets the question category to 'deep'
+            cmdId: `${cmd.id}`, // Converts the command ID to a string
+            id: `${i}#${cmd.id}`, // Creates a unique composite ID using an outer index 'i'
+            statement: cmd.statement, // Assigns the specific command text
+            chunk: chunk.join(' '), // Joins the current array of words into a single string
+            // If command has an answer, check if it's ID 3 for specific slicing, else join the chunk
+            answer: (cmd.hasAns) ? ((cmd.id === 3) ? chunkSlice : chunk.join(' ')) : false,
+            // Determines what to display based on the command ID
+            display: (cmd.id === 1) ? highlightedContent : this[cmd.content]
+        })); // Closes the map function and returns the new array
                     
             return studyQuestions;
 
@@ -3454,13 +3662,13 @@ actualQuestState(anwser =[], states, missed){
                 if(type !== 'both') this.content = type === 'anwser' ? this.content.split('?')[1] : this.content.split('?')[0];
                 [this.question, this.answer ] = this.content.split('?')
            
-              const chunks = this.initWords(this.content, this.chunkLen)
+              const chunks = this.initWords(this.content, this.chunkLen);
               delog(chunks, 'chunks')
               const commands = this.memoryStudyCommands.commands.filter( cmd => cmd.used_for !== 'EXTRA' )
               const extras =  this.memoryStudyCommands.commands.filter( cmd => cmd.used_for === 'EXTRA' )
                
            
-             this.selVerses= this.formatQuizStudy(chunks, commands, this.currentQObject, extras);
+             this.selVerses= this.formatQuizStudy(chunks, commands, this.currentQObject,  this.content, extras);
              console.log( this.selVerses);
              const settings = {
                 numQuestions: this.selVerses.length,
