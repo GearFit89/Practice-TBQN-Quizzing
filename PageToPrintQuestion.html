@@ -156,7 +156,7 @@ function adjustTextSize(sizeChange) {
         let question_dict2 = allquestionsinquizapp;
         let ver = null;
         //console.log(allquestionsinquizapp)
-        let questions = allquestionsinquizapp.filter(Verse => {
+        let questions = allquestionsinquizapp.filter((Verse , i)=> {
             let Test = quizSettings.months.includes(Verse.month) && quizSettings.flights.includes(Verse.flight) && quizSettings.quizMode.includes(Verse.type) && quizSettings.chapters.includes(Verse.chapter)
                             if( i==10){
                             const isMonthIncluded = quizSettings.months.includes(Verse.month); // Checks the first condition: month inclusion
