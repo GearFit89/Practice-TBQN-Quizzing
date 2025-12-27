@@ -859,8 +859,9 @@ QuizCompanion {
         ];
         this.notriggers = [];
         let htmlArr = verse.verse.split(' ');
+        try{
      await this.loadVerseDicts(false)
-    
+        }catch(e){    console.error('error loading verse dicts', e)}
         let monthsTrigs = {}
         let arr_of_question = ( verse.verse.includes('?') ? verse.verse.split('?')[0] : verse.verse).split(' ')
       
@@ -1421,6 +1422,13 @@ hightestMonth(inMonths){
 
         const QUESTIONS = this.question_dict;
         const VERSES = this.verse_dict;
+        for(const q of  Object.values(  allContent )){
+            const {monthsTrigs:trigs} ={op:'op'} ///await  this.setTrigForAllMonths(q);
+              if(q.aq) q.aq = null;
+           const   [question, answer] = q.verse.includes('?') ?  q.verse.split('?'): ['ftv/quote', q.verse]
+              allQuestions[q.id] = ( {...q, trigs, answer, question})
+    
+         }
         const DATA  = {...this.clientanswers, ...allQs}
     return { allQs, QUESTIONS, VERSES, DATA }
     }
