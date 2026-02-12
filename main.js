@@ -2174,7 +2174,7 @@ checkAns() {
 
     // 6. Execute Check
     const result = this.checkAnswer(this.ANS, userAnswer, options);
-
+console.log('ans  real', this.ANS)
     // 7. Handle Outcomes
     if (result === 1) {
         this.processOutcome(true, displayAns);
@@ -2194,6 +2194,7 @@ checkAns() {
  * Helper to extract text from UI regardless of input mode
  */
 getUserAnswer() {
+   
     // If there are drag-and-drop blocks, use those
     if (this.vD && this.vD.children.length > 0) {
         return Array.from(this.vD.children)
@@ -2206,6 +2207,7 @@ getUserAnswer() {
     if (!this.isVerse ) {
         inputVal = this.manageAnswer(this.ANS, false, inputVal)[4] || inputVal;
     }
+     console.log('user ans', inputVal, 'op')
     return inputVal;
 }
 
