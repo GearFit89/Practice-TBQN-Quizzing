@@ -1032,80 +1032,138 @@ QuizCompanion {
         }
                return  byVerseAbet;
 
-          }    
-          checkAnswer (answer=[], enteredAnswer=[]) {
+          }  
+   commonWords: ['the', 'and', 'is', 'in', 'to', 'of', 'a', 'that', 'it', 'on', 'for', 'with', 'as', 'was', 'at', 'by', 'an', 'be', 'this', 'from']
+          checkAnswer(answer, enteredAnswer, options = {}) {
+    // Set default values for options
+    const defaults = {
+      spellThreshold: 2,
+      closeThreshold: 2,
+      correction: true,
+      extraThreshold: 2,
+      isQuote: false,
+      isOneChanceQuote: false,
+      shouldCorrectAtErr: false
+    };
+    const opt = { ...defaults, ...options };
 
-            const commonWords = ['the', 'and', 'is', 'in', 'to', 'of', 'a', 'that', 'it', 'on', 'for', 'with', 'as', 'was', 'at', 'by', 'an', 'be', 'this', 'from'];
-           const cleanAns = answer.split(' ').map(w=>this.stripChar(w))
-           const cleanEntrAns = enteredAnswer.split(' ').map(w=>this.stripChar(w))
-           const {correctedAnswer, misspelledWords} = this.spellCheck(cleanAns, cleanEntrAns, { correction:true})
-              this.delog('correctedAnswer', correctedAnswer, 'misspelledWords', misspelledWords)
-       const    fixedAns =   correctedAnswer.filter(word=> !commonWords.includes(word.toLowerCase())) || []
-            const entrCout =  this.wordsCount(fixedAns)
-            const ansCout =  this.wordsCount(answer)
-            coutState= {}
-            for (let i in entrCout){
-                if(!ansCout[i]){
-                    coutState[i] = 'extraIncorrectWords';
-                    continue;
-                }
-                if(entrCout[i] === ansCout[i]){
-                   coutState[i] = 'correct'
-                }else if(entrCout[i -1] === ansCout[i]  || entrCout[i -3] === ansCout[i] || entrCout[i -2] === ansCout[i]){
+    // Convert strings to arrays and clean characters
+    const cleanAns = answer.split(' ').map(w => this.stripChar(w));
+    const cleanEntrAns = enteredAnswer.split(' ').map(w => this.stripChar(w));
 
-                }
-               
-            }
+    // Run spellcheck logic
+    const { correctedAnswer } = this.spellCheck(cleanAns, cleanEntrAns, { 
+      correction: opt.correction, 
+      threshold: opt.spellThreshold 
+    });
 
-            if(Object.values( coutState).every(e=> e === 'correct') || fixedAns.join(' ') === answer.join(' ')){
-                return true;
-            }else {
-                return false;
-            }
-          }
-          wordsCount(input=[]){
-            const objectCount = {};
-            input.forEach(w => {objectCount[w] = 0}); /// initilaizes teh count
-            input.forEach(word => {
-                if (objectCount.hasOwnProperty(word)) {
-                    objectCount[word] += 1;
-                } else {
-                    objectCount[word] = 1;
-                }
-            });
-            return objectCount;
+    if (opt.isQuote) {
+      const ans = opt.shouldCorrectAtErr ? cleanAns.slice(0, correctedAnswer.length) : cleanAns;
 
-          }
-    
-    stripChar(input, nums=false, messaa = 'errorr!!!' ) {
-        // Define the set of characters to be stripped
-        const charToStripArr = ['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ', '\n', '\r', '\t', '[', ']', '{', '}', '—', '–', '|'];
-        if(nums) charToStripArr.push('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-        const charToStrip = new Set(charToStripArr);
-        // Helper function to process a single string
-        const processString = (str) => {messaa='no message'
-            // Ensure the input is a string before proceeding
-            if (typeof str !== 'string') {
-                console.warn('stripChar received a non-string element in the array.', messaa);
-                return ''; // Return an empty string for invalid elements
-            }
-            // Convert to lowercase, trim whitespace, and filter out unwanted characters
-            return str.toLowerCase().trim().split('').filter(char => !charToStrip.has(char)).join('');
-        };
-        
-        // Check if the input is an array
-        if (Array.isArray(input)) {
-            // If it's an array, use .map() to process each string element
-            return input.map(str => processString(str));
-        } else if (typeof input === 'string') {
-            // If it's a single string, process it directly
-            return processString(input);
-        } else {
-            // Handle cases where the input is neither a string nor an array
-            console.warn('stripChar received an invalid input type. Expected a string or an array of strings.', messaa);
-            return '';
-        }
+      if (correctedAnswer.join(' ') === ans.join(' ')) {
+        return 1; // Word perfect
+      } else {
+        return opt.isOneChanceQuote ? -1 : 0;
+      }
     }
+
+    // Remove common words for frequency comparison
+    const fixedEntr = correctedAnswer.filter(word => !this.commonWords.has(word.toLowerCase()));
+    const fixedAns = cleanAns.filter(word => !this.commonWords.has(word.toLowerCase()));
+
+    // Map frequencies
+    const entrCount = this.wordsCount(fixedEntr);
+    const ansCount = this.wordsCount(fixedAns);
+
+    // Calculate missing words
+    const incorrectCount = Object.keys(ansCount).reduce((acc, key) => {
+      const diff = ansCount[key] - (entrCount[key] || 0);
+      return acc + (diff > 0 ? diff : 0);
+    }, 0);
+
+    // Calculate extra words
+    const extraCount = Object.keys(entrCount).reduce((acc, key) => {
+      const diff = entrCount[key] - (ansCount[key] || 0);
+      return acc + (diff > 0 ? diff : 0);
+    }, 0);
+
+    // Perfect match
+    if (incorrectCount === 0 && extraCount === 0) {
+      return 1;
+    }
+
+    // Evaluate failure thresholds
+    if (extraCount > opt.extraThreshold || incorrectCount > opt.closeThreshold) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+
+  wordsCount(input = []) {
+    const objectCount = {};
+    input.forEach(word => {
+      objectCount[word] = (objectCount[word] || 0) + 1;
+    });
+    return objectCount;
+  }
+
+  stripChar(input, nums = false) {
+    const charToStripArr = ['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ', '\n', '\r', '\t', '[', ']', '{', '}', '—', '–', '|'];
+    if (nums) charToStripArr.push('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+    const charToStrip = new Set(charToStripArr);
+
+    const processString = (str) => {
+      if (typeof str !== 'string') return '';
+      return str.toLowerCase().trim().split('').filter(char => !charToStrip.has(char)).join('');
+    };
+
+    return Array.isArray(input) ? input.map(processString) : processString(input);
+  }
+
+  levenshtein(a, b) {
+    const matrix = [];
+    for (let i = 0; i <= a.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        if (a[i - 1] === b[j - 1]) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + 1);
+        }
+      }
+    }
+    return matrix[a.length][b.length];
+  }
+
+  spellCheck(answer = [], enteredAnswer = [], options = { threshold: 2, correction: true }) {
+    const correctedAnswer = [];
+    const misspelledWords = [];
+
+    enteredAnswer.forEach((enteredWord) => {
+      let bestMatch = enteredWord;
+      let minDistance = Infinity;
+
+      answer.forEach(targetWord => {
+        const distance = this.levenshtein(targetWord, enteredWord);
+        if (distance < minDistance) {
+          minDistance = distance;
+          bestMatch = targetWord;
+        }
+      });
+
+      if (minDistance <= options.threshold) {
+        correctedAnswer.push(options.correction ? bestMatch : enteredWord);
+      } else {
+        correctedAnswer.push(enteredWord);
+        misspelledWords.push(enteredWord);
+      }
+    });
+
+    return { correctedAnswer, misspelledWords };
+  }
     
  // NOTE: This file assumes the existence of 'this.stripChar' and 'this.delog' methods on the class instance.
 
