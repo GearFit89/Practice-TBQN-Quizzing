@@ -1056,7 +1056,7 @@ QuizCompanion {
     // Convert strings to arrays and clean characters
     const cleanAns = answer.split(' ').map(w => this.stripChar(w));
     const cleanEntrAns = enteredAnswer.split(' ').map(w => this.stripChar(w));
-
+ if (cleanAns.join(' ') === cleanEntrAns.join(' ')) return 1; //early return to avoid using up resuocres and taking more than needed
     // Run spellcheck logic
     const { correctedAnswer } = this.spellCheck(cleanAns, cleanEntrAns, { 
       correction: opt.correction, 
