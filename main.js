@@ -2177,7 +2177,7 @@ checkAns() {
     if (result === 1) {
         this.processOutcome(true, displayAns);
         return true;
-    } else if (result === -1 && this.count >= 1) {
+    } else if (result === -1 || this.count >= 1) {
         this.count =0
         this.processOutcome(false, displayAns);
         return false;
