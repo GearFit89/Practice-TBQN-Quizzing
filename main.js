@@ -2068,161 +2068,106 @@ hightestMonth(inMonths){
           this.retryBtn.style.display = 'none'
     }
     
-    checkAns() {
-        this.isend = true;
-        console.warn(this.currentVerseIndex, 'check ans');
-        const displayAns = this.ANS;
-        this.ANS &&=  this.manageAnswer(this.ANS, false)[0].join(' ');
-        
-        this.delog('quest valur at checkans:', this.quest, this.ANS);
-        let inVerse = this.ver.value;
-        this.id('correctbtn').style.display = "none";
-        this.id('incorrectbtn').style.display = "none";
-        
-        this.plsc.style.display = 'none';
-        if (this.isVerse) {
-            const Blocks = Array.from(this.vD.children);
-            let entered_words = Blocks.map(Block => {
-                return Block.textContent.trim();
-            }).join(' ');
-            this.delog(entered_words);
-            if (this.stripChar(inVerse) === this.stripChar(this.quest) || this.stripChar(entered_words) === this.stripChar(this.quest)) {
-                this.id('correctbtn').style.display = "block";
-                // Correctly add a record to the answers array
-                this.answers.push({
-                    verse: this.selVerses[this.cnum],
-                    correct: true,
-                });
-                this.correctCount++;
-                this.correct('right');
-                
-                return true;
-            } else {
-                this.id('incorrectbtn').style.display = "block";
-                this.ver.value = `${this.ver.value} \n \nCorrect Answer: ${this.selVerses[this.cnum].ref}\n${this.selVerses[this.cnum].verse} `;
-                
-                this.vC.innerHTML = `Correct Answer: ${this.selVerses[this.cnum].ref}\n${this.selVerses[this.cnum].verse} `;
-                // Correctly add a record to the answers array
-                this.answers.push({
-                    verse: this.selVerses[this.cnum],
-                    correct: false
-                });
-                
-                this.correct('wrong');
-                return false;
-            }
-        } else if (!this.dragEnabled) {
-            
-            // This function compares a user's answer to the correct answer.
-            // It returns 'Correct', 'Incorrect', or 'Needs More Info'.
-            const checkAdvancedAnswer = (userAnswer, correctAnswer) => {
-                // Step 1: Normalize both answers.
-                // This removes leading/trailing whitespace, makes them lowercase, and removes common punctuation.
-                const normalize = (str) => {
-                    // Check if the input is a string before trying to normalize it.
-                    if (typeof str !== 'string') {
-                        return '';
-                    }
-                    // Convert to lowercase to ignore case differences.
-                    // Remove leading/trailing spaces with trim().
-                    // Use a regular expression to remove common punctuation and symbols.
-                    // Replace multiple spaces with a single space.
-                    return str.toLowerCase().trim().replace(/[.,/#!$%^&*;:{}=?\-_`~()'"]/g, '').replace(/\s{1,}/g, '');
-                };
-                
-                const normalizedUser = normalize(userAnswer); // Normalize the user's answer.
-                const normalizedCorrect = normalize(correctAnswer); // Normalize the correct answer.
-                this.delog('norans', normalizedCorrect, normalizedUser);
-                // Step 2: Check for an exact match.
-                // This is the most straightforward check for correctness.
-                if (normalizedUser === normalizedCorrect) {
-                    // If the normalized answers are identical, the user is correct.
-                    return 'Correct';
-                }
-                
-                // Step 3: Check for a partial match.
-                // This is where we determine if the user is close but needs more information.
-                // We check if the user's answer contains a significant part of the correct answer.
-                if (normalizedCorrect.includes(normalizedUser) && normalizedUser.length > 2) {
-                    // The includes() method checks if a string contains another string.
-                    // We also check that the user's answer is not just a single letter or number,
-                    // to avoid false positives (e.g., 'a' is in 'apple').
-                    return 'More';
-                }
-                
-                // Step 4: If no match is found, the answer is incorrect.
-                // This is the final and default case if the answer is neither correct nor close.
-                return 'Incorrect';
-            };
-            
-            
-            //delog('quest valur at checkans after AI:', ANS)
-            let result;
-            inVerse = this.manageAnswer(this.ANS, false, inVerse)[4];
-            this.delog('user in', inVerse, this.ANS);
-            result = checkAdvancedAnswer(inVerse, this.ANS);
-            this.delog('Result of advanced check:', result); // Log the result for debugging.
-            if (result === 'Correct') {
-                this.id('correctbtn').style.display = "block";
-                // Correctly add a record to the answers array
-                this.answers.push({
-                    verse: this.selVerses[this.cnum],
-                    correct: true,
-                });
-                this.correctCount++;
-                this.correct('right');
-                return true;
-            } else if (result === 'Incorrect') {
-                this.id('incorrectbtn').style.display = "block";
-                this.ver.value = `${this.ver.value} \n \nCorrect Answer: ${this.QUEST}?\n${displayAns}`;
-                //vC.innerHTML =`${ver.value} \n \nCorrect Answer:${QUEST}?\n${ANS}`;
-                // Correctly add a record to the answers array
-                this.answers.push({
-                    verse: this.selVerses[this.cnum],
-                    correct: false
-                });
-                
-                this.correct('wrong');
-                return false;
-            } else {
-                this.morebtn.style.display = 'block';
-            }
-            
-        } else  if(this.selVerses[this.cnum].type === 'deep'){
-            this.deepStudy('check', this.ver.value, this.selVerses[this.cnum].answer);
-        }
-            else{
-            // drag and drop elements
-            const Blocks = Array.from(this.vD.children);
-            let entered_words = Blocks.map(Block => {
-                return Block.textContent.trim();
-            });
-            if (this.stripChar(entered_words.join(' ')) === this.stripChar(this.ANS)) {
-                this.id('correctbtn').style.display = "block";
-                // Correctly add a record to the answers array
-                this.answers.push({
-                    verse: this.selVerses[this.cnum],
-                    correct: true,
-                });
-                this.correctCount++;
-                this.correct('right');
-                return true;
-            } else {
-                this.id('incorrectbtn').style.display = "block";
-                this.ver.value = `${this.ver.value} \n \nCorrect Answer: ${this.QUEST}?\n${displayAns}`;
-                this.vC.innerHTML = `Correct Answer: ${this.QUEST}?\n${displayAns}`;
-                // Correctly add a record to the answers array
-                this.answers.push({
-                    verse: this.selVerses[this.cnum],
-                    correct: false,
-                    //type: selVerses[cnum].type
-                });
-             
-                this.correct('wrong');
-                return false;
-            }
-        }
+   /**
+ * Refactored checkAns using the advanced checkAnswer logic.
+ * This version handles both Verse, Drag-and-Drop, and standard Input modes.
+ */
+checkAns() {
+    this.isend = true;
+    
+    // 1. Reset UI State
+    this.id('correctbtn').style.display = "none";
+    this.id('incorrectbtn').style.display = "none";
+    if (this.plsc) this.plsc.style.display = 'none';
+
+    // 2. Normalize correct answer and store display version
+    const displayAns = this.ANS;
+    if (this.ANS) {
+        this.ANS = this.manageAnswer(this.ANS, false)[0].join(' ');
     }
+
+    // 3. Handle Deep Study special case
+    const currentVerse = this.selVerses[this.cnum];
+    if (currentVerse.type === 'deep' && !this.isVerse) {
+        return this.deepStudy('check', this.ver.value, currentVerse.answer);
+    }
+
+    // 4. Gather User Input (Unified for blocks or text area)
+    const userAnswer = this.getUserAnswer();
+
+    // 5. Configure thresholds (Strict for Quotes/Drag, Fuzzy for others)
+    const options = {
+        spellThreshold: 2,
+        closeThreshold: 2,
+        correction: true,
+        extraThreshold: 2,
+        isQuote: this.isVerse || this.dragEnabled,
+        isOneChanceQuote: false,
+        shouldCorrectAtErr: false
+    };
+
+    // 6. Execute Check
+    const result = this.checkAnswer(this.ANS, userAnswer, options);
+
+    // 7. Handle Outcomes
+    if (result === 1) {
+        this.processOutcome(true, displayAns);
+        return true;
+    } else if (result === -1) {
+        this.processOutcome(false, displayAns);
+        return false;
+    } else {
+        // Result is 0 (Partial/Close)
+        if (this.morebtn) this.morebtn.style.display = 'block';
+    }
+}
+
+/**
+ * Helper to extract text from UI regardless of input mode
+ */
+getUserAnswer() {
+    // If there are drag-and-drop blocks, use those
+    if (this.vD && this.vD.children.length > 0) {
+        return Array.from(this.vD.children)
+            .map(block => block.textContent.trim())
+            .join(' ');
+    }
+    
+    // Otherwise, use the text input (potentially filtered by manageAnswer)
+    let inputVal = this.ver.value;
+    if (!this.isVerse ) {
+        inputVal = this.manageAnswer(this.ANS, false, inputVal)[4] || inputVal;
+    }
+    return inputVal;
+}
+
+/**
+ * Handles the UI updates and data recording for Right/Wrong answers
+ */
+processOutcome(isCorrect, displayAns) {
+    const currentVerse = this.selVerses[this.cnum];
+    const btnId = isCorrect ? 'correctbtn' : 'incorrectbtn';
+    
+    this.id(btnId).style.display = "block";
+
+    if (isCorrect) {
+        this.correctCount++;
+        this.correct('right');
+    } else {
+        const correctionMsg = this.isVerse 
+            ? `Correct Answer: ${currentVerse.ref}\n${currentVerse.verse}`
+            : `Correct Answer: ${this.QUEST}?\n${displayAns}`;
+
+        this.ver.value = `${this.ver.value} \n \n${correctionMsg}`;
+        if (this.vC) this.vC.innerHTML = correctionMsg;
+        this.correct('wrong');
+    }
+
+    this.answers.push({
+        verse: currentVerse,
+        correct: isCorrect
+    });
+}
 upTimerNew(remainingSeconds, totalDurationSeconds) {
     if(this.stopTimer)return;
         const timerElement = document.getElementById('quizTimer');
