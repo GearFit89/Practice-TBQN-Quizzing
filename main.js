@@ -462,7 +462,8 @@ class
 QuizCompanion {
     constructor(debugMode=true, type ,config='nothing') {
       this.debugLogs = [];
-      this.errors ={}
+      this.errors ={};
+         this.count= 0;
       console.log(this.debugLogs) ///lilve array 
         this.id = (word) => {
             const defluatWord = {style: {display:'block'}, message: `Element with id "${word}" not found.`};
@@ -2119,7 +2120,7 @@ hightestMonth(inMonths){
         this.ver.classList.add('blueborder');
         this.vC.innerHTML = '';
         this.vD.innerHTML = '';
-   this.counter= 0;
+  
         this.ver.placeholder = 'Enter Answer';
         this.id('pleasefinish').style.display = 'none';
         this.id('pleasebtn').style.display = 'none';
@@ -2176,7 +2177,7 @@ checkAns() {
     if (result === 1) {
         this.processOutcome(true, displayAns);
         return true;
-    } else if (result === -1 && this.count >= 2) {
+    } else if (result === -1 && this.count >= 1) {
         this.count =0
         this.processOutcome(false, displayAns);
         return false;
