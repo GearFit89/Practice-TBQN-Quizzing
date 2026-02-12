@@ -1040,6 +1040,7 @@ QuizCompanion {
           }  
  
           checkAnswer(answer, enteredAnswer, options = {}) {
+              if(!enteredAnswer || !answer) return -1;
     // Set default values for options
     const defaults = {
       spellThreshold: 2,
