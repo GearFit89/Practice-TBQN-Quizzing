@@ -558,6 +558,10 @@ QuizCompanion {
                 }
             });
         }
+        this.commonWords = new Set([
+    'the', 'and', 'is', 'in', 'to', 'of', 'a', 'that', 'it', 'on', 
+    'for', 'with', 'as', 'was', 'at', 'by', 'an', 'be', 'this', 'from'
+  ]);
         this.stopTimer = false
         this.isDeep  = false;
         this.isend = false;
@@ -1033,7 +1037,7 @@ QuizCompanion {
                return  byVerseAbet;
 
           }  
-   commonWords: ['the', 'and', 'is', 'in', 'to', 'of', 'a', 'that', 'it', 'on', 'for', 'with', 'as', 'was', 'at', 'by', 'an', 'be', 'this', 'from']
+ 
           checkAnswer(answer, enteredAnswer, options = {}) {
     // Set default values for options
     const defaults = {
