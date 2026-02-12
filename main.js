@@ -2172,11 +2172,12 @@ checkAns() {
         shouldCorrectAtErr: false
     };
 
-    // 6. Execute Check
+    
     const result = this.checkAnswer(this.ANS, userAnswer, options);
-console.log('ans  real', this.ANS)
+console.log('ans  real', this.ANS, 'vs',  userAnswer, result)
     // 7. Handle Outcomes
-    if (result === 1) {
+    if (result === 1 || this.stripChar(this.ANS) === this.stripChar(userAnswer) {
+        console.log('corrext');
         this.processOutcome(true, displayAns);
         return true;
     } else if (result === -1 || this.count >= 1) {
