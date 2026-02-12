@@ -2119,7 +2119,7 @@ hightestMonth(inMonths){
         this.ver.classList.add('blueborder');
         this.vC.innerHTML = '';
         this.vD.innerHTML = '';
-   
+   this.counter= 0;
         this.ver.placeholder = 'Enter Answer';
         this.id('pleasefinish').style.display = 'none';
         this.id('pleasebtn').style.display = 'none';
@@ -2164,7 +2164,7 @@ checkAns() {
         closeThreshold: 2,
         correction: true,
         extraThreshold: 2,
-        isQuote: this.isVerse || this.dragEnabled,
+        isQuote: this.selVerses[this.cnum].type === 'ftv/quote',
         isOneChanceQuote: false,
         shouldCorrectAtErr: false
     };
@@ -2176,11 +2176,13 @@ checkAns() {
     if (result === 1) {
         this.processOutcome(true, displayAns);
         return true;
-    } else if (result === -1) {
+    } else if (result === -1 && this.count >= 2) {
+        this.count =0
         this.processOutcome(false, displayAns);
         return false;
     } else {
         // Result is 0 (Partial/Close)
+        this.count++;
         if (this.morebtn) this.morebtn.style.display = 'block';
     }
 }
