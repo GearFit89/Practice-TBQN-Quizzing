@@ -1484,6 +1484,7 @@ hightestMonth(inMonths){
 
         const QUESTIONS = this.question_dict;
         const VERSES = this.verse_dict;
+        const allContent = {...VERSES, ...QUESTIONS};
         for(const q of  Object.values(  allContent )){
             const {monthsTrigs:trigs} ={op:'op'} ///await  this.setTrigForAllMonths(q);
               if(q.aq) q.aq = null;
