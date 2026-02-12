@@ -1039,138 +1039,8 @@ QuizCompanion {
 
           }  
  
-          checkAnswer(answer, enteredAnswer, options = {}) {
-              console.warn('no value provided', enteredAnswer)
-              if(!enteredAnswer || !answer) return -1;
-    // Set default values for options
-    const defaults = {
-      spellThreshold: 2,
-      closeThreshold: 2,
-      correction: true,
-      extraThreshold: 2,
-      isQuote: false,
-      isOneChanceQuote: false,
-      shouldCorrectAtErr: false
-    };
-    const opt = { ...defaults, ...options };
-
-    // Convert strings to arrays and clean characters
-    const cleanAns = answer.split(' ').map(w => this.stripChar(w));
-    const cleanEntrAns = enteredAnswer.split(' ').map(w => this.stripChar(w));
- if (cleanAns.join(' ') === cleanEntrAns.join(' ')) return 1; //early return to avoid using up resuocres and taking more than needed
-    // Run spellcheck logic
-    const { correctedAnswer } = this.spellCheck(cleanAns, cleanEntrAns, { 
-      correction: opt.correction, 
-      threshold: opt.spellThreshold 
-    });
-
-    if (opt.isQuote) {
-      const ans = opt.shouldCorrectAtErr ? cleanAns.slice(0, correctedAnswer.length) : cleanAns;
-
-      if (correctedAnswer.join(' ') === ans.join(' ')) {
-        return 1; // Word perfect
-      } else {
-        return opt.isOneChanceQuote ? -1 : 0;
-      }
-    }
-
-    // Remove common words for frequency comparison
-    const fixedEntr = correctedAnswer.filter(word => !this.commonWords.has(word.toLowerCase()));
-    const fixedAns = cleanAns.filter(word => !this.commonWords.has(word.toLowerCase()));
-
-    // Map frequencies
-    const entrCount = this.wordsCount(fixedEntr);
-    const ansCount = this.wordsCount(fixedAns);
-
-    // Calculate missing words
-    const incorrectCount = Object.keys(ansCount).reduce((acc, key) => {
-      const diff = ansCount[key] - (entrCount[key] || 0);
-      return acc + (diff > 0 ? diff : 0);
-    }, 0);
-
-    // Calculate extra words
-    const extraCount = Object.keys(entrCount).reduce((acc, key) => {
-      const diff = entrCount[key] - (ansCount[key] || 0);
-      return acc + (diff > 0 ? diff : 0);
-    }, 0);
-
-    // Perfect match
-    if (incorrectCount === 0 && extraCount === 0) {
-      return 1;
-    }
-
-    // Evaluate failure thresholds
-    if (extraCount > opt.extraThreshold || incorrectCount > opt.closeThreshold) {
-      return -1;
-    } else {
-      return 0;
-    }
-  }
-
-  wordsCount(input = []) {
-    const objectCount = {};
-    input.forEach(word => {
-      objectCount[word] = (objectCount[word] || 0) + 1;
-    });
-    return objectCount;
-  }
-
-  stripChar(input, nums = false) {
-    const charToStripArr = ['!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', '?', ' ', '\n', '\r', '\t', '[', ']', '{', '}', '—', '–', '|'];
-    if (nums) charToStripArr.push('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-    const charToStrip = new Set(charToStripArr);
-
-    const processString = (str) => {
-      if (typeof str !== 'string') return '';
-      return str.toLowerCase().trim().split('').filter(char => !charToStrip.has(char)).join('');
-    };
-
-    return Array.isArray(input) ? input.map(processString) : processString(input);
-  }
-
-  levenshtein(a, b) {
-    const matrix = [];
-    for (let i = 0; i <= a.length; i++) matrix[i] = [i];
-    for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
-
-    for (let i = 1; i <= a.length; i++) {
-      for (let j = 1; j <= b.length; j++) {
-        if (a[i - 1] === b[j - 1]) {
-          matrix[i][j] = matrix[i - 1][j - 1];
-        } else {
-          matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + 1);
-        }
-      }
-    }
-    return matrix[a.length][b.length];
-  }
-
-  spellCheck(answer = [], enteredAnswer = [], options = { threshold: 2, correction: true }) {
-    const correctedAnswer = [];
-    const misspelledWords = [];
-
-    enteredAnswer.forEach((enteredWord) => {
-      let bestMatch = enteredWord;
-      let minDistance = Infinity;
-
-      answer.forEach(targetWord => {
-        const distance = this.levenshtein(targetWord, enteredWord);
-        if (distance < minDistance) {
-          minDistance = distance;
-          bestMatch = targetWord;
-        }
-      });
-
-      if (minDistance <= options.threshold) {
-        correctedAnswer.push(options.correction ? bestMatch : enteredWord);
-      } else {
-        correctedAnswer.push(enteredWord);
-        misspelledWords.push(enteredWord);
-      }
-    });
-
-    return { correctedAnswer, misspelledWords };
-  }
+         
+ 
     
  // NOTE: This file assumes the existence of 'this.stripChar' and 'this.delog' methods on the class instance.
 
@@ -2138,106 +2008,331 @@ hightestMonth(inMonths){
  * Refactored checkAns using the advanced checkAnswer logic.
  * This version handles both Verse, Drag-and-Drop, and standard Input modes.
  */
+/**
+ * COMPLETE FIXED VERSION - All syntax errors corrected
+ * Core answer checking logic with improved validation
+ */
+
 checkAns() {
     this.isend = true;
     
-    // 1. Reset UI State
+    // Reset UI state
     this.id('correctbtn').style.display = "none";
     this.id('incorrectbtn').style.display = "none";
     if (this.plsc) this.plsc.style.display = 'none';
 
-    // 2. Normalize correct answer and store display version
+    // Store display answer before normalization
     const displayAns = this.ANS;
+    
+    // Normalize the correct answer
     if (this.ANS) {
-        this.ANS = this.manageAnswer(this.ANS, false)[0].join(' ');
+        const [cleanedAns] = this.manageAnswer(this.ANS, false);
+        this.ANS = cleanedAns.join(' ');
     }
 
-    // 3. Handle Deep Study special case
+    // Handle Deep Study mode
     const currentVerse = this.selVerses[this.cnum];
-    if (currentVerse.type === 'deep' && !this.isVerse) {
+    if (currentVerse && currentVerse.type === 'deep' && !this.isVerse) {
         return this.deepStudy('check', this.ver.value, currentVerse.answer);
     }
 
-    // 4. Gather User Input (Unified for blocks or text area)
+    // Get user's answer from input
     const userAnswer = this.getUserAnswer();
 
-    // 5. Configure thresholds (Strict for Quotes/Drag, Fuzzy for others)
+    // Configure answer checking options
     const options = {
         spellThreshold: 2,
         closeThreshold: 2,
         correction: true,
         extraThreshold: 2,
-        isQuote: this.selVerses[this.cnum].type === 'ftv/quote',
+        isQuote: currentVerse && (currentVerse.type === 'ftv/quote' || currentVerse.type === 'quote' || currentVerse.type === 'ftv'),
         isOneChanceQuote: false,
         shouldCorrectAtErr: false
     };
 
-    
+    // Check the answer
     const result = this.checkAnswer(this.ANS, userAnswer, options);
-console.log('ans  real', this.ANS, 'vs',  userAnswer, result)
-    // 7. Handle Outcomes
-    if (result === 1 || this.stripChar(this.ANS) === this.stripChar(userAnswer) {
-        console.log('corrext');
+    console.log('Answer Check Result:', { 
+        expected: this.ANS, 
+        received: userAnswer, 
+        result: result,
+        verseType: currentVerse?.type 
+    });
+
+    // Process result - FIXED: Added missing closing parenthesis
+    if (result === 1 || this.stripChar(this.ANS) === this.stripChar(userAnswer)) {
+        console.log('✓ Answer is CORRECT');
         this.processOutcome(true, displayAns);
         return true;
     } else if (result === -1 || this.count >= 1) {
-        this.count =0
+        this.count = 0;
+        console.log('✗ Answer is INCORRECT');
         this.processOutcome(false, displayAns);
         return false;
     } else {
-        // Result is 0 (Partial/Close)
+        // Result is 0 (Partial/Close match)
         this.count++;
+        console.log('⚠ Partial match - showing "More" button');
         if (this.morebtn) this.morebtn.style.display = 'block';
+        return false;
     }
 }
 
 /**
- * Helper to extract text from UI regardless of input mode
+ * Extract user answer from either drag-and-drop or text input
  */
 getUserAnswer() {
-   
-    // If there are drag-and-drop blocks, use those
-    if (this.vD && this.vD.children.length > 0) {
-        return Array.from(this.vD.children)
+    let userAnswer = '';
+    
+    // Check for drag-and-drop blocks first
+    if (this.vD && this.vD.children && this.vD.children.length > 0) {
+        userAnswer = Array.from(this.vD.children)
             .map(block => block.textContent.trim())
             .join(' ');
+        console.log('Answer from drag-and-drop:', userAnswer);
+    } 
+    // Fall back to text input
+    else if (this.ver && this.ver.value) {
+        userAnswer = this.ver.value.trim();
+        
+        // Apply answer management if not a verse
+        if (!this.isVerse && this.ANS) {
+            const [, , , , managed] = this.manageAnswer(this.ANS, false, userAnswer);
+            userAnswer = managed || userAnswer;
+        }
+        console.log('Answer from text input:', userAnswer);
     }
     
-    // Otherwise, use the text input (potentially filtered by manageAnswer)
-    let inputVal = this.ver.value;
-    if (!this.isVerse ) {
-        inputVal = this.manageAnswer(this.ANS, false, inputVal)[4] || inputVal;
-    }
-     console.log('user ans', inputVal, 'op')
-    return inputVal;
+    return userAnswer;
 }
 
 /**
- * Handles the UI updates and data recording for Right/Wrong answers
+ * IMPROVED checkAnswer with better logic and validation
+ * Returns:
+ *   1 = Correct answer
+ *   0 = Partial/Close match (allow retry or hint)
+ *  -1 = Wrong answer
  */
-processOutcome(isCorrect, displayAns) {
-    const currentVerse = this.selVerses[this.cnum];
-    const btnId = isCorrect ? 'correctbtn' : 'incorrectbtn';
+checkAnswer(answer, enteredAnswer, options = {}) {
+    console.log('=== checkAnswer Debug ===', { answer, enteredAnswer, options });
     
-    this.id(btnId).style.display = "block";
-
-    if (isCorrect) {
-        this.correctCount++;
-        this.correct('right');
-    } else {
-        const correctionMsg = this.isVerse 
-            ? `Correct Answer: ${currentVerse.ref}\n${currentVerse.verse}`
-            : `Correct Answer: ${this.QUEST}?\n${displayAns}`;
-
-        this.ver.value = `${this.ver.value} \n \n${correctionMsg}`;
-        if (this.vC) this.vC.innerHTML = correctionMsg;
-        this.correct('wrong');
+    // 1. VALIDATE INPUTS
+    if (!enteredAnswer || !answer) {
+        console.warn('checkAnswer: Missing answer or enteredAnswer', { answer, enteredAnswer });
+        return -1;
     }
 
-    this.answers.push({
-        verse: currentVerse,
-        correct: isCorrect
+    // 2. SET DEFAULTS
+    const defaults = {
+        spellThreshold: 2,
+        closeThreshold: 2,
+        correction: true,
+        extraThreshold: 2,
+        isQuote: false,
+        isOneChanceQuote: false,
+        shouldCorrectAtErr: false
+    };
+    const opt = { ...defaults, ...options };
+
+    // 3. CLEAN AND NORMALIZE
+    const cleanAns = answer
+        .split(' ')
+        .map(w => this.stripChar(w))
+        .filter(w => w && w.length > 0); // Remove empty strings
+        
+    const cleanEntrAns = enteredAnswer
+        .split(' ')
+        .map(w => this.stripChar(w))
+        .filter(w => w && w.length > 0); // Remove empty strings
+
+    console.log('After cleaning:', { cleanAns, cleanEntrAns });
+
+    // 4. EARLY EXIT: Perfect match (byte-for-byte)
+    if (cleanAns.join(' ') === cleanEntrAns.join(' ')) {
+        console.log('✓ Perfect match detected');
+        return 1;
+    }
+
+    // 5. RUN SPELLCHECK
+    const { correctedAnswer, misspelledWords } = this.spellCheck(
+        cleanAns, 
+        cleanEntrAns, 
+        { 
+            correction: opt.correction, 
+            threshold: opt.spellThreshold 
+        }
+    );
+    console.log('After spellcheck:', { correctedAnswer, misspelledWords });
+
+    // 6. HANDLE QUOTE/FTV MODE (Stricter checking)
+    if (opt.isQuote) {
+        console.log('Quote/FTV mode - using strict comparison');
+        const compareAns = opt.shouldCorrectAtErr 
+            ? cleanAns.slice(0, correctedAnswer.length) 
+            : cleanAns;
+
+        if (correctedAnswer.join(' ') === compareAns.join(' ')) {
+            console.log('✓ Quote answer is correct');
+            return 1;
+        } else {
+            console.log('✗ Quote answer is incorrect');
+            return opt.isOneChanceQuote ? -1 : 0;
+        }
+    }
+
+    // 7. HANDLE REGULAR QUESTIONS (Fuzzy matching with common words)
+    console.log('Regular question mode - using fuzzy comparison');
+    
+    // Filter out common words for more meaningful comparison
+    const fixedEntr = correctedAnswer.filter(word => 
+        !this.commonWords.has(word.toLowerCase())
+    );
+    const fixedAns = cleanAns.filter(word => 
+        !this.commonWords.has(word.toLowerCase())
+    );
+
+    console.log('After filtering common words:', { fixedEntr, fixedAns });
+
+    // 8. COUNT WORD FREQUENCIES
+    const entrCount = this.wordsCount(fixedEntr);
+    const ansCount = this.wordsCount(fixedAns);
+    console.log('Word frequencies:', { entrCount, ansCount });
+
+    // 9. CALCULATE MISSING WORDS (in answer but not in input)
+    const incorrectCount = Object.keys(ansCount).reduce((acc, key) => {
+        const expectedCount = ansCount[key] || 0;
+        const actualCount = entrCount[key] || 0;
+        const diff = expectedCount - actualCount;
+        return acc + (diff > 0 ? diff : 0);
+    }, 0);
+
+    // 10. CALCULATE EXTRA WORDS (in input but not in answer)
+    const extraCount = Object.keys(entrCount).reduce((acc, key) => {
+        const actualCount = entrCount[key] || 0;
+        const expectedCount = ansCount[key] || 0;
+        const diff = actualCount - expectedCount;
+        return acc + (diff > 0 ? diff : 0);
+    }, 0);
+
+    console.log('Word count analysis:', { 
+        incorrectCount, 
+        extraCount, 
+        closeThreshold: opt.closeThreshold,
+        extraThreshold: opt.extraThreshold
     });
+
+    // 11. FINAL DECISION
+    if (incorrectCount === 0 && extraCount === 0) {
+        console.log('✓ All words match (frequency match)');
+        return 1;
+    }
+
+    if (extraCount > opt.extraThreshold || incorrectCount > opt.closeThreshold) {
+        console.log('✗ Too many errors - answer is wrong');
+        console.log(`  - Missing ${incorrectCount} words (threshold: ${opt.closeThreshold})`);
+        console.log(`  - Extra ${extraCount} words (threshold: ${opt.extraThreshold})`);
+        return -1;
+    } 
+
+    console.log('⚠ Close match - allow retry with hint');
+    return 0; // Partial match
+}
+
+/**
+ * Count frequency of each word in array
+ */
+wordsCount(input = []) {
+    const objectCount = {};
+    input.forEach(word => {
+        objectCount[word] = (objectCount[word] || 0) + 1;
+    });
+    return objectCount;
+}
+
+/**
+ * Strip special characters and normalize string
+ */
+stripChar(input, nums = false) {
+    const charToStripArr = [
+        '!', '/', ';', ':', '.', '"', "'", ',', '-', '(', ')', 
+        '?', ' ', '\n', '\r', '\t', '[', ']', '{', '}', '—', '–', '|'
+    ];
+    
+    if (nums) {
+        charToStripArr.push('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+    }
+    
+    const charToStrip = new Set(charToStripArr);
+
+    const processString = (str) => {
+        if (typeof str !== 'string') return '';
+        return str
+            .toLowerCase()
+            .trim()
+            .split('')
+            .filter(char => !charToStrip.has(char))
+            .join('');
+    };
+
+    return Array.isArray(input) 
+        ? input.map(processString) 
+        : processString(input);
+}
+
+/**
+ * Improved spellCheck with better word matching
+ */
+spellCheck(answer = [], enteredAnswer = [], options = { threshold: 2, correction: true }) {
+    const correctedAnswer = [];
+    const misspelledWords = [];
+
+    enteredAnswer.forEach((enteredWord) => {
+        let bestMatch = enteredWord;
+        let minDistance = Infinity;
+
+        answer.forEach(targetWord => {
+            const distance = this.levenshteinDistance(targetWord, enteredWord);
+            if (distance < minDistance) {
+                minDistance = distance;
+                bestMatch = targetWord;
+            }
+        });
+
+        if (minDistance <= options.threshold) {
+            correctedAnswer.push(options.correction ? bestMatch : enteredWord);
+        } else {
+            correctedAnswer.push(enteredWord);
+            misspelledWords.push(enteredWord);
+        }
+    });
+
+    return { correctedAnswer, misspelledWords };
+}
+
+/**
+ * Calculate Levenshtein distance between two strings
+ */
+levenshteinDistance(a, b) {
+    const matrix = Array.from({ length: a.length + 1 }, (_, i) =>
+        Array.from({ length: b.length + 1 }, (_, j) => 
+            (i === 0 ? j : j === 0 ? i : 0)
+        )
+    );
+
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+            if (a[i - 1] === b[j - 1]) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j] + 1,      // deletion
+                    matrix[i][j - 1] + 1,      // insertion
+                    matrix[i - 1][j - 1] + 1   // substitution
+                );
+            }
+        }
+    }
+    return matrix[a.length][b.length];
 }
 upTimerNew(remainingSeconds, totalDurationSeconds) {
     if(this.stopTimer)return;
