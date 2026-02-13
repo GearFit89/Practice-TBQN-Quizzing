@@ -808,6 +808,30 @@ QuizCompanion {
             console.error('Failed loading Questions', error);
         }
     }
+    processOutcome(isCorrect, displayAns) {
+    const currentVerse = this.selVerses[this.cnum];
+    const btnId = isCorrect ? 'correctbtn' : 'incorrectbtn';
+    
+    this.id(btnId).style.display = "block";
+
+    if (isCorrect) {
+        this.correctCount++;
+        this.correct('right');
+    } else {
+        const correctionMsg = this.isVerse 
+            ? `Correct Answer: ${currentVerse.ref}\n${currentVerse.verse}`
+            : `Correct Answer: ${this.QUEST}?\n${displayAns}`;
+
+        this.ver.value = `${this.ver.value} \n \n${correctionMsg}`;
+        if (this.vC) this.vC.innerHTML = correctionMsg;
+        this.correct('wrong');
+    }
+
+    this.answers.push({
+        verse: currentVerse,
+        correct: isCorrect
+    });
+}
     
     async loadQuotes() {
         try {
